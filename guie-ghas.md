@@ -74,3 +74,55 @@
 ### Rol en el ecosistema de seguridad:
 
 GHAS se integra en el **Shift Left Security** - moviendo la seguridad al inicio del SDLC:
+
+```
+Desarrollo → Commit → PR → Merge → Deploy → Producción
+    ↓         ↓      ↓      ↓        ↓         ↓
+  CodeQL   Secret  Dep   Code    Runtime  Monitoring
+           Scan   Review Scan    Security
+```
+
+**Enlaces:**
+- https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security
+- https://github.com/security/advanced-security
+- https://resources.github.com/evolving-github-advanced-security/
+
+---
+
+## 1.2 Diferenciar características para proyectos Open Source vs GHEC/GHES
+
+### Repositorios Públicos (Open Source) - GRATUITO
+
+**Características automáticas:**
+- Secret scanning (escaneo de secretos)
+- Push protection (protección en push)
+- Dependency graph (gráfico de dependencias)
+- Dependency alerts (alertas de dependencias vulnerables)
+- Dependabot security updates (actualizaciones automáticas)
+
+**NO incluidas:**
+- Code scanning con CodeQL (requiere configuración manual pero es gratuito)
+- Security overview
+- Custom patterns para secret scanning
+- Advanced security overview features
+
+### Repositorios Privados con GHAS (GHEC/GHES)
+
+**Requiere licencia de:**
+- GitHub Secret Protection, o
+- GitHub Code Security, o
+- GitHub Enterprise (que incluía GHAS hasta abril 2025)
+
+**Características adicionales:**
+
+| Característica | Público | Privado sin GHAS | Privado con GHAS |
+|----------------|---------|------------------|------------------|
+| Secret Scanning | ✅ | ❌ | ✅ |
+| Push Protection | ✅ | ❌ | ✅ |
+| Code Scanning | ✅ Manual | ❌ | ✅ |
+| Dependabot Alerts | ✅ | ✅ | ✅ |
+| Dependency Review | ❌ | ❌ | ✅ |
+| Security Overview | ❌ | ❌ | ✅ |
+| Custom Patterns | ❌ | ❌ | ✅ |
+| Copilot Autofix | ❌ | ❌ | ✅ |
+| Auto-triage Rules | ❌ | ❌ | ✅ |
