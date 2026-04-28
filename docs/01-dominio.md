@@ -1,5 +1,7 @@
 # DOMINIO 1: CARACTERÍSTICAS Y FUNCIONALIDADES DE SEGURIDAD DE GHAS (15%)
-## 1.1 Comparar las caraterísticas de GHAS y su papel en el ecosistema de seguridad <a name="d1-1"></a>
+
+<a id="d1-1"></a>
+## 1.1 Comparar las caraterísticas de GHAS y su papel en el ecosistema de seguridad 
 
 ### ¿Qué es GitHub Advanced Security (GHAS)?
 
@@ -71,8 +73,8 @@ Desarrollo → Commit → PR → Merge → Deploy → Producción
 - https://resources.github.com/evolving-github-advanced-security/
 
 ---
-
-## 1.2 Diferenciar características para proyectos Open Source vs GHEC/GHES <a name="d1-2"></a>
+<a id="d1-2"></a>
+## 1.2 Diferenciar características para proyectos Open Source vs GHEC/GHES 
 
 ### Repositorios Públicos (Open Source) - GRATUITO
 
