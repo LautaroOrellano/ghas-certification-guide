@@ -130,7 +130,7 @@ Desarrollo → Commit → PR → Merge → Deploy → Producción
 - https://github.com/advanced-security/advanced-security-material
 
 ---
-
+<a id="d1-3"></a>
 ## 1.3 Características y beneficios del Security Overview
 
 ### ¿Qué es Security Overview?
@@ -208,7 +208,7 @@ Filtros disponibles:
 - https://docs.github.com/en/code-security/security-overview/assessing-adoption-code-security
 
 ---
-
+<a id="d1-4"></a>
 ## 1.4 Diferencias entre Secret Scanning y Code Scanning
 
 ### Secret Scanning
@@ -311,7 +311,7 @@ String query = "SELECT * FROM users WHERE id = " + userId;
 - https://docs.github.com/en/code-security/code-scanning
 
 ---
-
+<a id="d1-5"></a>
 ## 1.5 Ciclo de vida de desarrollo seguro con GHAS
 
 ### Integración en el SDLC
@@ -448,7 +448,7 @@ String query = "SELECT * FROM users WHERE id = " + userId;
 - https://docs.github.com/en/enterprise-cloud@latest/code-security/tutorials/adopting-github-advanced-security-at-scale
 
 ---
-
+<a id="d1-6"></a>
 ## 1.6 Explicar y utilizar características específicas de GHAS
 
 ### a) Identificación de dependencias vulnerables
