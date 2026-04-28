@@ -1,5 +1,5 @@
 # DOMINIO 1: CARACTERÍSTICAS Y FUNCIONALIDADES DE SEGURIDAD DE GHAS (15%)
-## 1.1 Comparar las caraterísticas de GHAS y su papel en el ecosistema de seguridad
+## 1.1 Comparar las caraterísticas de GHAS y su papel en el ecosistema de seguridad <a name="d11"></a>
 
 ### ¿Qué es GitHub Advanced Security (GHAS)?
 
