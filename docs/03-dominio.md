@@ -387,44 +387,648 @@ Pull requests automáticos que actualizan dependencias vulnerables a versiones p
 8. Alert auto-closed
 ```
 
+**Ejemplo de PR de Dependabot:**
 
+```markdown
+## Bump lodash from 4.17.15 to 4.17.21
 
+**Dependabot** will resolve any conflicts with this PR as long as you don't alter it yourself.
 
+### Vulnerabilities fixed
+🔴 **High severity** - CVE-2021-23337
+Prototype Pollution in lodash
 
+### Release notes
+<details>
+<summary>4.17.21</summary>
 
+#### Fixed
+- Prototype pollution via setWith and set
 
+#### Changelog
+See full changelog: https://github.com/lodash/lodash/releases/tag/4.17.21
+</details>
 
+### Commits
+- [`f299b52`] Bump to v4.17.21
+- [`c4847eb`] Fix prototype pollution
+- See full diff: lodash/lodash@4.17.15...4.17.21
 
+### Compatibility score
+Dependabot will merge this PR once CI passes on it, as requested by @you.
 
+**Note:** This PR was generated automatically by Dependabot.
+```
 
+### Dependency Review
 
+**¿Qué es?**
+Feature que analiza cambios de dependencias en PRs y bloquea merge si se introducen vulnerabilidades.
 
+**Diferencia clave:**
 
+```
+Dependabot Alerts:
+  - Escanea dependencias existentes
+  - Reactivo (alerta después de merge)
+  - Security tab
 
+Dependency Review:
+  - Escanea cambios en PR
+  - Proactivo (bloquea antes de merge)
+  - PR checks
+```
 
+**Funcionamiento:**
 
+```
+Developer crea PR:
+  package.json: lodash@4.17.15 → lodash@4.17.10 (downgrade!)
+     ↓
+Dependency Review Action ejecuta:
+     ↓
+Compara:
+  Base branch (main): lodash@4.17.15 (sin vulnerabilidades)
+  PR branch: lodash@4.17.10 (CVE-2020-8203: HIGH)
+     ↓
+Resultado:
+  ❌ Check failed: 1 high severity vulnerability introduced
+     ↓
+Bloquea merge:
+  - PR status: ❌ Dependency review — Changes introduce known vulnerabilities
+  - Requires: Fix before merge
+```
 
+**Configuración de Dependency Review Action:**
 
+```yaml
+# .github/workflows/dependency-review.yml
+name: 'Dependency Review'
 
+on: [pull_request]
 
+permissions:
+  contents: read
+  pull-requests: write
 
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail on high/critical only
+          fail-on-severity: moderate
+          
+          # Allow specific licenses
+          allow-licenses: MIT, Apache-2.0, BSD-3-Clause
+          
+          # Deny specific licenses
+          deny-licenses: GPL-3.0, AGPL-3.0
+          
+          # Comment on PR with details
+          comment-summary-in-pr: always
+          
+          # Check for malicious packages
+          warn-on-openssf-scorecard-level: 3
+```
 
+### Generación de alertas para dependencias vulnerables
 
+**Pipeline completo:**
 
+```
+┌──────────────────────────────────────────────────┐
+│ 1. COMMIT pushed to repository                   │
+└──────────────────┬───────────────────────────────┘
+                   │
+┌──────────────────▼───────────────────────────────┐
+│ 2. Dependency Graph updated                      │
+│    - Parse manifest files                        │
+│    - Extract dependencies                        │
+│    - Build dependency tree                       │
+└──────────────────┬───────────────────────────────┘
+                   │
+┌──────────────────▼───────────────────────────────┐
+│ 3. Match against GitHub Advisory Database        │
+│    For each dependency:                          │
+│      - Check package + version                   │
+│      - Query advisories                          │
+│      - Calculate CVSS score                      │
+└──────────────────┬───────────────────────────────┘
+                   │
+              ┌────┴────┐
+              │ Match?  │
+              └────┬────┘
+                   │
+         ┌─────────┴─────────┐
+        YES                  NO
+         │                    │
+┌────────▼────────┐    ┌─────▼──────┐
+│ 4. Create Alert │    │  No Action │
+│   - Generate    │    └────────────┘
+│     alert       │
+│   - Set severity│
+│   - Add metadata│
+└────────┬────────┘
+         │
+┌────────▼──────────────────────────────────────────┐
+│ 5. Notify                                         │
+│    ├─ Repository admins (email)                   │
+│    ├─ Security managers                           │
+│    ├─ Webhooks (if configured)                    │
+│    └─ Integrations (Slack, PagerDuty, etc.)       │
+└────────┬──────────────────────────────────────────┘
+         │
+┌────────▼──────────────────────────────────────────┐
+│ 6. Dependabot evaluates security update           │
+│    ├─ Is patch available?                         │
+│    ├─ Is it backward compatible?                  │
+│    ├─ Are there breaking changes?                 │
+│    └─ Create PR? (if enabled)                     │
+└───────────────────────────────────────────────────┘
+```
 
+### Diferencia entre Dependabot y Dependency Review
 
+**Tabla comparativa completa:**
 
+| Aspecto | Dependabot Alerts | Dependabot Security Updates | Dependency Review |
+|---------|------------------|----------------------------|-------------------|
+| **Cuándo actúa** | Después de commit | Después de alert | Durante PR |
+| **Objetivo** | Detectar vulnerabilidades existentes | Automatizar fixes | Prevenir nuevas vulnerabilidades |
+| **Ubicación** | Security tab | Pull requests tab | PR checks |
+| **Acción** | Crear alerta | Crear PR de fix | Bloquear/aprobar merge |
+| **Reactivo/Proactivo** | Reactivo | Reactivo | Proactivo |
+| **Requiere GHAS** | No (públicos), Sí (privados) | No (públicos), Sí (privados) | Sí |
+| **Bloquea código** | No | No | Sí (configurable) |
+| **Auto-remediation** | No | Sí (PR) | No |
+| **Scope** | Todo el repo | Dependencias vulnerables | Cambios en PR |
+| **Configuración** | Settings → Dependabot | Settings → Dependabot | GitHub Actions workflow |
 
+**Flujo combinado ideal:**
 
+```
+┌─────────────────────────────────────────┐
+│ Developer updates package.json          │
+│ npm install lodash@4.17.10              │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ git commit & push to feature branch     │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Opens PR to main                        │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Dependency Review Action runs           │
+│ X Found: CVE-2020-8203 in lodash@4.17.10│
+│ PR check FAILS                          │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Developer sees:                         │
+│ "Cannot merge - vulnerabilities found"  │
+│ Updates to lodash@4.17.21               │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Push update                             │
+│ Dependency Review re-runs               │
+│ ✅ No vulnerabilities                   │
+│ PR check PASSES                         │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Merge to main                           │
+└─────────┬───────────────────────────────┘
+          │
+┌─────────▼───────────────────────────────┐
+│ Dependabot monitors main branch         │
+│ (No alerts-all dependencies up to date) │
+└─────────────────────────────────────────┘
+          │
+          ├─ [Future: New CVE discovered]
+          │
+┌─────────▼───────────────────────────────┐
+│ Dependabot Alert created                │
+│ Dependabot Security Update PR created   │
+│ Team reviews & merges                   │
+└─────────────────────────────────────────┘
+```
 
+**Cuándo usar cada herramienta:**
 
+```yaml
+Dependabot Alerts:
+  Usa para:
+    - ✅ Monitoring continuo de dependencias
+    - ✅ Detectar vulnerabilidades en main branch
+    - ✅ Compliance reporting
+    - ✅ Security overview metrics
 
+Dependabot Security Updates:
+  Usa para:
+    - ✅ Automatizar updates de seguridad
+    - ✅ Reducir tiempo de remediación
+    - ✅ Keep dependencies current
+    - ✅ Batch updates (via grouping)
 
+Dependency Review:
+  Usa para:
+    - ✅ Gate PRs con vulnerabilidades
+    - ✅ Prevenir regresiones de seguridad
+    - ✅ License compliance
+    - ✅ Enforce security policies
+    - ✅ Educate developers at PR time
+```
+**Enlaces:**
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph
+- https://docs.github.com/en/code-security/dependabot
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
 
+---
 
+## 3.2 Configuración predeterminada para alertas de Dependabot
 
+### Repositorios Públicos
 
+**Configuración automática:**
 
+```yaml
+Dependabot Alerts: ✅ HABILITADO por defecto
+Dependency Graph: ✅ HABILITADO por defecto
+Dependabot Security Updates: ✅ HABILITADO por defecto
+
+Características incluidas:
+  - Alertas automáticas de vulnerabilidades
+  - PRs de seguridad automáticos
+  - Notificaciones por email
+  - Security tab visible
+  - Dependency graph público
+```
+
+**No requiere:**
+- ❌ Licencia GHAS
+- ❌ Configuración manual
+- ❌ GitHub Actions minutes (los PRs son gratuitos)
+
+### Repositorios Privados
+
+**Sin GHAS:**
+```yaml
+Dependabot Alerts: ✅ HABILITADO por defecto (desde 2022)
+Dependency Graph: ✅ HABILITADO por defecto
+Dependabot Security Updates: ❌ DESHABILITADO (requiere habilitar)
+Dependency Review: ❌ NO DISPONIBLE (requiere GHAS)
+```
+
+**Con GHAS (GitHub Code Security):**
+```yaml
+Dependabot Alerts: ✅ HABILITADO
+Dependency Graph: ✅ HABILITADO
+Dependabot Security Updates: ✅ Puede habilitarse
+Dependency Review: ✅ DISPONIBLE
+Custom Auto-triage Rules: ✅ DISPONIBLE
+```
+
+### Tabla comparativa de configuración predeterminada
+
+| Feature | Público | Privado sin GHAS | Privado con GHAS |
+|---------|---------|------------------|------------------|
+| **Dependency Graph** | ✅ Auto | ✅ Auto | ✅ Auto |
+| **Dependabot Alerts** | ✅ Auto | ✅ Auto | ✅ Auto |
+| **Dependabot Security Updates** | ✅ Auto | Opt-in | Opt-in |
+| **Dependabot Version Updates** | Opt-in | Opt-in | Opt-in |
+| **Dependency Review** | ❌ | ❌ | ✅ Requiere config |
+| **Custom Auto-triage** | ❌ | ❌ | ✅ |
+| **Security Overview** | ❌ | ❌ | ✅ |
+| **Grouped Updates** | Opt-in | Opt-in | Opt-in |
+
+### Verificar configuración actual
+
+```bash
+# Via GitHub CLI
+gh api repos/:owner/:repo | jq '{
+  dependency_graph: .has_dependency_graph,
+  vulnerability_alerts: .vulnerability_alerts_enabled,
+  automated_security_fixes: .automated_security_fixes_enabled
+}'
+
+# Via API
+curl -H "Authorization: token $GITHUB_TOKEN" \
+     https://api.github.com/repos/OWNER/REPO | \
+     jq '.vulnerability_alerts_enabled, .automated_security_fixes_enabled'
+
+# Via Web UI
+Repository → Settings → Code security and analysis
+  ├─ Dependency graph: [Enabled/Disabled]
+  ├─ Dependabot alerts: [Enabled/Disabled]
+  └─ Dependabot security updates: [Enabled/Disabled]
+```
+
+**Enlaces:**
+- https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts
+- https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository
+- https://docs.github.com/en/code-security/getting-started/securing-your-repository
+
+---
+
+## 3.3 Permisos y roles para Dependabot
+
+### Permisos para HABILITAR alertas de Dependabot
+
+**A nivel de repositorio:**
+
+| Rol | Habilitar Dependabot Alerts | Habilitar Security Updates | Configurar dependabot.yml |
+|-----|----------------------------|---------------------------|---------------------------|
+| **Read** | ❌ | ❌ | ❌ |
+| **Triage** | ❌ | ❌ | ❌ |
+| **Write** | ❌ | ❌ | ✅ (via PR) |
+| **Maintain** | ❌ | ❌ | ✅ |
+| **Admin** | ✅ | ✅ | ✅ |
+
+**A nivel de organización:**
+
+| Rol | Habilitar para org | Policies | Bulk enable |
+|-----|-------------------|----------|-------------|
+| **Member** | ❌ | ❌ | ❌ |
+| **Owner** | ✅ | ✅ | ✅ |
+| **Security Manager** | ✅ | ✅ | ✅ |
+
+### Permisos para VER alertas de Dependabot
+
+**Importante:** Las alertas de Dependabot tienen visibilidad diferente que otras alertas de seguridad.
+
+| Rol | Ver Dependabot Alerts | Ver detalles | Dismiss alerts | Ver PRs |
+|-----|----------------------|--------------|----------------|---------|
+| **Read** | ✅ | ✅ | ❌ | ✅ |
+| **Triage** | ✅ | ✅ | ❌ | ✅ |
+| **Write** | ✅ | ✅ | ✅ | ✅ |
+| **Maintain** | ✅ | ✅ | ✅ | ✅ |
+| **Admin** | ✅ | ✅ | ✅ | ✅ |
+| **Security Manager** | ✅ | ✅ | ✅ | ✅ |
+
+**Diferencia con Code Scanning:**
+```yaml
+Code Scanning:
+  - Solo Admin y Security Manager ven alertas
+  
+Dependabot:
+  - Todos los colaboradores con Read+ ven alertas
+  - Razón: Developers necesitan ver dependencias para su trabajo
+```
+
+### Configuración de acceso granular
+
+**Otorgar acceso a team:**
+
+```bash
+# Via GitHub CLI
+gh api \
+  --method PUT \
+  -H "Accept: application/vnd.github+json" \
+  /repos/OWNER/REPO/teams/TEAM_SLUG \
+  -f permission='push'  # write access includes Dependabot alerts
+
+# Via API
+curl -X PUT \
+  -H "Authorization: token $GITHUB_TOKEN" \
+  -H "Accept: application/vnd.github+json" \
+  https://api.github.com/repos/OWNER/REPO/teams/TEAM_SLUG \
+  -d '{"permission":"push"}'
+```
+
+**Security Manager role (organization level):**
+
+```bash
+# Agregar security manager a org
+gh api \
+  --method PUT \
+  -H "Accept: application/vnd.github+json" \
+  /orgs/ORG/security-managers/teams/TEAM_SLUG
+
+# Listar security managers
+gh api /orgs/ORG/security-managers/teams
+```
+
+**Custom notification groups:**
+
+```yaml
+# No hay configuración nativa para custom groups
+# Solución: Usar webhooks + automation
+
+# .github/workflows/dependabot-router.yml
+name: Route Dependabot Alerts
+
+on:
+  dependabot_alert:
+    types: [created, reopened]
+
+jobs:
+  route-alert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Route based on package ecosystem
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const alert = context.payload.alert;
+            const ecosystem = alert.dependency.package.ecosystem;
+            
+            let team;
+            if (ecosystem === 'npm') team = '@org/frontend-team';
+            else if (ecosystem === 'pip') team = '@org/backend-team';
+            else if (ecosystem === 'maven') team = '@org/java-team';
+            
+            // Create issue and assign
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              title: `Dependabot: ${alert.dependency.package.name}`,
+              body: `Security alert: ${alert.security_advisory.summary}`,
+              assignees: [team],
+              labels: ['security', 'dependencies']
+            });
+```
+
+**Enlaces:**
+- https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/repository-roles-for-an-organization
+- https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts
+- https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-security-managers-in-your-organization
+- https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-access-to-private-registries-for-dependabot
+
+---
+
+## 3.4 Habilitar Dependabot para repositorios privados
+
+### Método 1: Via Web UI (Individual)
+
+**Paso a paso:**
+
+```
+1. Ir al repositorio
+   └─ Settings tab
+
+2. Navegar a Code security and analysis
+   └─ Sidebar izquierdo
+
+3. Habilitar Dependency graph (si no está habilitado)
+   ├─ Click [Enable]
+   └─ Esperar 1-2 minutos para el análisis inicial
+
+4. Habilitar Dependabot alerts
+   ├─ Click [Enable]
+   └─ Confirmar
+
+5. [Opcional] Habilitar Dependabot security updates
+   ├─ Click [Enable]
+   └─ Esto permite PRs automáticos
+```
+
+### Método 2: Via GitHub CLI
+
+```bash
+# Habilitar todo de una vez
+gh api \
+  --method PATCH \
+  -H "Accept: application/vnd.github+json" \
+  /repos/OWNER/REPO \
+  -f has_dependency_graph=true
+
+# Habilitar vulnerability alerts
+gh api \
+  --method PUT \
+  -H "Accept: application/vnd.github+json" \
+  /repos/OWNER/REPO/vulnerability-alerts
+
+# Habilitar security updates
+gh api \
+  --method PUT \
+  -H "Accept: application/vnd.github+json" \
+  /repos/OWNER/REPO/automated-security-fixes
+
+# Verificar
+gh api repos/OWNER/REPO | jq '{
+  dependency_graph: .has_dependency_graph,
+  alerts: .vulnerability_alerts_enabled,
+  security_updates: .automated_security_fixes_enabled
+}'
+```
+
+### Método 3: Via API (Programático)
+
+```python
+import requests
+
+GITHUB_TOKEN = "ghp_..."
+ORG = "my-org"
+
+headers = {
+    "Authorization": f"token {GITHUB_TOKEN}",
+    "Accept": "application/vnd.github+json"
+}
+
+# Obtener todos los repos privados
+repos_response = requests.get(
+    f"https://api.github.com/orgs/{ORG}/repos",
+    headers=headers,
+    params={"type": "private", "per_page": 100}
+)
+
+for repo in repos_response.json():
+    repo_name = repo["full_name"]
+    
+    print(f"Enabling Dependabot for {repo_name}...")
+    
+    # Habilitar vulnerability alerts
+    alerts_response = requests.put(
+        f"https://api.github.com/repos/{repo_name}/vulnerability-alerts",
+        headers=headers
+    )
+    
+    # Habilitar automated security fixes
+    fixes_response = requests.put(
+        f"https://api.github.com/repos/{repo_name}/automated-security-fixes",
+        headers=headers
+    )
+    
+    if alerts_response.status_code == 204 and fixes_response.status_code == 204:
+        print(f"  ✅ {repo_name}: Dependabot enabled")
+    else:
+        print(f"  ❌ {repo_name}: Error - {alerts_response.status_code}")
+```
+
+### Método 4: Bulk habilitación (Organization level)
+
+**Via UI:**
+
+```
+Organization Settings
+  → Code security and analysis
+  → Dependabot
+      ├─ [Enable for all repositories]
+      │   └─ Seleccionar:
+      │       ├─ All repositories
+      │       ├─ All private repositories
+      │       └─ Selected repositories
+      │
+      └─ [✓] Automatically enable for new repositories
+          ├─ New public repositories
+          └─ New private repositories
+```
+
+**Script de habilitación masiva:**
+
+```bash
+#!/bin/bash
+# enable-dependabot-all-repos.sh
+
+ORG="my-org"
+TOKEN="$GITHUB_TOKEN"
+
+# Obtener todos los repos
+repos=$(gh api --paginate "/orgs/$ORG/repos" --jq '.[].name')
+
+echo "Found $(echo "$repos" | wc -l) repositories"
+echo "Enabling Dependabot..."
+
+for repo in $repos; do
+    echo -n "Processing $repo... "
+    
+    # Enable vulnerability alerts
+    gh api \
+        --method PUT \
+        --silent \
+        "/repos/$ORG/$repo/vulnerability-alerts" 2>/dev/null
+    
+    # Enable automated security fixes
+    gh api \
+        --method PUT \
+        --silent \
+        "/repos/$ORG/$repo/automated-security-fixes" 2>/dev/null
+    
+    echo "✅"
+done
+
+echo "Done! Dependabot enabled for all repositories."
+```
+
+**Enlaces:**
+
+- https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts
+- https://docs.github.com/en/rest/repos/repos#enable-vulnerability-alerts
+- https://docs.github.com/en/rest/repos/repos#enable-automated-security-fixes
+- https://docs.github.com/en/enterprise-cloud@latest/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts#managing-dependabot-alerts-for-your-organization
+
+---
+## 3.5 Habilitar Dependabot para organizaciones
 
 
 
