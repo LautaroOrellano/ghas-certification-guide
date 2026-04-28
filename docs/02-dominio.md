@@ -1,5 +1,6 @@
 # DOMINIO 2: CONFIGURAR Y USAR EL ESCANEO DE SECRETOS (15%)
 
+<a id="d2-1"></a>
 ## 2.1 Describir el escaneo de secretos
 
 ### ¿Qué es Secret Scanning?
@@ -178,7 +179,7 @@ AWS_KEY = "AKIA2345678901234567"
 - https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns
 
 ---
-
+<a id="d2-2"></a>
 ## 2.2 Describir Push Protection
 
 ### ¿Qué es Push Protection?
@@ -460,7 +461,7 @@ const apiKey = process.env.STRIPE_API_KEY;
 - https://docs.github.com/en/code-security/secret-scanning/using-advanced-secret-scanning-and-push-protection-features/delegated-bypass-for-push-protection
 
 ---
-
+<a id="d2-3"></a>
 ## 2.3 Disponibilidad de Secret Scanning por tipo de repositorio
 
 ### Repositorios Públicos
@@ -581,7 +582,7 @@ Policies → Advanced Security
 - https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security#about-advanced-security-features
 
 ---
-
+<a id="d2-4"></a>
 ## 2.4 Habilitar Secret Scanning para repositorios privados
 
 ### Prerrequisitos
@@ -895,7 +896,7 @@ gh api /repos/:owner/:repo | \
 - https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection
 
 ---
-
+<a id="d2-5"></a>
 ## 2.5 Respuestas apropiadas a alertas de Secret Scanning
 
 ### Workflow de decisión
@@ -1373,7 +1374,7 @@ jobs:
 - https://docs.github.com/en/code-security/secret-scanning/secret-scanning-partnership-program
 
 ---
-
+<a id="d2-6"></a>
 ## 2.6 Personalizar el comportamiento de Secret Scanning
 
 ### Configurar destinatarios de alertas
