@@ -661,7 +661,7 @@ Click on alert para ver:
 │         ↓                                       │
 │   Sink: executeQuery(query)                     │
 │                                                 │
-│ [Show paths] [Dismiss] [Create issue]          │
+│ [Show paths] [Dismiss] [Create issue]           │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -893,17 +893,233 @@ References:
   - MITRE ATT&CK T1190
 ```
 
+### Determinar si descartar alert
 
+**Criterios para dismiss:**
 
+```yaml
+✅ Dismiss si:
+  - False positive (código no es vulnerable)
+  - Code is in test files (not production)
+  - Vulnerability is not exploitable (context)
+  - Risk accepted (documented exception)
+  - Will fix later (in backlog)
 
+❌ NO dismiss si:
+  - Es un verdadero positive
+  - Está en código de producción
+  - Es exploitable
+  - No hay mitigación
+  - Severidad critical/high sin análisis
+```
 
+**Razones de dismissal:**
 
+```
+Repository → Security → Code scanning → Alert
 
+[Dismiss alert]
+  ├─ False positive
+  │   └─ "CodeQL flagged this but it's not actually vulnerable"
+  │
+  ├─ Won't fix
+  │   └─ "Risk accepted, not fixing"
+  │
+  ├─ Used in tests
+  │   └─ "This code is only in test files"
+  │
+  └─ Won't fix (other reason)
+      └─ Custom reason required
+```
 
+**Documentar dismissal:**
 
+```
+Reason: Won't fix
+Comment:
+  This SQL query is internal-only and the input comes from 
+  a trusted admin interface with authentication & authorization.
+  
+  Risk accepted by: Security Team
+  Date: 2026-04-27
+  Review date: 2027-04-27
+  
+  Additional context:
+  - Query runs in read-only replica
+  - User must have admin role
+  - All admin actions are logged
+  - WAF rules prevent SQL metacharacters
+```
 
+**Enlaces:**
+- https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning
+- https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
+- https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
+- https://codeql.github.com/docs/codeql-cli/creating-codeql-databases/
+- https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning/server-error
+- https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning/not-found-errors
 
+---
 
+## 4.4 CodeQL internals
+
+### Limitaciones de CodeQL
+
+**Por lenguaje compilado:**
+
+```yaml
+Lenguajes compilados (Java, C++, C#, Go):
+  Requieren:
+    - ✅ Build completo
+    - ✅ Todas las dependencias
+    - ✅ Compilación exitosa
+    - ✅ Más tiempo de análisis
+  
+  Limitaciones:
+    - ❌ No puede analizar código que no compila
+    - ❌ Requiere configuración de build
+    - ❌ Más consumo de recursos
+    - ❌ Más lento (minutos a horas)
+```
+
+**Por lenguaje interpretado:**
+
+```yaml
+Lenguajes interpretados (JavaScript, Python, Ruby):
+  Ventajas:
+    - ✅ No requiere build
+    - ✅ Análisis más rápido
+    - ✅ Menos recursos
+    - ✅ Setup más simple
+  
+  Limitaciones:
+    - ⚠️ Análisis estático limitado
+    - ⚠️ Type inference menos preciso
+    - ⚠️ Puede perder algunos flows dinámicos
+```
+
+### Compatibilidad con lenguajes
+
+**Matriz de soporte:**
+
+| Lenguaje | Soporte | Build mode | Tiempo típico |
+|----------|---------|------------|---------------|
+| **JavaScript/TypeScript** | ✅ Full | none | 2-10 min |
+| **Python** | ✅ Full | none | 2-10 min |
+| **Java** | ✅ Full | manual/autobuild | 10-60 min |
+| **C#** | ✅ Full | manual/autobuild | 10-60 min |
+| **C/C++** | ✅ Full | manual/autobuild | 20-120 min |
+| **Go** | ✅ Full | manual/autobuild | 5-30 min |
+| **Ruby** | ✅ Full | none | 2-10 min |
+| **Kotlin** | ✅ Via java-kotlin | manual/autobuild | 10-60 min |
+| **Swift** | ✅ Full | manual/autobuild | 10-60 min |
+| **Rust** | ⚠️ Beta | manual | 10-60 min |
+| **PHP** | ❌ No soportado | - | - |
+| **Scala** | ❌ No soportado | - | - |
+
+**Frameworks soportados por lenguaje:**
+
+```yaml
+JavaScript/TypeScript:
+  - Express.js ✅
+  - React ✅
+  - Angular ✅
+  - Vue ✅
+  - Node.js ✅
+  - Next.js ✅
+
+Python:
+  - Django ✅
+  - Flask ✅
+  - FastAPI ✅
+  - Tornado ✅
+
+Java:
+  - Spring Boot ✅
+  - Jakarta EE ✅
+  - Struts ✅
+  - Play Framework ✅
+
+C#:
+  - ASP.NET Core ✅
+  - .NET Framework ✅
+  - Entity Framework ✅
+```
+
+### Propósito de categoría SARIF
+
+**¿Qué es una categoría SARIF?**
+
+Identificador único que agrupa resultados de un análisis específico.
+
+**Por qué es importante:**
+
+```yaml
+Sin categoría:
+  - CodeQL ejecuta múltiples veces
+  - Resultados se sobrescriben
+  - Solo ves el último scan
+  - Pierdes contexto histórico
+
+Con categoría:
+  - Cada análisis tiene ID único
+  - Resultados se acumulan
+  - Ves evolución temporal
+  - Puedes comparar branches/lenguajes
+```
+
+**Ejemplo de uso:**
+
+```yaml
+# Múltiples análisis en el mismo workflow
+
+- name: CodeQL Analysis - Security
+  uses: github/codeql-action/analyze@v3
+  with:
+    category: "/language:${{matrix.language}}/suite:security"
+
+- name: CodeQL Analysis - Quality
+  uses: github/codeql-action/analyze@v3
+  with:
+    category: "/language:${{matrix.language}}/suite:quality"
+
+# Resultado: Dos conjuntos de alerts separados
+```
+
+**Naming conventions:**
+
+```yaml
+Categorías recomendadas:
+
+Por lenguaje:
+  "/language:javascript"
+  "/language:python"
+
+Por suite:
+  "/suite:security-extended"
+  "/suite:security-and-quality"
+
+Por branch:
+  "/branch:main"
+  "/branch:develop"
+
+Por ambiente:
+  "/env:production"
+  "/env:staging"
+
+Combinadas:
+  "/language:java/suite:security/branch:main"
+```
+
+**Enlaces:**
+- https://codeql.github.com/docs/codeql-overview/about-codeql/
+- https://codeql.github.com/docs/codeql-language-guides/
+- https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql
+- https://codeql.github.com/docs/codeql-cli/about-codeql-databases/
+- https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/codeql-query-suites
+- https://codeql.github.com/docs/writing-codeql-queries/
+
+---
 
 
 
