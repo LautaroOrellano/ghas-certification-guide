@@ -1,6 +1,6 @@
 # DOMINIO 5: MEJORES PRÁCTICAS, RESULTADOS Y MEDIDAS CORRECTIVAS (10%) {#dominio5}
 
-
+<a id="d5-1"></a>
 ## 5.1 Usar CVE y CWE para describir alertas
 
 ### CVE (Common Vulnerabilities and Exposures)
@@ -250,7 +250,7 @@ User user = entityManager.find(User.class, userId);
 - https://owasp.org/www-community/vulnerabilities/
 
 ---
-
+<a id="d5-2"></a>
 ## 5.2 Proceso de toma de decisiones para cerrar/descartar alertas
 
 ### Framework de decisión
@@ -415,7 +415,7 @@ Decision:
 - https://docs.github.com/en/code-security/security-overview/filtering-alerts-in-security-overview
 
 ---
-
+<a id="d5-3"></a>
 ## 5.3 CodeQL query suites
 
 ### Query suites predeterminados
@@ -493,7 +493,7 @@ code-scanning:
 - https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/built-in-codeql-query-suites
 
 ---
-
+<a id="d5-4"></a>
 ## 5.4 Cómo CodeQL analiza el código
 
 ### Lenguajes compilados vs interpretados
@@ -634,7 +634,7 @@ app.get('/user', (req, res) => {
 - https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql#about-codeql
 
 ---
-
+<a id="d5-5"></a>
 ## 5.5 Roles y responsabilidades
 
 ### Development Team
@@ -764,7 +764,7 @@ KPIs:
 - https://resources.github.com/security/adopting-github-advanced-security-at-scale/
 
 ---
-
+<a id="d5-6"></a>
 ## 5.6 Severity thresholds para PR checks
 
 ### Configurar thresholds
@@ -872,8 +872,7 @@ jobs:
 - https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/editing-your-configuration-of-default-setup
 
 ---
-
-
+<a id="d5-7"></a>
 ## 5.7 Filtros y clasificación para priorización
 
 ### Secret scanning filters
@@ -1005,7 +1004,7 @@ Result: Critical & high alerts in main, newest first
 - https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/assessing-code-scanning-alerts-for-your-repository
 
 ---
-
+<a id="d5-8"></a>
 ## 5.8 CodeQL y Dependency Review con rulesets
 
 ### Repository rulesets
@@ -1114,7 +1113,7 @@ Merge allowed if:
 - https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-code-security-and-analysis-for-your-enterprise
 
 ---
-
+<a id="d5-9"></a>
 ## 5.9 Configurar escaneo temprano
 
 ### Code scanning en PR
