@@ -1,4 +1,4 @@
-# RECURSOS Y ENLACES ADICIONALES {#recursos}
+# RECURSOS Y ENLACES ADICIONALES
 
 ## Documentación Oficial
 
