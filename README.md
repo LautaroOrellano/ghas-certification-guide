@@ -30,6 +30,10 @@
    - [3.8 Dependency Review Workflow](docs/03-dominio.md#d3-8)
    - [3.9 Identificar y corregir dependencias vulnerables](docs/03-dominio.md#d3-9)
 4. [Dominio 4: Configurar y Usar el Análisis de Código con CodeQL (25%)](docs/04-dominio.md)
+   - [4.1 Herramientas de escaneo de terceros](docs/04-dominio.md#d4-1)
+   - [4.2 Describir y habilitar code scanning](docs/04-dominio.md#d4-2)
+   - [4.3 Troubleshooting de workflows CodeQL](docs/04-dominio.md#d4-3)
+   - [4.4 CodeQL internals](docs/04-dominio.md#d4-4)
 5. [Dominio 5: Mejores Prácticas de GHAS, Resultados Y Medidas Correctivas (10%)](docs/05-dominio.md)
 6. [Enlaces y Recursos Adicionales](docs/recursos.md)
 
