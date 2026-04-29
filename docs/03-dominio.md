@@ -1,5 +1,6 @@
 # DOMINIO 3: CONFIGURAR Y USAR DEPENDABOT Y DEPENDENCY REVIEW (35%)
 
+<a id="d3-1"></a>
 ## 3.1 Herramientas para gestionar vulnerabilidades en dependencias
 
 ### Dependency Graph
@@ -654,7 +655,7 @@ Dependency Review:
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
 
 ---
-
+<a id="d3-2"></a>
 ## 3.2 Configuración predeterminada para alertas de Dependabot
 
 ### Repositorios Públicos
@@ -739,7 +740,7 @@ Repository → Settings → Code security and analysis
 - https://docs.github.com/en/code-security/getting-started/securing-your-repository
 
 ---
-
+<a id="d3-3"></a>
 ## 3.3 Permisos y roles para Dependabot
 
 ### Permisos para HABILITAR alertas de Dependabot
@@ -865,7 +866,7 @@ jobs:
 - https://docs.github.com/en/code-security/dependabot/working-with-dependabot/configuring-access-to-private-registries-for-dependabot
 
 ---
-
+<a id="d3-4"></a>
 ## 3.4 Habilitar Dependabot para repositorios privados
 
 ### Método 1: Via Web UI (Individual)
@@ -1028,6 +1029,7 @@ echo "Done! Dependabot enabled for all repositories."
 - https://docs.github.com/en/enterprise-cloud@latest/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts#managing-dependabot-alerts-for-your-organization
 
 ---
+<a id="d3-5"></a>
 ## 3.5 Habilitar Dependabot para organizaciones
 
 ### Políticas a nivel de organización
@@ -1139,7 +1141,7 @@ echo "Disabled: $disabled_repos / $total_repos"
 - https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-code-security-and-analysis-for-your-enterprise
 
 ---
-
+<a id="d3-6"></a>
 ## 3.6 Crear archivo de configuración de Dependabot (dependabot.yml)
 
 ### Estructura básica
@@ -1536,7 +1538,7 @@ jobs:
 - https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/grouping-dependabot-updates
 
 ---
-
+<a id="d3-7"></a>
 # 3.7 Custom Auto-triage Rules para Dependabot
 
 **Disponible con GitHub Code Security**
@@ -1655,7 +1657,7 @@ Action: Create PR + notify team
 - https://github.blog/changelog/2024-01-24-dependabot-auto-triage-rules-and-custom-rules-public-beta/
 
 ---
-
+<a id="d3-8"></a>
 ## 3.8 Dependency Review Workflow
 
 ### Configurar Dependency Review Action
@@ -1910,7 +1912,7 @@ allow_licenses:
 - https://github.com/actions/dependency-review-action#configuration-options
 
 ---
-
+<a id="d3-9"></a>
 ## 3.9 Identificar y corregir dependencias vulnerables
 
 ### Identificar vulnerabilidades
