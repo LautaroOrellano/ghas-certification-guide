@@ -1030,46 +1030,1165 @@ echo "Done! Dependabot enabled for all repositories."
 ---
 ## 3.5 Habilitar Dependabot para organizaciones
 
+### Políticas a nivel de organización
 
+**Opción 1: Habilitar para todos**
 
+```
+Organization Settings
+  → Code security and analysis
+  → Dependabot alerts
+      └─ [Enable for all repositories]
+          ├─ Apply to: All repositories
+          └─ [Confirm]
+```
 
+**Opción 2: Política por defecto para nuevos repos**
 
+```
+Organization Settings
+  → Code security and analysis
+  → Dependabot alerts
+      └─ [✓] Automatically enable for new repositories
+          ├─ Public repositories: [✓] Enabled
+          └─ Private repositories: [✓] Enabled
+```
 
+**Opción 3: Políticas condicionales (GitHub Enterprise)**
 
+```yaml
+# Solo disponible en GitHub Enterprise Cloud
+# Via Enterprise Settings
 
+Enterprise Settings
+  → Policies
+  → Advanced Security
+      ├─ Dependabot alerts
+      │   ├─ Enforced: All organizations must enable
+      │   ├─ Not enforced: Organizations can choose
+      │   └─ Disabled: Organizations cannot enable
+      │
+      └─ Dependabot security updates
+          ├─ Enforced
+          ├─ Not enforced
+          └─ Disabled
+```
 
+### Configuración de notificaciones a nivel org
 
+```yaml
+# Configurar destinatarios por defecto
 
+Organization Settings
+  → Code security
+  → Dependabot alerts
+      └─ Default notification settings
+          ├─ Notify: security@company.com
+          ├─ Slack: #security-alerts
+          └─ Webhook: https://api.company.com/webhooks/dependabot
+```
 
+### Reporte y compliance
 
+```bash
+# Script para generar reporte de coverage
 
+#!/bin/bash
+ORG="my-org"
 
+echo "Dependabot Coverage Report for $ORG"
+echo "===================================="
+echo ""
 
+total_repos=0
+enabled_repos=0
+disabled_repos=0
 
+# Obtener todos los repos
+repos=$(gh api --paginate "/orgs/$ORG/repos" --jq '.[].name')
+total_repos=$(echo "$repos" | wc -l)
 
+echo "Total repositories: $total_repos"
+echo ""
+echo "Checking Dependabot status..."
+echo ""
 
+for repo in $repos; do
+    status=$(gh api "/repos/$ORG/$repo" --jq '.vulnerability_alerts_enabled')
+    
+    if [ "$status" = "true" ]; then
+        enabled_repos=$((enabled_repos + 1))
+        echo "✅ $repo"
+    else
+        disabled_repos=$((disabled_repos + 1))
+        echo "❌ $repo"
+    fi
+done
 
+echo ""
+echo "Summary:"
+echo "--------"
+echo "Enabled: $enabled_repos / $total_repos ($(( enabled_repos * 100 / total_repos ))%)"
+echo "Disabled: $disabled_repos / $total_repos"
+```
 
+**Enlaces:**
 
+- https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-security-and-analysis-settings-for-your-organization
+- https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts#managing-dependabot-alerts-for-your-organization
+- https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-code-security-and-analysis-for-your-enterprise
 
+---
 
+## 3.6 Crear archivo de configuración de Dependabot (dependabot.yml)
 
+### Estructura básica
 
+```yaml
+# .github/dependabot.yml
+version: 2
+updates:
+  # Configuration for npm
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    
+    open-pull-requests-limit: 10
+    
+    reviewers:
+      - "octocat"
+      - "org/team-name"
+    
+    assignees:
+      - "security-lead"
+    
+    labels:
+      - "dependencies"
+      - "npm"
+    
+    commit-message:
+      prefix: "chore"
+      prefix-development: "build"
+      include: "scope"
+```
 
+### Ecosistemas soportados
 
+```yaml
+# Todos los ecosistemas disponibles:
 
+updates:
+  - package-ecosystem: "npm"           # JavaScript (npm, yarn, pnpm)
+  - package-ecosystem: "bundler"       # Ruby
+  - package-ecosystem: "pip"           # Python
+  - package-ecosystem: "maven"         # Java (Maven)
+  - package-ecosystem: "gradle"        # Java/Kotlin (Gradle)
+  - package-ecosystem: "cargo"         # Rust
+  - package-ecosystem: "gomod"         # Go modules
+  - package-ecosystem: "composer"      # PHP
+  - package-ecosystem: "nuget"         # .NET
+  - package-ecosystem: "docker"        # Docker
+  - package-ecosystem: "terraform"     # Terraform
+  - package-ecosystem: "github-actions" # GitHub Actions workflows
+  - package-ecosystem: "pub"           # Dart/Flutter
+  - package-ecosystem: "hex"           # Elixir
+  - package-ecosystem: "swift"         # Swift Package Manager
+```
 
+### Configuración de grupos (Grouping updates)
 
+**Agrupar updates para reducir PRs:**
 
+```yaml
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    
+    # Agrupar por tipo de dependencia
+    groups:
+      # Grupo para todas las dev dependencies
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Grupo para production dependencies (solo patches)
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+          - "patch"
+      
+      # Grupo por patrón de nombre
+      react-related:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      
+      # Grupo para testing frameworks
+      testing-frameworks:
+        patterns:
+          - "jest"
+          - "@testing-library/*"
+          - "vitest"
+```
 
+**Ejemplo de agrupación avanzada:**
 
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    
+    groups:
+      # Monorepo pattern
+      internal-packages:
+        patterns:
+          - "@company/*"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Major updates separately
+      major-updates:
+        update-types:
+          - "major"
+        # No agrupar - un PR por major update
+      
+      # Framework updates
+      angular:
+        patterns:
+          - "@angular/*"
+          - "@angular-devkit/*"
+          - "rxjs"
+        update-types:
+          - "minor"
+          - "patch"
+      
+      # Tooling
+      build-tools:
+        patterns:
+          - "webpack*"
+          - "babel*"
+          - "@babel/*"
+          - "eslint*"
+```
 
+**Resultado de grouping:**
 
+```
+Sin grouping:
+  ├─ PR #1: Bump eslint from 8.0.0 to 8.0.1
+  ├─ PR #2: Bump eslint-config-airbnb from 19.0.0 to 19.0.1
+  ├─ PR #3: Bump eslint-plugin-import from 2.25.0 to 2.25.1
+  └─ ... (10 PRs más para tooling)
 
+Con grouping:
+  └─ PR #1: Bump build-tools group (13 dependencies)
+      ├─ eslint: 8.0.0 → 8.0.1
+      ├─ eslint-config-airbnb: 19.0.0 → 19.0.1
+      └─ ... (11 más)
+```
 
+### Configuración de automerge
 
+```yaml
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    
+    # Pull request branch name
+    pull-request-branch-name:
+      separator: "-"
+    
+    # Auto-merge configuration (requires GitHub CLI or Actions)
+    # Note: Dependabot no tiene auto-merge nativo
+    # Se configura via branch protection rules o Actions
+```
 
+**GitHub Actions workflow para auto-merge:**
 
+```yaml
+# .github/workflows/dependabot-auto-merge.yml
+name: Dependabot Auto-merge
 
+on: pull_request
 
+permissions:
+  contents: write
+  pull-requests: write
 
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Auto-merge patch and minor updates
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Approve PR
+        if: |
+          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+          steps.metadata.outputs.update-type == 'version-update:semver-minor'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Configuración avanzada de scheduling
+
+```yaml
+version: 2
+updates:
+  # Diferentes schedules para diferentes ecosistemas
+  
+  # npm: Diario (alta frecuencia de updates)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "03:00"
+      timezone: "UTC"
+  
+  # Docker: Semanal (menos frecuente)
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "sunday"
+      time: "04:00"
+  
+  # GitHub Actions: Mensual (muy estables)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    
+  # Terraform: Solo security updates
+  - package-ecosystem: "terraform"
+    directory: "/infrastructure"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0  # No version updates
+    # Solo security updates a través de Dependabot alerts
+```
+
+### Ignore configurations
+
+```yaml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    
+    # Ignorar dependencias específicas
+    ignore:
+      # Nunca actualizar React (pinned version)
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      
+      # Ignorar patches de lodash (demasiados updates)
+      - dependency-name: "lodash"
+        update-types: ["version-update:semver-patch"]
+      
+      # Ignorar todas las major versions de Angular
+      - dependency-name: "@angular/*"
+        update-types: ["version-update:semver-major"]
+      
+      # Ignorar versiones específicas que rompen
+      - dependency-name: "webpack"
+        versions: ["5.x"]
+```
+
+### Configuración para monorepos
+
+```yaml
+version: 2
+updates:
+  # Frontend app
+  - package-ecosystem: "npm"
+    directory: "/apps/frontend"
+    schedule:
+      interval: "weekly"
+    groups:
+      frontend-deps:
+        patterns: ["*"]
+  
+  # Backend app
+  - package-ecosystem: "npm"
+    directory: "/apps/backend"
+    schedule:
+      interval: "weekly"
+    groups:
+      backend-deps:
+        patterns: ["*"]
+  
+  # Shared packages
+  - package-ecosystem: "npm"
+    directory: "/packages/shared"
+    schedule:
+      interval: "weekly"
+  
+  # Root workspace
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    
+  # Infrastructure
+  - package-ecosystem: "terraform"
+    directory: "/infrastructure"
+    schedule:
+      interval: "monthly"
+```
+
+### Validación del archivo
+
+```bash
+# GitHub no tiene validador oficial, pero puedes usar:
+
+# 1. Linter YAML básico
+yamllint .github/dependabot.yml
+
+# 2. Verificar sintaxis con Python
+python -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"
+
+# 3. Verificar después de commit
+# GitHub validará el archivo automáticamente
+# Errores aparecerán en:
+# Repository → Insights → Dependency graph → Dependabot
+
+# 4. Test in workflow
+# .github/workflows/validate-dependabot.yml
+name: Validate Dependabot Config
+
+on:
+  pull_request:
+    paths:
+      - '.github/dependabot.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate YAML syntax
+        run: |
+          python -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"
+      
+      - name: Check required fields
+        run: |
+          python << 'EOF'
+          import yaml
+          
+          with open('.github/dependabot.yml') as f:
+              config = yaml.safe_load(f)
+          
+          assert config['version'] == 2, "Version must be 2"
+          assert 'updates' in config, "Must have 'updates' section"
+          
+          for update in config['updates']:
+              assert 'package-ecosystem' in update
+              assert 'directory' in update
+              assert 'schedule' in update
+              assert 'interval' in update['schedule']
+          
+          print("✅ Dependabot config is valid")
+          EOF
+```
+
+**Enlaces:**
+- https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+- https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
+- https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates
+- https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot
+- https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/grouping-dependabot-updates
+
+---
+
+# 3.7 Custom Auto-triage Rules para Dependabot
+
+**Disponible con GitHub Code Security**
+
+### ¿Qué son las auto-triage rules?
+
+Reglas automáticas para gestionar alertas de Dependabot a escala:
+- Auto-dismiss alertas de baja prioridad
+- Auto-snooze hasta que haya patch disponible
+- Auto-trigger security updates para criterios específicos
+
+### Crear reglas de auto-triage
+
+**Via UI:**
+
+```
+Repository/Organization Settings
+  → Code security
+  → Dependabot
+  → Auto-triage rules
+      → [New rule]
+```
+
+**Ejemplo 1: Descartar low severity hasta patch**
+
+```yaml
+Rule name: Dismiss low severity without patch
+Conditions:
+  - Severity: Low
+  - State: Open
+  - Has patch: No
+
+Action: Dismiss
+Reason: "Low severity, will address when patch available"
+```
+
+**Ejemplo 2: Auto-approve patches de desarrollo**
+
+```yaml
+Rule name: Auto-approve dev dependency patches
+Conditions:
+  - Dependency scope: Development
+  - Update type: Patch (semver)
+  - Severity: Any
+
+Action: Create security update PR
+Auto-merge: Yes (if CI passes)
+```
+
+**Via API:**
+
+```bash
+# Crear auto-triage rule
+gh api \
+  --method POST \
+  -H "Accept: application/vnd.github+json" \
+  /repos/OWNER/REPO/dependabot/auto-triage-rules \
+  -f name="Dismiss low without patch" \
+  -f conditions='[{
+    "type": "severity",
+    "value": "low"
+  }, {
+    "type": "patch_available",
+    "value": false
+  }]' \
+  -f action="dismiss" \
+  -f dismissal_reason="Low severity without available patch"
+```
+
+### Casos de uso comunes
+
+**1. Gestión de deuda técnica:**
+
+```yaml
+Rule: Snooze medium severity for legacy code
+Conditions:
+  - Severity: Medium
+  - File path: /legacy/**
+Action: Snooze for 90 days
+Reason: "Legacy code scheduled for deprecation"
+```
+
+**2. Priorización por ecosistema:**
+
+```yaml
+Rule: High priority for production npm packages
+Conditions:
+  - Package ecosystem: npm
+  - Dependency scope: Production
+  - Severity: High or Critical
+Action: Create issue
+Assign: @org/security-team
+Labels: P0, security, npm
+```
+
+**3. Desarrollo vs Producción:**
+
+```yaml
+# Rule 1: Auto-fix dev dependencies
+Conditions:
+  - Scope: Development
+  - Severity: Any
+Action: Create and merge PR
+
+# Rule 2: Alert for production
+Conditions:
+  - Scope: Production
+  - Severity: Medium+
+Action: Create PR + notify team
+```
+
+**Enlaces:**
+
+- https://docs.github.com/en/code-security/dependabot/dependabot-auto-triage-rules/about-dependabot-auto-triage-rules
+- https://docs.github.com/en/code-security/dependabot/dependabot-auto-triage-rules/customizing-auto-triage-rules-to-prioritize-dependabot-alerts
+- https://github.blog/changelog/2024-01-24-dependabot-auto-triage-rules-and-custom-rules-public-beta/
+
+---
+
+## 3.8 Dependency Review Workflow
+
+### Configurar Dependency Review Action
+
+**Configuración básica:**
+
+```yaml
+# .github/workflows/dependency-review.yml
+name: 'Dependency Review'
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+```
+
+### Configuración avanzada con umbrales
+
+```yaml
+# .github/workflows/dependency-review.yml
+name: 'Dependency Review'
+
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fallar solo en severidad moderate o superior
+          fail-on-severity: moderate
+          
+          # Fallar en scopes específicos
+          fail-on-scopes: runtime, production
+          
+          # Licencias permitidas
+          allow-licenses: |
+            MIT
+            Apache-2.0
+            BSD-2-Clause
+            BSD-3-Clause
+            ISC
+            0BSD
+          
+          # Licencias denegadas
+          deny-licenses: |
+            GPL-3.0
+            AGPL-3.0
+            LGPL-3.0
+          
+          # Comentar resumen en PR
+          comment-summary-in-pr: always
+          
+          # Fallar en dependencias con OpenSSF Scorecard bajo
+          warn-on-openssf-scorecard-level: 3
+          
+          # Configurar GitHub token
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          
+          # Base y head para comparación
+          base-ref: ${{ github.event.pull_request.base.sha }}
+          head-ref: ${{ github.event.pull_request.head.sha }}
+```
+
+### Configuración de licencias
+
+**Definir políticas de licencia:**
+
+```yaml
+# .github/workflows/dependency-review.yml
+- name: 'Dependency Review with License Check'
+  uses: actions/dependency-review-action@v4
+  with:
+    # Permitir solo licencias open source permisivas
+    allow-licenses: |
+      MIT
+      Apache-2.0
+      BSD-2-Clause
+      BSD-3-Clause
+      ISC
+      Unlicense
+    
+    # Denegar copyleft estricto
+    deny-licenses: |
+      GPL-2.0
+      GPL-3.0
+      AGPL-3.0
+      LGPL-3.0
+    
+    # Permitir excepciones para dependencias específicas
+    allow-dependencies-licenses: |
+      pkg:npm/some-gpl-package@1.0.0, GPL-3.0
+    
+    # Acción en violación de licencia
+    license-check: true
+    fail-on-severity: high
+```
+
+**Matriz de licencias comunes:**
+
+| Licencia | Tipo | Permitida corporativamente | Requiere atribución |
+|----------|------|---------------------------|---------------------|
+| MIT | Permisiva | ✅ | ✅ |
+| Apache-2.0 | Permisiva | ✅ | ✅ |
+| BSD-3-Clause | Permisiva | ✅ | ✅ |
+| ISC | Permisiva | ✅ | ✅ |
+| GPL-3.0 | Copyleft | ⚠️ | ✅ |
+| AGPL-3.0 | Copyleft fuerte | ❌ | ✅ |
+| Unlicense | Public Domain | ✅ | ❌ |
+| Proprietary | Propietaria | ⚠️ | Varía |
+
+### Configurar umbrales de severidad personalizados
+
+```yaml
+# Diferentes políticas por tipo de proyecto
+
+# Aplicación crítica de producción
+- name: 'Dependency Review - Production'
+  uses: actions/dependency-review-action@v4
+  with:
+    fail-on-severity: low  # Muy estricto
+    fail-on-scopes: runtime
+    
+# Proyecto interno de desarrollo
+- name: 'Dependency Review - Dev Tool'
+  uses: actions/dependency-review-action@v4
+  with:
+    fail-on-severity: high  # Más relajado
+    fail-on-scopes: runtime, production
+```
+
+### Integración con branch protection
+
+```yaml
+# Configurar en GitHub UI
+Repository → Settings → Branches → Branch protection rules
+
+Rules for 'main':
+  ├─ [✓] Require status checks to pass before merging
+  │   └─ Status checks that are required:
+  │       ├─ [✓] dependency-review
+  │       ├─ [✓] CI / test
+  │       └─ [✓] Security / secret-scanning
+  │
+  ├─ [✓] Require branches to be up to date before merging
+  └─ [✓] Do not allow bypassing the above settings
+```
+
+### Casos de uso avanzados
+
+**1. Diferentes políticas por directorio:**
+
+```yaml
+# .github/workflows/dependency-review-frontend.yml
+name: 'Dependency Review - Frontend'
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+
+jobs:
+  review-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/dependency-review-action@v4
+        with:
+          config-file: '.github/dependency-review-frontend.yml'
+
+# .github/dependency-review-frontend.yml
+fail_on_severity: 'moderate'
+allow_licenses:
+  - 'MIT'
+  - 'Apache-2.0'
+```
+
+**2. Monitoreo sin bloqueo (warning mode):**
+
+```yaml
+- name: 'Dependency Review - Warn Only'
+  uses: actions/dependency-review-action@v4
+  with:
+    fail-on-severity: critical  # Solo critical bloquea
+    warn-only: true  # Comentar pero no fallar
+    comment-summary-in-pr: always
+```
+
+**3. Custom output y reporting:**
+
+```yaml
+- name: 'Dependency Review'
+  id: review
+  uses: actions/dependency-review-action@v4
+  with:
+    fail-on-severity: high
+  
+- name: 'Upload results'
+  if: always()
+  uses: actions/upload-artifact@v4
+  with:
+    name: dependency-review-results
+    path: |
+      dependency-review-results.json
+      dependency-review-summary.md
+  
+- name: 'Post to Slack'
+  if: failure()
+  uses: slackapi/slack-github-action@v1
+  with:
+    webhook-url: ${{ secrets.SLACK_WEBHOOK }}
+    webhook: |
+      {
+        "text": "❌ Dependency Review failed on PR #${{ github.event.pull_request.number }}",
+        "blocks": [
+          {
+            "type": "section",
+            "text": {
+              "type": "mrkdwn",
+              "text": "New vulnerabilities detected in <${{ github.event.pull_request.html_url }}|PR #${{ github.event.pull_request.number }}>"
+            }
+          }
+        ]
+      }
+```
+
+**Enlaces:**
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-dependency-review
+- https://github.com/actions/dependency-review-action
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/dependency-review-enforcement
+- https://github.com/actions/dependency-review-action#configuration-options
+
+---
+
+## 3.9 Identificar y corregir dependencias vulnerables
+
+### Identificar vulnerabilidades
+
+**Desde Dependabot Alert:**
+
+```
+Repository → Security tab → Dependabot alerts
+
+Alert details:
+  ├─ Package: lodash
+  ├─ Version: 4.17.15
+  ├─ Vulnerability: Prototype Pollution (CVE-2021-23337)
+  ├─ Severity: High (7.2)
+  ├─ Affected versions: < 4.17.21
+  ├─ Patched versions: >= 4.17.21
+  │
+  ├─ Dependency path:
+  │   my-app@1.0.0
+  │     └─ express@4.16.0
+  │         └─ lodash@4.17.15  ← Vulnerable
+  │
+  └─ Remediation:
+      ├─ [View PR] Dependabot security update
+      └─ [Dismiss] if false positive
+```
+
+*Desde Pull Request:**
+
+```
+PR checks:
+  ❌ Dependency Review — Changes introduce known vulnerabilities
+  
+Details:
+  ┌────────────────────────────────────────────────────┐
+  │ 🔴 High severity vulnerabilities                   │
+  ├────────────────────────────────────────────────────┤
+  │ axios@0.21.0 → axios@0.21.4                        │
+  │   CVE-2021-3749: Regular Expression Denial of      │
+  │   Service in axios                                 │
+  │                                                    │
+  │ Recommendation: Update to axios@0.27.0 or later    │
+  └────────────────────────────────────────────────────┘
+```
+
+### Solucionar desde Security tab
+
+**Flujo de remediación:**
+
+```
+1. Ir a Security → Dependabot alerts
+   
+2. Click en alert específica
+   
+3. Revisar detalles:
+   ├─ Leer descripción del CVE
+   ├─ Entender el impacto
+   └─ Verificar si el código afectado se usa
+   
+4. Opciones de remediación:
+   
+   Opción A: Aceptar PR de Dependabot
+     ├─ Click [Review security update]
+     ├─ Ver PR con cambios
+     ├─ Verificar tests pasan
+     ├─ [Merge pull request]
+     └─ Alert se cierra automáticamente
+   
+   Opción B: Actualizar manualmente
+     ├─ Click [Dismiss alert]
+     ├─ Reason: "Fix is being prepared"
+     ├─ Actualizar package.json:
+     │   "lodash": "4.17.15"  →  "lodash": "^4.17.21"
+     ├─ npm update lodash
+     ├─ git commit & push
+     └─ Alert se cierra automáticamente
+   
+   Opción C: Eliminar dependencia
+     ├─ Si no es necesaria
+     ├─ npm uninstall lodash
+     ├─ Refactor código para no usar lodash
+     ├─ git commit & push
+     └─ Alert se cierra automáticamente
+```
+
+### Solucionar desde Pull Request
+
+**Cuando Dependency Review bloquea el PR:**
+
+```
+Scenario: PR introduce axios@0.21.0 (vulnerable)
+
+1. Ver el error en PR checks:
+   ❌ Dependency Review — High severity vulnerability
+
+2. Click en "Details" del check
+
+3. Ver reporte:
+   Package: axios@0.21.0
+   Vulnerability: CVE-2021-3749
+   Fix: axios@0.27.0+
+
+4. Actualizar en el PR:
+   # En tu branch local
+   npm update axios@^0.27.0
+   git add package*.json
+   git commit -m "fix: Update axios to resolve CVE-2021-3749"
+   git push
+
+5. Dependency Review re-ejecuta:
+   ✅ Dependency Review — No vulnerabilities detected
+
+6. PR ahora puede mergearse
+```
+
+### Actualizar dependencias transitivas
+
+**Problema:** La vulnerabilidad está en una dependencia indirecta
+
+```
+Dependency tree:
+  my-app
+    └─ express@4.16.0
+        └─ lodash@4.17.15  ← Vulnerable (transitiva)
+```
+
+**Solución 1: Actualizar la dependencia padre**
+
+```bash
+# Actualizar express a versión que use lodash seguro
+npm update express
+# o
+npm install express@latest
+
+# Verificar árbol de dependencias
+npm list lodash
+# my-app@1.0.0
+# └─ express@4.18.2
+#     └─ lodash@4.17.21  ✅ Fixed
+```
+
+**Solución 2: Resolution/override (npm 8.3+)**
+
+```json
+// package.json
+{
+  "overrides": {
+    "lodash": "^4.17.21"
+  }
+}
+
+// Para yarn
+{
+  "resolutions": {
+    "lodash": "^4.17.21"
+  }
+}
+
+// Para pnpm
+{
+  "pnpm": {
+    "overrides": {
+      "lodash": "^4.17.21"
+    }
+  }
+}
+```
+
+**Solución 3: npm audit fix**
+
+```bash
+# Auto-fix vulnerabilities
+npm audit fix
+
+# Fix aggressive (puede romper compatibilidad)
+npm audit fix --force
+
+# Ver qué se va a arreglar sin aplicar
+npm audit fix --dry-run
+
+# Generar reporte
+npm audit --json > audit-report.json
+```
+
+### Testing después de actualización
+
+```yaml
+# .github/workflows/test-after-update.yml
+name: Test Dependabot PR
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Run integration tests
+        run: npm run test:integration
+      
+      - name: Check bundle size
+        run: |
+          npm run build
+          npm run check-bundle-size
+      
+      - name: Auto-merge if tests pass
+        if: success()
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Merge de Dependabot PRs
+
+**Best practices:**
+
+```yaml
+✅ DO:
+  - Review changelog de la actualización
+  - Verificar breaking changes
+  - Run tests completos
+  - Check bundle size impact
+  - Verificar deprecation warnings
+  - Test en staging antes de prod
+
+❌ DON'T:
+  - Auto-merge major versions sin review
+  - Ignorar test failures
+  - Skip security patches
+  - Merge sin verificar compatibility
+```
+
+**Workflow de merge:**
+
+```bash
+# 1. Checkout PR de Dependabot
+gh pr checkout 123
+
+# 2. Verificar cambios
+git diff main HEAD
+
+# 3. Run tests localmente
+npm test
+
+# 4. Build y verificar
+npm run build
+
+# 5. Si todo OK, merge
+gh pr merge 123 --squash --delete-branch
+
+# 6. Verificar que alert se cierra
+gh api repos/:owner/:repo/dependabot/alerts | \
+  jq '.[] | select(.state == "fixed")'
+```
+
+**Enlaces:**
+- https://docs.github.com/en/code-security/dependabot/working-with-dependabot/managing-pull-requests-for-dependency-updates
+- https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
+- https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
+- https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
+- https://docs.npmjs.com/cli/v8/commands/npm-audit
+- https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/troubleshooting-the-dependency-graph
+
+---
