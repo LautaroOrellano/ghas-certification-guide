@@ -38,7 +38,7 @@
    - [5.1 Usar CVE y CWE para describir alertas](docs/05-dominio.md#d5-1)
    - [5.2 Proceso de toma de decisiones para cerrar/descartar alertas](docs/05-dominio.md#d5-2)
    - [5.3 CodeQL query suites](docs/05-dominio.md#d5-3)
-   - [5.4 Cómo CodeQL analiza el código](docs/03-dominio.md#d5-4)
+   - [5.4 Cómo CodeQL analiza el código](docs/05-dominio.md#d5-4)
    - [5.5 Roles y responsabilidades](docs/05-dominio.md#d5-5)
    - [5.6 Severity thresholds para PR checks](docs/05-dominio.md#d5-6)
    - [5.7 Filtros y clasificación para priorización](docs/05-dominio.md#d5-7)
