@@ -35,6 +35,15 @@
    - [4.3 Troubleshooting de workflows CodeQL](docs/04-dominio.md#d4-3)
    - [4.4 CodeQL internals](docs/04-dominio.md#d4-4)
 5. [Dominio 5: Mejores Prácticas de GHAS, Resultados Y Medidas Correctivas (10%)](docs/05-dominio.md)
+   - [5.1 Herramientas para gestionar vulnerabilidades en dependencias](docs/05-dominio.md#d5-1)
+   - [5.2 Configuración predeterminada para alertas de Dependabot](docs/05-dominio.md#d5-2)
+   - [5.3 Permisos y roles para Dependabot](docs/05-dominio.md#d5-3)
+   - [5.4 Habilitar Dependabot para repositorios privados](docs/03-dominio.md#d5-4)
+   - [5.5 Habilitar Dependabot para organizaciones](docs/05-dominio.md#d5-5)
+   - [5.6 Crear archivo de configuración de Dependabot (dependabot.yml)](docs/05-dominio.md#d5-6)
+   - [5.7 Custom Auto-triage Rules para Dependabot](docs/05-dominio.md#d5-7)
+   - [5.8 Dependency Review Workflow](docs/05-dominio.md#d5-8)
+   - [5.9 Identificar y corregir dependencias vulnerables](docs/05-dominio.md#d5-9)
 6. [Enlaces y Recursos Adicionales](docs/recursos.md)
 
 ---
