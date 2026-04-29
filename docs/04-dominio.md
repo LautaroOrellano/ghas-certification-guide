@@ -1,5 +1,6 @@
 # DOMINIO 4: CONFIGURAR Y USAR EL ANÁLISIS DE CÓDIGO CON CODEQL (25%) {#dominio4}
 
+<a id="d4-1"></a>
 ## 4.1 Herramientas de escaneo de terceros
 
 ### Habilitar code scanning para terceros
@@ -283,7 +284,7 @@ curl -X POST \
 - https://github.com/github/codeql-action/tree/main/upload-sarif
 
 ---
-
+<a id="d4-2"></a>
 ## 4.2 Describir y habilitar code scanning
 
 ### Rol en el SDLC
@@ -673,7 +674,7 @@ Click on alert para ver:
 - https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/managing-code-scanning-alerts-for-your-repository
 
 ---
-
+<a id="d4-3"></a>
 ## 4.3 Troubleshooting de workflows CodeQL
 
 ### Errores comunes y soluciones
@@ -960,7 +961,7 @@ Comment:
 - https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning/not-found-errors
 
 ---
-
+<a id="d4-4"></a>
 ## 4.4 CodeQL internals
 
 ### Limitaciones de CodeQL
