@@ -1,1 +1,1 @@
-![GitHub Security Ecosystem](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/LautaroOrellano/ghas-certification-guide/main/diagrams/github-security-ecosystem.puml)
+![GitHub Security Ecosystem](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/LautaroOrellano/ghas-certification-guide/main/engine-desing-ghas/github-security-ecosystem.puml)
