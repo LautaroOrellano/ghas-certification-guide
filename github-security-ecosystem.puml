@@ -1,0 +1,139 @@
+@startuml github-security-ecosystem
+title GitHub Security Ecosystem — Advanced View
+
+skinparam shadowing false
+skinparam monochrome false
+skinparam dpi 150
+skinparam defaultFontName Arial
+skinparam defaultFontSize 13
+skinparam ArrowColor #555555
+skinparam ArrowThickness 1.2
+
+skinparam package {
+  BackgroundColor #F8F8F8
+  BorderColor #CCCCCC
+  FontStyle bold
+  FontSize 13
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+  FontSize 12
+}
+
+left to right direction
+
+' ============================================================
+' INPUT
+' ============================================================
+package "Input" as PKG_INPUT {
+  [Source Code]    as Source
+  [Dependencies]   as Deps
+  [Secrets]        as Secrets
+}
+
+' ============================================================
+' CORE CONTEXT
+' ============================================================
+package "Core Context" as PKG_CONTEXT {
+  [Dependency Graph] as DepGraph
+}
+
+' ============================================================
+' EXECUTION
+' ============================================================
+package "Execution Layer" as PKG_EXEC {
+  [GitHub Actions] as Actions
+}
+
+' ============================================================
+' DETECTION
+' ============================================================
+package "Detection Layer" as PKG_DETECT {
+  [Code Scanning]      as CodeScan
+  [CodeQL]             as CodeQL
+  [Dependabot]         as Dependabot
+  [Secret Scanning]    as SecretScan
+  [Dependency Review]  as DepReview
+  [Push Protection]    as PushProtection
+}
+
+' ============================================================
+' DATA SOURCE
+' ============================================================
+package "Data Source" as PKG_DATA {
+  [GitHub Advisory Database] as AdvisoryDB
+}
+
+' ============================================================
+' OUTPUTS
+' ============================================================
+package "Outputs" as PKG_OUT {
+  [Code Scanning Alerts]  as CodeAlerts
+  [Dependabot Alerts]     as DependabotAlerts
+  [Secret Scanning Alerts] as SecretAlerts
+  [Pull Requests]         as PRs
+  [Security Overview]     as SecurityOverview
+  [Audit Log]             as AuditLog
+}
+
+' ============================================================
+' EXTERNAL
+' ============================================================
+package "External Systems" as PKG_EXT {
+  [SIEM / Dashboards] as SIEM
+}
+
+' ============================================================
+' RELATIONSHIPS
+' ============================================================
+
+' --- Input Flow ---
+Source    --> CodeScan   : triggers
+Source    --> SecretScan : scans commits
+Deps      --> DepGraph
+Secrets   --> SecretScan
+
+' --- Secret Scanning ---
+SecretScan   --> PushProtection : enables
+PushProtection --> SecretAlerts : blocks push
+
+' --- Core Context ---
+DepGraph --> Dependabot  : enables
+DepGraph --> DepReview   : required for
+
+' --- Detection Internals ---
+CodeScan  --> CodeQL     : uses engine
+
+' --- Data Source ---
+Dependabot --> AdvisoryDB : queries
+
+' --- Execution Layer ---
+Actions --> CodeScan  : runs analysis
+Actions --> DepReview : runs on PRs
+
+' --- Alert Generation ---
+CodeScan   --> CodeAlerts
+Dependabot --> DependabotAlerts
+SecretScan --> SecretAlerts
+DepReview  --> CodeAlerts
+
+' --- Dependabot Active Mode ---
+Dependabot --> PRs : creates security updates
+
+' --- Outputs Aggregation ---
+CodeAlerts       --> SecurityOverview
+DependabotAlerts --> SecurityOverview
+SecretAlerts     --> SecurityOverview
+
+' --- Audit Trail ---
+CodeScan   --> AuditLog
+Dependabot --> AuditLog
+SecretScan --> AuditLog
+Actions    --> AuditLog
+
+' --- External ---
+AuditLog --> SIEM : API / streaming
+
+@enduml
