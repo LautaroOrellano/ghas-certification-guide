@@ -4830,7 +4830,7 @@ https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/
 
 ---
 
-DOMINIO 4: CODEQL Y CODE SCANNING
+## DOMINIO 4: CODEQL Y CODE SCANNING
 ### Pregunta 36A
 ¿Cuál es la diferencia entre CodeQL "default setup" y "advanced setup"?
 A) Default es gratis, advanced requiere GHAS
