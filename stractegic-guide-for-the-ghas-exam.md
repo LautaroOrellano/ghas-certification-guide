@@ -4037,7 +4037,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
 
 </details>
+
 ---
+
 ### Pregunta 22
 ¿Qué información NO está incluida en un Dependabot security update PR?
 A) CVE ID
@@ -4086,7 +4088,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
 
 </details>
+
 ---
+
 ### Pregunta 23
 Tu equipo quiere que Dependabot solo cree PRs para vulnerabilidades Critical y High, no Medium o Low. ¿Cómo lo configuras?
 A) En dependabot.yml con min-severity: high
@@ -4144,7 +4148,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
 
 </details>
+
 ---
+
 ### Pregunta 24
 ¿Qué información proporciona el Dependency Graph? (Selecciona todas las correctas)
 A) Lista de dependencias directas
@@ -4186,7 +4192,9 @@ Recursos:
 https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph
 
 </details>
+
 ---
+
 ### Pregunta 25
 Tu dependabot.yml tiene un error de sintaxis. ¿Cómo te enteras?
 A) Email notification
@@ -4243,7 +4251,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
 
 </details>
+
 ---
+
 ### Pregunta 26
 Dependabot puede actualizar qué tipos de archivos? (Selecciona todas las correctas)
 A) package.json (npm)
@@ -4291,7 +4301,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
 
 </details>
+
 ---
+
 ### Pregunta 27
 Tu organización tiene una política: "Dependencias con licencias GPL no pueden usarse". ¿Cómo lo enforces con GHAS?
 A) Secret scanning con custom pattern
@@ -4353,7 +4365,9 @@ Recursos:
 https://github.com/actions/dependency-review-action#configuration-options
 
 </details>
+
 ---
+
 ### Pregunta 28
 ¿Cuál es el comportamiento de Dependabot cuando encuentra una vulnerabilidad en una dependencia de desarrollo (devDependency)?
 A) Ignora, solo procesa production dependencies
@@ -4408,7 +4422,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
 
 </details>
+
 ---
+
 ### Pregunta 29
 Dependency review detecta que un PR introduce una dependencia con licencia GPL-3.0, pero el proyecto NECESITA esa biblioteca. ¿Qué opción es correcta?
 A) Deshabilitar dependency review
@@ -4464,7 +4480,9 @@ Recursos:
 https://github.com/actions/dependency-review-action#allow-licenses-and-deny-licenses
 
 </details>
+
 ---
+
 ### Pregunta 30
 ¿Cuál es la diferencia entre update-types: ["version-update:semver-patch"] y update-types: ["version-update:semver-minor"] en grouping?
 A) Patch = bug fixes, Minor = nuevas features
@@ -4515,7 +4533,9 @@ https://semver.org/
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
 
 </details>
+
 ---
+
 ### Pregunta 31
 Un desarrollador hace bypass de Dependency Review para mergear un PR con vulnerabilidad HIGH. ¿Qué pasa?
 A) GitHub bloquea el merge automáticamente
@@ -4568,7 +4588,9 @@ Recursos:
 https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
 
 </details>
+
 ---
+
 ### Pregunta 32
 Tu equipo quiere que Dependabot cree PRs solo los lunes a las 9 AM UTC. ¿Cómo lo configuras?
 A) schedule: interval: "weekly" + day: "monday" + time: "09:00"
@@ -4625,7 +4647,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#schedule
 
 </details>
+
 ---
+
 ### Pregunta 33
 ¿Qué hace el campo rebase-strategy en dependabot.yml?
 A) Define cómo Dependabot resuelve conflictos
@@ -4684,7 +4708,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#rebase-strategy
 
 </details>
+
 ---
+
 ### Pregunta 34
 Una alerta de Dependabot muestra "No known patch available". ¿Qué significa?
 A) El maintainer no ha lanzado un fix todavía
@@ -4748,7 +4774,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
 
 </details>
+
 ---
+
 ### Pregunta 35
 ¿Cuántos Dependabot PRs puede haber abiertos simultáneamente para SECURITY updates?
 A) 5 (default limit)
@@ -4799,9 +4827,11 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
 
 </details>
+
 ---
+
 DOMINIO 4: CODEQL Y CODE SCANNING
-### Pregunta 36
+### Pregunta 36A
 ¿Cuál es la diferencia entre CodeQL "default setup" y "advanced setup"?
 A) Default es gratis, advanced requiere GHAS
 B) Default es automático, advanced requiere workflow file
@@ -4830,8 +4860,10 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning/configuring-default-setup-for-code-scanning
 
 </details>
+
 ---
-### Pregunta 36
+
+### Pregunta 36B
 Tu workflow de CodeQL falla con error "No code found for language: java". ¿Cuál es la causa más probable?
 A) Java no es soportado por CodeQL
 B) El autobuild falló
@@ -4901,7 +4933,9 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning
 
 </details>
+
 ---
+
 ### Pregunta 37
 ¿Qué archivo se usa para customizar qué queries ejecuta CodeQL?
 A) codeql.yml
@@ -4958,7 +4992,9 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
 
 </details>
+
 ---
+
 ### Pregunta 38
 Un CodeQL scan encuentra 50 alertas. Después de un commit que NO cambia código (solo README), CodeQL re-ejecuta y ahora muestra 52 alertas. ¿Qué puede explicar esto?
 A) False positives en el primer scan
@@ -5018,7 +5054,9 @@ Recursos:
 https://github.com/github/codeql-action/releases
 
 </details>
+
 ---
+
 ### Pregunta 39
 ¿Qué significa "category" en un CodeQL workflow?
 A) La categoría de vulnerabilidad (SQL injection, XSS, etc)
@@ -5072,7 +5110,9 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#specifying-codeql-query-suites
 
 </details>
+
 ---
+
 ### Pregunta 40
 Tu workflow de CodeQL tarda 3 horas en completar para un repo grande. ¿Cuál NO es una estrategia válida para reducir el tiempo?
 A) Usar self-hosted runners con más CPUs
