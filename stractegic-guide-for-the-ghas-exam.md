@@ -3738,24 +3738,1396 @@ CON grouping:
 
 ---
 
-### Pregunta 14
-
-**¿Qué rol mínimo necesita un usuario para VER alertas de Dependabot en un repositorio privado?**
-
-A) Admin  
-B) Write  
-C) Read  
-D) Security Manager  
-
+Pregunta 14 (completada)
+¿Qué rol mínimo necesita un usuario para VER alertas de Dependabot en un repositorio privado?
+A) Admin
+B) Write
+C) Read
+D) Security Manager
 <details>
 <summary>Ver respuesta</summary>
+Respuesta: C) Read
+Explicación:
+Dependabot alerts visibilidad:
+RolVer AlertsDismiss AlertsReopen AlertsRead✅❌❌Triage✅❌❌Write✅✅✅Maintain✅✅✅Admin✅✅✅
+Excepción importante:
+Dependabot alerts son la ÚNICA feature de seguridad visible para Read role en repos privados.
+Code scanning y Secret scanning:
 
-**Respuesta: C) Read**
+Requieren mínimo Admin role para repos privados
 
-**Explicación:**
+Recursos:
 
-**Dependabot alerts visibilidad:**
-| Rol | Ver Alerts | Dismiss Alerts |
-|-----|-----------|----------------|
-| Read | ✅ | ❌ |
-| Triage | ✅ |
+https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts#access-to-dependabot-alerts
+
+</details>
+
+---
+
+Pregunta 15
+Tienes un monorepo con frontend (npm) y backend (maven). ¿Cuántas entradas en dependabot.yml necesitas?
+A) 1 entrada (Dependabot auto-detecta ambos)
+B) 2 entradas (una por ecosistema)
+C) No necesitas dependabot.yml para Dependabot alerts
+D) 3 entradas (npm, yarn, maven)
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) 2 entradas (una por ecosistema)
+Explicación:
+Para Dependabot VERSION updates (no alerts), necesitas una entrada por ecosistema:
+yaml# .github/dependabot.yml
+version: 2
+updates:
+  # Frontend (npm)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    
+  # Backend (maven)
+  - package-ecosystem: "maven"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+CLAVE:
+
+Dependabot ALERTS: No requiere config, detecta todo automáticamente
+Dependabot VERSION UPDATES: Requiere dependabot.yml explícito
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+</details>
+
+Pregunta 16
+Un Dependabot PR lleva 30 días abierto sin merge. ¿Qué pasa?
+A) Se cierra automáticamente
+B) Se mergea automáticamente
+C) Permanece abierto indefinidamente
+D) Se crea un nuevo PR reemplazándolo
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: A) Se cierra automáticamente
+Explicación:
+Dependabot cierra PRs automáticamente si:
+
+✅ Están abiertos por más de 30 días sin actividad
+✅ Hay conflictos de merge sin resolver
+✅ Una nueva versión supersede la propuesta
+
+Comportamiento:
+Day 0: PR creado
+Day 30: PR auto-cerrado si no hay actividad
+Comentario: "Superseded by newer version" o "Closing due to inactivity"
+Para prevenir:
+
+Review PRs regularmente
+Configure auto-merge para patches
+Use grouping para reducir PR count
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/working-with-dependabot/managing-pull-requests-for-dependency-updates
+
+</details>
+
+Pregunta 17
+¿Cuál es el límite DEFAULT de PRs abiertos simultáneos por Dependabot VERSION updates?
+A) 3
+B) 5
+C) 10
+D) Ilimitado
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) 5
+Explicación:
+Límite por defecto: 5 PRs abiertos
+yaml# Comportamiento default:
+- Dependabot abre hasta 5 PRs
+- Al mergearse 1, crea el siguiente
+- Al cerrar 1, crea el siguiente
+- Límite previene PR overload
+
+# Customizar:
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10  # ← Override
+Valores válidos:
+
+Mínimo: 0 (disable version updates)
+Máximo: 99
+Default: 5
+
+IMPORTANTE:
+
+Límite NO aplica a Security Updates
+Security updates son ilimitados (always created)
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#open-pull-requests-limit
+
+</details>
+
+Pregunta 18
+¿Qué sucede cuando Dependabot detecta una vulnerabilidad en una dependencia transitiva (indirect dependency)?
+A) No crea alerta (solo direct dependencies)
+B) Crea alerta pero NO puede crear PR automático
+C) Crea alerta Y PR actualizando la dependencia directa
+D) Solo notifica, no crea alerta
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Crea alerta Y PR actualizando la dependencia directa
+Explicación:
+Escenario:
+Tu proyecto:
+  ├─ express@4.16.0 (direct)
+  │   └─ lodash@4.17.15 (transitive) ← VULNERABLE
+Dependabot hace:
+
+Detecta vuln en lodash@4.17.15 (transitive)
+Crea alert
+Busca versión de express que use lodash seguro
+Crea PR: "Bump express from 4.16.0 to 4.18.2"
+PR description explica que actualiza lodash transitivamente
+
+Si NO hay versión de express que resuelva:
+
+Alerta permanece
+PR indica "manual resolution required"
+Necesitas override o cambiar dependencia
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates#about-pull-requests-for-security-updates
+
+</details>
+
+Pregunta 19
+Tu organización tiene 100 repositorios. ¿Cómo habilitas Dependabot security updates para todos a la vez?
+A) Script con GitHub CLI para cada repo
+B) Organization Settings → Enable for all
+C) GitHub Actions workflow
+D) Contact GitHub Support
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Organization Settings → Enable for all
+Explicación:
+UI Path:
+Organization Settings
+  → Code security and analysis
+  → Dependabot security updates
+      [✓] Automatically enable for new repositories
+      [Enable all] ← Click aquí para repos existentes
+Esto habilita en bulk:
+
+Dependabot alerts ✅
+Dependabot security updates ✅
+Para TODOS los repos de la org
+
+Alternativa con API:
+bash# Lista todos los repos
+gh api /orgs/MY-ORG/repos --paginate | jq -r '.[].name' | while read repo; do
+  # Enable security updates
+  gh api -X PUT /repos/MY-ORG/$repo/automated-security-fixes
+  echo "✅ Enabled for $repo"
+done
+Recursos:
+
+https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-security-and-analysis-settings-for-your-organization
+
+</details>
+
+Pregunta 20
+Un dependency tiene múltiples vulnerabilidades con diferentes severidades (1 critical, 2 high, 5 medium). ¿Cuántas alertas de Dependabot se crean?
+A) 1 alerta (agrupadas)
+B) 3 alertas (por severidad)
+C) 8 alertas (una por vulnerabilidad)
+D) Depende del package manager
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) 8 alertas (una por vulnerabilidad)
+Explicación:
+Dependabot crea una alerta por CVE, no por paquete.
+Ejemplo real:
+lodash@4.17.15 tiene:
+  - CVE-2019-10744 (Prototype Pollution) - High
+  - CVE-2020-8203 (Prototype Pollution) - High  
+  - CVE-2021-23337 (Command Injection) - Critical
+
+Resultado: 3 alertas separadas para el mismo paquete
+Dependabot Security Update:
+
+Crea 1 PR que resuelve todas las CVEs
+Al actualizar lodash@4.17.21:
+✅ Cierra las 3 alertas automáticamente
+
+UI muestra:
+Security tab → Dependabot alerts
+  [3] lodash
+    ├─ CVE-2021-23337 (Critical)
+    ├─ CVE-2020-8203 (High)
+    └─ CVE-2019-10744 (High)
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
+
+</details>
+
+Pregunta 21
+Dependabot security updates está habilitado pero no está creando PRs. ¿Cuáles podrían ser las razones? (Selecciona todas las correctas)
+A) El repo tiene >5 PRs abiertos de Dependabot
+B) No hay versión parcheada disponible
+C) La dependencia está en devDependencies
+D) El repositorio está archivado
+<details>
+<summary>Ver respuesta</summary>
+Respuestas: B, D
+Explicación:
+Dependabot security updates NO crea PR si:
+✅ B) No hay versión parcheada disponible
+
+Si CVE afecta todas las versiones
+Si el fix no está released aún
+Si requires major version bump (configurable)
+
+✅ D) El repositorio está archivado
+
+Repos archivados no reciben PRs
+Alerts se crean pero no PRs
+
+❌ A) Límite de PRs abiertos NO aplica a security updates
+
+open-pull-requests-limit solo para VERSION updates
+Security updates son ilimitados
+
+❌ C) devDependencies SÍ reciben security updates
+
+Security updates aplican a todas las deps
+No distingue entre prod y dev
+
+Otras razones posibles:
+
+Branch protection bloquea Dependabot bot
+Conflictos de merge sin resolver
+dependabot.yml configurado incorrectamente
+Token sin permisos suficientes
+
+Troubleshooting:
+bash# Ver logs de Dependabot
+Repository → Insights → Dependency graph → Dependabot
+# Click en última ejecución
+# Ver errores/warnings
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
+
+</details>
+
+Pregunta 22
+¿Qué información NO está incluida en un Dependabot security update PR?
+A) CVE ID
+B) CVSS score
+C) Código de ejemplo para explotar la vulnerabilidad
+D) Versión de fix recomendada
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Código de ejemplo para explotar la vulnerabilidad
+Explicación:
+Dependabot PR incluye:
+
+✅ CVE ID (ej: CVE-2024-12345)
+✅ CVSS score (ej: 8.1 High)
+✅ Versión vulnerable
+✅ Versión de fix
+✅ Descripción de vulnerabilidad
+✅ Referencias (GitHub Advisory, NVD)
+✅ Compatibilidad check
+✅ Release notes del package
+
+NO incluye:
+
+❌ Código de exploit (responsabilidad)
+❌ Detalles técnicos profundos
+❌ Attack vectors específicos
+
+Ejemplo de PR body:
+markdownBumps lodash from 4.17.15 to 4.17.21
+
+This update includes a security fix for:
+- CVE-2020-8203 (High severity)
+
+Affected versions: < 4.17.21
+Patched versions: >= 4.17.21
+
+More information:
+- GitHub Advisory: GHSA-p6mc-m468-83gw
+- NVD: CVE-2020-8203
+
+Compatibility: This is a patch version update
+
+Release notes: https://github.com/lodash/lodash/releases/tag/4.17.21
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
+
+</details>
+
+Pregunta 23
+Tu equipo quiere que Dependabot solo cree PRs para vulnerabilidades Critical y High, no Medium o Low. ¿Cómo lo configuras?
+A) En dependabot.yml con min-severity: high
+B) En Organization settings
+C) No es posible, Dependabot crea PRs para todas las severities
+D) Con Dependency Review action
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) No es posible, Dependabot crea PRs para todas las severities
+Explicación:
+Dependabot Security Updates:
+
+❌ NO tiene opción de filtrar por severidad
+✅ Crea PR para CUALQUIER vulnerabilidad con fix disponible
+❌ min-severity no existe en dependabot.yml
+
+Workarounds:
+Opción 1: Auto-triage rules (Enterprise only)
+yaml# Requiere GitHub Code Security
+Auto-dismiss low severity alerts
+→ No se crean PRs para esos
+Opción 2: GitHub Actions para auto-close
+yamlname: Close low-severity Dependabot PRs
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  triage:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check severity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            // Parse PR body for severity
+            if (pr.body.includes('Low severity')) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.name,
+                pull_number: pr.number,
+                state: 'closed'
+              });
+            }
+Opción 3: Dependency Review (prevención)
+yaml# .github/workflows/dependency-review.yml
+- uses: actions/dependency-review-action@v4
+  with:
+    fail-on-severity: high  # Solo bloquea high+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
+
+</details>
+
+Pregunta 24
+¿Qué información proporciona el Dependency Graph? (Selecciona todas las correctas)
+A) Lista de dependencias directas
+B) Lista de dependencias transitivas
+C) Repositorios que dependen de tu repositorio (dependents)
+D) Vulnerabilidades conocidas
+E) Licencias de dependencias
+<details>
+<summary>Ver respuesta</summary>
+Respuestas: A, B, C, E
+Explicación:
+Dependency Graph proporciona:
+✅ A) Dependencias directas
+package.json dependencies:
+  - express@4.18.0
+  - lodash@4.17.21
+✅ B) Dependencias transitivas
+express@4.18.0 requiere:
+  └─ body-parser@1.20.0
+      └─ qs@6.10.3
+✅ C) Dependents (quién depende de este repo)
+Si tu repo es una librería:
+  - my-app-1 usa este package
+  - my-app-2 usa este package
+✅ E) Información de licencias
+express: MIT
+lodash: MIT
+❌ D) Vulnerabilidades NO
+
+Eso es Dependabot ALERTS
+Dependency graph solo muestra inventario
+
+Ubicación:
+Repository → Insights → Dependency graph
+  ├─ Dependencies (lo que usa este repo)
+  └─ Dependents (quién usa este repo)
+Recursos:
+
+https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph
+
+</details>
+
+Pregunta 25
+Tu dependabot.yml tiene un error de sintaxis. ¿Cómo te enteras?
+A) Email notification
+B) Failed check en PR
+C) Dependabot tab en Insights
+D) No hay indicación, simplemente no funciona
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Dependabot tab en Insights
+Explicación:
+Ubicación de errores:
+Repository → Insights → Dependency graph → Dependabot tab
+
+Muestra:
+  ✅ Last checked: 2 hours ago
+  ❌ Configuration error: Invalid YAML syntax
+  
+  Details:
+    Line 5: Unexpected token
+    schedule.interval must be one of: daily, weekly, monthly
+Errores comunes:
+
+YAML syntax error:
+
+yaml# ❌ INCORRECTO (indentation)
+version: 2
+updates:
+- package-ecosystem: "npm"  # Falta indent
+  directory: "/"
+
+Invalid value:
+
+yaml# ❌ INCORRECTO
+schedule:
+  interval: "hourly"  # No existe, debe ser daily/weekly/monthly
+
+Missing required fields:
+
+yaml# ❌ INCORRECTO (falta directory)
+updates:
+  - package-ecosystem: "npm"
+    schedule:
+      interval: "weekly"
+Validación local:
+bash# Usar GitHub CLI para validar
+gh api repos/:owner/:repo/dependency-graph/snapshots \
+  --method POST \
+  --field version=2
+
+# O validador online:
+# https://github.com/mheap/dependabot-yaml-validator
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
+
+</details>
+
+Pregunta 26
+Dependabot puede actualizar qué tipos de archivos? (Selecciona todas las correctas)
+A) package.json (npm)
+B) Dockerfile
+C) GitHub Actions workflows
+D) requirements.txt (Python)
+E) Terraform modules
+<details>
+<summary>Ver respuesta</summary>
+Respuestas: A, B, C, D
+Explicación:
+Package ecosystems soportados:
+✅ A) npm (package.json)
+yaml- package-ecosystem: "npm"
+✅ B) Docker
+yaml- package-ecosystem: "docker"
+  # Actualiza FROM statements en Dockerfile
+✅ C) GitHub Actions
+yaml- package-ecosystem: "github-actions"
+  # Actualiza uses: actions/checkout@v3 → @v4
+✅ D) Python (requirements.txt, Pipfile, pyproject.toml)
+yaml- package-ecosystem: "pip"
+❌ E) Terraform modules
+
+Terraform NO está soportado nativamente
+Workaround: usar herramientas como Renovate
+
+Lista completa de ecosistemas:
+
+npm / yarn / pnpm
+bundler (Ruby)
+pip / pipenv / poetry (Python)
+maven / gradle (Java)
+cargo (Rust)
+go modules
+composer (PHP)
+nuget (.NET)
+docker
+github-actions
+pub (Dart)
+hex (Elixir)
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
+
+</details>
+
+Pregunta 27
+Tu organización tiene una política: "Dependencias con licencias GPL no pueden usarse". ¿Cómo lo enforces con GHAS?
+A) Secret scanning con custom pattern
+B) CodeQL custom query
+C) Dependency review con deny-licenses
+D) Dependabot version updates con filters
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Dependency review con deny-licenses
+Explicación:
+Configuración:
+yaml# .github/workflows/dependency-review.yml
+name: 'Dependency Review'
+on: [pull_request]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/dependency-review-action@v4
+        with:
+          # Bloquear licencias copyleft
+          deny-licenses: |
+            GPL-2.0
+            GPL-3.0
+            AGPL-3.0
+            LGPL-2.1
+            LGPL-3.0
+          
+          # Permitir licencias específicas
+          allow-licenses: |
+            MIT
+            Apache-2.0
+            BSD-2-Clause
+            BSD-3-Clause
+            ISC
+          
+          # Fallar en cualquier licencia no permitida
+          fail-on-scopes: runtime
+Resultado:
+
+PR que introduce GPL dependency → ❌ BLOCKED
+PR con MIT/Apache → ✅ PASS
+
+Por qué otras opciones no:
+
+A) Secret scanning: Para credenciales, no licencias
+B) CodeQL: Analiza código, no metadatos de paquetes
+D) Dependabot: Actualiza deps, no enforcea policies
+
+Recursos:
+
+https://github.com/actions/dependency-review-action#configuration-options
+
+</details>
+
+Pregunta 28
+¿Cuál es el comportamiento de Dependabot cuando encuentra una vulnerabilidad en una dependencia de desarrollo (devDependency)?
+A) Ignora, solo procesa production dependencies
+B) Crea alerta pero no PR
+C) Crea alerta y PR igual que production
+D) Solo notifica, no crea alerta
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Crea alerta y PR igual que production
+Explicación:
+Dependabot NO distingue entre prod y dev dependencies para security:
+json{
+  "dependencies": {
+    "express": "4.16.0"  ← Vulnerable
+  },
+  "devDependencies": {
+    "webpack": "4.0.0"   ← También vulnerable
+  }
+}
+Ambos generan:
+
+✅ Alerta en Security tab
+✅ Security update PR
+✅ Misma prioridad
+
+Razón:
+
+Dev dependencies pueden tener security impact
+Build tools comprometidos = supply chain attack
+Ejemplo: event-stream backdoor (2018)
+
+Si quieres diferentes behaviors:
+yaml# dependabot.yml
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    # Production dependencies
+    groups:
+      production:
+        dependency-type: "production"
+    
+  # Separate config para dev (diferentes reviewers, etc)
+  - package-ecosystem: "npm"
+    directory: "/"
+    groups:
+      development:
+        dependency-type: "development"
+    assignees:
+      - "dev-tools-team"
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
+
+</details>
+
+Pregunta 29
+Dependency review detecta que un PR introduce una dependencia con licencia GPL-3.0, pero el proyecto NECESITA esa biblioteca. ¿Qué opción es correcta?
+A) Deshabilitar dependency review
+B) Agregar exception en dependency-review config
+C) Ignorar el check y merge igual
+D) Fork la librería y cambiar licencia
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Agregar exception en dependency-review config
+Explicación:
+Configuración de excepción:
+yaml# .github/workflows/dependency-review.yml
+- uses: actions/dependency-review-action@v4
+  with:
+    deny-licenses: GPL-3.0, AGPL-3.0
+    
+    # Allow specific packages as exceptions
+    allow-dependencies-licenses: |
+      pkg:npm/critical-library@1.0.0, GPL-3.0
+O usar config file:
+yaml# .github/dependency-review-config.yml
+fail-on-scopes:
+  - runtime
+  - development
+
+deny-licenses:
+  - GPL-3.0
+  - AGPL-3.0
+
+# Excepciones documentadas
+allow-dependencies-licenses:
+  - package-url: pkg:npm/critical-library@1.0.0
+    license: GPL-3.0
+    reason: "Required for core functionality, legal review completed"
+    approved-by: "legal-team@company.com"
+    review-date: "2024-01-15"
+    next-review: "2025-01-15"
+Por qué otras opciones son malas:
+
+A) Deshabilitar = perder toda la protección
+C) Ignorar = compliance risk
+D) Fork = maintenance nightmare
+
+Proceso recomendado:
+
+Legal review de la licencia
+Document business justification
+Add specific exception
+Set review date para re-evaluar
+
+Recursos:
+
+https://github.com/actions/dependency-review-action#allow-licenses-and-deny-licenses
+
+</details>
+
+Pregunta 30
+¿Cuál es la diferencia entre update-types: ["version-update:semver-patch"] y update-types: ["version-update:semver-minor"] en grouping?
+A) Patch = bug fixes, Minor = nuevas features
+B) Patch = <1.0.0, Minor = >=1.0.0
+C) No hay diferencia práctica
+D) Patch incluye security fixes, Minor no
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: A) Patch = bug fixes, Minor = nuevas features
+Explicación:
+Semantic Versioning (semver):
+X.Y.Z
+│ │ └─ PATCH: Bug fixes, no breaking changes
+│ └─── MINOR: New features, backward compatible
+└───── MAJOR: Breaking changes
+
+Ejemplo:
+  1.2.3 → 1.2.4  (patch)
+  1.2.3 → 1.3.0  (minor)
+  1.2.3 → 2.0.0  (major)
+En dependabot.yml:
+yamlgroups:
+  # Solo patches (low risk)
+  safe-updates:
+    update-types:
+      - "version-update:semver-patch"
+    # lodash 4.17.20 → 4.17.21 ✅
+    # lodash 4.17.21 → 4.18.0  ❌ (minor)
+  
+  # Patches + minor (moderate risk)
+  regular-updates:
+    update-types:
+      - "version-update:semver-minor"
+      - "version-update:semver-patch"
+    # lodash 4.17.21 → 4.18.0 ✅
+    # lodash 4.18.0 → 5.0.0   ❌ (major)
+Strategy recomendada:
+yamlProduction dependencies:
+  - Patch: Auto-merge
+  - Minor: Review + merge
+  - Major: Manual testing + review
+
+Development dependencies:
+  - All: Auto-merge (menos riesgo)
+Recursos:
+
+https://semver.org/
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
+
+</details>
+
+Pregunta 31
+Un desarrollador hace bypass de Dependency Review para mergear un PR con vulnerabilidad HIGH. ¿Qué pasa?
+A) GitHub bloquea el merge automáticamente
+B) Se crea incident ticket en Security tab
+C) El merge se permite si branch protection lo permite
+D) Se notifica al Security Manager
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) El merge se permite si branch protection lo permite
+Explicación:
+Dependency Review es un CHECK, no un enforcement:
+yamlDependency Review Action ejecuta:
+  ├─ Analiza cambios
+  ├─ Detecta vulnerabilidad HIGH
+  ├─ Status check: ❌ FAILED
+  └─ Pero NO bloquea técnicamente
+
+Branch Protection determina si bloquea:
+  ├─ "Require status checks" = ON
+  │   └─ "Dependency Review" listed
+  │       → ❌ CANNOT merge
+  │
+  └─ "Require status checks" = OFF
+      → ✅ CAN merge (con warning)
+Admin override:
+IF admin bypass is allowed:
+  Admin puede mergear aunque check falle
+  
+  Audit log registra:
+    - Who bypassed
+    - When
+    - Which check was bypassed
+    - Reason (if provided)
+Para prevenir bypass:
+yamlBranch protection rules:
+  ✓ Require status checks to pass
+  ✓ Require branches to be up to date
+  ✓ Do not allow bypassing the above settings
+      ↑ CRÍTICO: Esto previene admin bypass
+  
+  Include administrators: ✓
+Alertas que SÍ se generan:
+
+Dependabot alert (en Security tab)
+Audit log entry (si bypass)
+Dependency review annotation en PR
+
+Recursos:
+
+https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
+
+</details>
+
+Pregunta 32
+Tu equipo quiere que Dependabot cree PRs solo los lunes a las 9 AM UTC. ¿Cómo lo configuras?
+A) schedule: interval: "weekly" + day: "monday" + time: "09:00"
+B) No es posible, Dependabot no soporta hora específica
+C) Usar GitHub Actions scheduled workflow
+D) Configurar en Organization settings
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: A) schedule: interval: "weekly" + day: "monday" + time: "09:00"
+Explicación:
+Configuración completa:
+yaml# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    
+    # Opcional: Solo crear PRs en horario laboral
+    open-pull-requests-limit: 5
+Opciones de schedule:
+yamlinterval: "daily"
+  # Ejecuta todos los días
+  time: "09:00"  # Opcional
+  timezone: "America/New_York"  # Opcional
+
+interval: "weekly"
+  # Ejecuta una vez por semana
+  day: "monday"  # monday-sunday
+  time: "09:00"  # HH:MM en timezone especificado
+  timezone: "Europe/London"
+
+interval: "monthly"
+  # Ejecuta el primer día del mes
+  time: "09:00"
+Consideraciones:
+
+Time NO es garantizado (best effort)
+Puede variar ±1 hora por carga de GitHub
+Use timezone de tu equipo para convenience
+
+Por qué otras son incorrectas:
+
+B) Sí soporta hora específica
+C) No necesitas custom Actions
+D) Org settings no controla schedule
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#schedule
+
+</details>
+
+Pregunta 33
+¿Qué hace el campo rebase-strategy en dependabot.yml?
+A) Define cómo Dependabot resuelve conflictos
+B) Controla si Dependabot rebasa PRs cuando hay nuevos commits
+C) Configura la estrategia de merge (merge vs rebase)
+D) No existe ese campo
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Controla si Dependabot rebasa PRs cuando hay nuevos commits
+Explicación:
+Opciones de rebase-strategy:
+yaml# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    
+    # Estrategia de rebase
+    rebase-strategy: "auto"  # default
+    # Options: "auto", "disabled"
+Valores:
+auto (default):
+Dependabot rebasa el PR cuando:
+  - Base branch (main) tiene nuevos commits
+  - PR conflicts con base
+  - Someone pushes to base branch
+
+Resultado:
+  ✅ PR siempre up-to-date
+  ✅ Menos merge conflicts
+  ⚠️ Puede retriggerar CI múltiples veces
+disabled:
+Dependabot NEVER rebasa
+  - PR puede quedar outdated
+  - Conflicts deben resolverse manualmente
+  - Útil si CI es costoso/lento
+Caso de uso para disabled:
+yaml# Para repos con CI muy lento
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    rebase-strategy: "disabled"
+    
+    # Developer manualmente hace rebase cuando quiera merge
+Comandos para forzar rebase:
+bash# En PR comment:
+@dependabot rebase
+
+# O close/reopen PR para forzar recreación
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#rebase-strategy
+
+</details>
+
+Pregunta 34
+Una alerta de Dependabot muestra "No known patch available". ¿Qué significa?
+A) El maintainer no ha lanzado un fix todavía
+B) Dependabot no puede auto-generar un PR
+C) Debes actualizar manualmente
+D) Todas las anteriores
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: D) Todas las anteriores
+Explicación:
+"No known patch available" significa:
+
+El maintainer no ha released un fix (A)
+
+CVE fue publicado
+Maintainer todavía no lanzó versión con fix
+O está abandonado
+
+
+Dependabot no puede auto-generar PR (B)
+
+No hay versión "safe" para recomendar
+No puede crear PR automático
+
+
+Debes actualizar manualmente (C)
+
+Buscar alternativas
+Fork y patchear
+Esperar por fix oficial
+
+
+
+Workflow:
+CVE publicado → Dependabot crea alert
+   ↓
+¿Hay versión con fix?
+   ├─ SÍ → Crea security update PR
+   └─ NO → Alert sin PR
+            └─ "No known patch available"
+
+Opciones del developer:
+  1. Esperar a que maintainer lance fix
+  2. Usar fork parcheado temporalmente
+  3. Buscar dependencia alternativa
+  4. Mitigar con workarounds
+  5. Aceptar riesgo (documentado)
+Ejemplo real:
+Alert: CVE-2024-XXXXX in old-package@1.2.3
+
+Status: No patch available
+Reason: Package is unmaintained since 2019
+
+Options:
+  1. Migrate to maintained-fork@2.0.0
+  2. Fork it yourself y mantenerlo
+  3. Replace con alternativa
+  4. Vendorizar el código y patch locally
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
+
+</details>
+
+Pregunta 35
+¿Cuántos Dependabot PRs puede haber abiertos simultáneamente para SECURITY updates?
+A) 5 (default limit)
+B) 10 (max limit)
+C) Ilimitados
+D) Configurable en dependabot.yml
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: C) Ilimitados
+Explicación:
+CRITICAL DISTINCTION:
+yamlDependabot SECURITY updates:
+  ✅ NO límite de PRs abiertos
+  ✅ Se crean siempre (alta prioridad)
+  ✅ No afectados por open-pull-requests-limit
+
+Dependabot VERSION updates:
+  ⚠️ Límite default: 5 PRs
+  ⚠️ Configurable con open-pull-requests-limit
+  ⚠️ Si hay 5 abiertos, no crea más
+Ejemplo:
+yaml# dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 3
+Escenario:
+Current state:
+  - 3 version update PRs abiertos
+  - Nueva vulnerabilidad detectada
+
+Result:
+  - Dependabot CREA security update PR ✅
+  - Ahora hay 4 PRs abiertos
+  - No crea más version updates hasta que se cierren
+  - Pero PUEDE crear más security updates
+Por qué:
+
+Security fixes = urgente
+Version updates = housekeeping
+Security no debe ser limitado por housekeeping
+
+Recursos:
+
+https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
+
+</details>
+
+DOMINIO 4: CODEQL Y CODE SCANNING
+Pregunta 36
+¿Cuál es la diferencia entre CodeQL "default setup" y "advanced setup"?
+A) Default es gratis, advanced requiere GHAS
+B) Default es automático, advanced requiere workflow file
+C) Default es solo JavaScript, advanced soporta más lenguajes
+D) No hay diferencia real
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Default es automático, advanced requiere workflow file
+Explicación:
+AspectoDefault SetupAdvanced SetupConfiguración1-click, sin archivosWorkflow manual (.github/workflows/)Tiempo setup30 segundos10-30 minutosCustomizaciónLimitadaCompletaQuery suitesFijo (default)SeleccionableCustom queries❌ No✅ SíBuild controlAutomáticoManual opcionalPaths exclusion❌ No✅ SíScheduled scansSemanal (fixed)ConfigurableRecomendado para80% casosPower users
+Cuándo usar cada uno:
+yamlDefault Setup:
+  ✅ Repos estándar
+  ✅ Lenguajes interpretados (JS, Python)
+  ✅ Quieres empezar rápido
+  ✅ No necesitas customización
+
+Advanced Setup:
+  ✅ Custom queries
+  ✅ Lenguajes compilados complejos (Java enterprise)
+  ✅ Monorepos
+  ✅ Path filtering
+  ✅ Self-hosted runners
+Recursos:
+
+https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning/configuring-default-setup-for-code-scanning
+
+</details>
+
+Pregunta 36
+Tu workflow de CodeQL falla con error "No code found for language: java". ¿Cuál es la causa más probable?
+A) Java no es soportado por CodeQL
+B) El autobuild falló
+C) Falta instalar JDK
+D) El repositorio no tiene código Java
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) El autobuild falló
+Explicación:
+Para lenguajes compilados (Java, C++, C#, Go):
+CodeQL necesita BUILD exitoso para crear la database.
+Proceso:
+1. Initialize CodeQL
+2. Autobuild (o manual build) ← ERROR aquí
+3. Si build falla → "No code found"
+4. Analyze
+Causas comunes:
+yaml1. Dependencies faltantes:
+   - Maven dependencies no resolvieron
+   - Gradle build falló
+   - Missing build tools
+
+2. Build complejo:
+   - Autobuild no detecta build system
+   - Múltiples módulos
+   - Custom build script
+
+3. Build environment:
+   - Wrong Java version
+   - Missing environment variables
+   - Credentials needed for private repos
+
+4. Path issues:
+   - Código en subdirectorio
+   - Multiple modules
+Solución:
+yaml# Opción 1: Manual build
+- name: Initialize CodeQL
+  uses: github/codeql-action/init@v3
+  with:
+    languages: java
+
+# NO uses autobuild, haz build manual
+- name: Build
+  run: |
+    mvn clean install -DskipTests
+
+- name: Perform CodeQL Analysis
+  uses: github/codeql-action/analyze@v3
+Debug el problema:
+yaml- name: Initialize CodeQL
+  uses: github/codeql-action/init@v3
+  with:
+    languages: java
+    
+# Agrega debug
+- name: Debug autobuild
+  run: |
+    echo "Current directory: $PWD"
+    ls -la
+    find . -name "pom.xml" -o -name "build.gradle"
+
+- name: Autobuild
+  uses: github/codeql-action/autobuild@v3
+Recursos:
+
+https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning
+
+</details>
+
+Pregunta 37
+¿Qué archivo se usa para customizar qué queries ejecuta CodeQL?
+A) codeql.yml
+B) codeql-config.yml
+C) queries.yml
+D) No se puede customizar
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) codeql-config.yml
+Explicación:
+Ubicación y nombre:
+.github/codeql/codeql-config.yml
+Estructura:
+yamlname: "Custom CodeQL Config"
+
+# Disable default queries
+disable-default-queries: false
+
+# Queries a ejecutar
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# Custom queries
+packs:
+  - codeql/javascript-queries
+  - my-org/custom-security-queries@1.0.0
+
+# Paths a escanear
+paths:
+  - src
+  - lib
+
+# Paths a ignorar
+paths-ignore:
+  - tests
+  - node_modules
+  - '**/*.test.js'
+
+# Query filters (excluir queries específicas)
+query-filters:
+  - exclude:
+      id: js/useless-assignment-to-local
+  - exclude:
+      tags: experimental
+Uso en workflow:
+yaml- name: Initialize CodeQL
+  uses: github/codeql-action/init@v3
+  with:
+    languages: javascript
+    config-file: ./.github/codeql/codeql-config.yml
+Recursos:
+
+https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
+
+</details>
+
+Pregunta 38
+Un CodeQL scan encuentra 50 alertas. Después de un commit que NO cambia código (solo README), CodeQL re-ejecuta y ahora muestra 52 alertas. ¿Qué puede explicar esto?
+A) False positives en el primer scan
+B) Queries de CodeQL fueron actualizadas
+C) El README contenía código vulnerable
+D) Bug en CodeQL
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Queries de CodeQL fueron actualizadas
+Explicación:
+CodeQL queries se actualizan constantemente:
+yamlCada scan usa:
+  - Latest CodeQL CLI version (si enabled auto-update)
+  - Latest query packs
+  - New security patterns
+
+Resultado:
+  - Nuevas queries pueden detectar issues existentes
+  - Queries mejoradas encuentran más patterns
+  - False positive fixes pueden reducir alertas
+Ejemplo real:
+Semana 1:
+  CodeQL 2.14.0
+  50 alerts
+
+Semana 2:
+  CodeQL 2.15.0 (nueva release)
+  Nueva query: "Incomplete string escaping"
+  Detecta 2 nuevos issues
+  
+  Result: 52 alerts
+Workflow típico:
+yamlname: CodeQL
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Weekly
+
+jobs:
+  analyze:
+    steps:
+      - uses: github/codeql-action/init@v3
+        # Usa latest queries automáticamente
+Para versión fija:
+yaml- uses: github/codeql-action/init@v3
+  with:
+    # Pin specific version
+    tools: https://github.com/github/codeql-action/releases/download/codeql-bundle-20231201/codeql-bundle.tar.gz
+Por qué otras son incorrectas:
+
+A) False positives no aparecen de la nada
+C) README no es código ejecutable
+D) Unlikely, y no es la razón más común
+
+Recursos:
+
+https://github.com/github/codeql-action/releases
+
+</details>
+
+Pregunta 39
+¿Qué significa "category" en un CodeQL workflow?
+A) La categoría de vulnerabilidad (SQL injection, XSS, etc)
+B) Un ID único para diferenciar múltiples análisis
+C) El nivel de severidad
+D) El lenguaje que se analiza
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: B) Un ID único para diferenciar múltiples análisis
+Explicación:
+Category permite múltiples análisis simultáneos:
+yaml# Análisis 1: Security queries
+- name: CodeQL Security
+  uses: github/codeql-action/analyze@v3
+  with:
+    category: "/language:javascript/suite:security"
+    
+# Análisis 2: Quality queries
+- name: CodeQL Quality
+  uses: github/codeql-action/analyze@v3
+  with:
+    category: "/language:javascript/suite:quality"
+Sin category:
+❌ Segundo análisis SOBREESCRIBE el primero
+❌ Solo ves resultados del último scan
+❌ Pierdes alertas
+Con category:
+✅ Ambos análisis coexisten
+✅ Puedes ver resultados separadamente
+✅ Filtros en Security tab por category
+Naming convention:
+yamlRecommended format:
+  "/language:<lang>/suite:<suite>"
+  "/language:javascript/suite:security"
+  "/language:python/suite:security-extended"
+
+Or custom:
+  "main-security-scan"
+  "pr-quickscan"
+  "nightly-deep-analysis"
+UI en GitHub:
+Security → Code scanning alerts
+  Filters:
+    Tool: CodeQL
+    Category: ▼
+      ├─ /language:javascript/suite:security
+      ├─ /language:javascript/suite:quality
+      └─ /language:python/suite:security
+Recursos:
+
+https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#specifying-codeql-query-suites
+
+</details>
+
+Pregunta 40
+Tu workflow de CodeQL tarda 3 horas en completar para un repo grande. ¿Cuál NO es una estrategia válida para reducir el tiempo?
+A) Usar self-hosted runners con más CPUs
+B) Separar análisis por lenguaje en workflows paralelos
+C) Usar query suite "security" en lugar de "security-extended"
+D) Aumentar el timeout del workflow
+<details>
+<summary>Ver respuesta</summary>
+Respuesta: D) Aumentar el timeout del workflow
+Explicación:
+D es INCORRECTO porque:
+
+Aumentar timeout NO reduce tiempo de ejecución
+Solo permite que termine un scan largo
+No optimiza nada
+
+Estrategias CORRECTAS:
+A) Usar runners más potentes:
+yamljobs:
+  analyze:
+    runs-on: ubuntu-latest-8-cores  # GitHub-hosted XL
+    # O self-hosted con más recursos
+    # runs-on: [self-hosted, linux, x64, 32-cores]
+B) Paralelizar por lenguaje:
+yamlstrategy:
+  matrix:
+    language: ['javascript', 'python', 'java']
+
+# Ejecuta 3 jobs en paralelo
+# vs 1 job secuencial (3x más rápido)
+C) Usar query suite más liviano:
+yaml# security-extended tiene ~200 queries
+# security tiene ~100 queries
+# = ~50% más rápido
+
+queries: security  # vs security-extended
+Otras optimizaciones:
+yaml# 1. Analizar solo código cambiado (PR mode)
+- uses: github/codeql-action/init@v3
+  with:
+    # Solo para PRs, no scheduled
+    
+# 2. Excluir paths innecesarios
+paths-ignore:
+  - 'test/**'
+  - 'docs/**'
+  - 'scripts/**'
+
+# 3. Build incremental (compilados)
+- name: Build
+  run: |
+    # Usar cache de Maven/Gradle
+    mvn clean install -DskipTests -T 4  # 4 threads
+Benchmark típico:
+Pequeño repo (10K LOC):
+  JavaScript: 2-5 min
+  Java: 5-15 min
+
+Mediano (100K LOC):
+  JavaScript: 10-20 min
+  Java: 30-60 min
+
+Grande (1M+ LOC):
+  JavaScript: 30-60 min
+  Java: 2-4 horas ← usa strategies arriba
+Recursos:
+
+https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#improving-the-performance-of-codeql-analysis
