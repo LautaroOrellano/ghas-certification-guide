@@ -8,18 +8,18 @@
 
 ## 📋 TABLA DE CONTENIDOS
 
-1. [Decision-Making Framework](#decision-framework)
-2. [Gobernanza y Roles Avanzados](#gobernanza-avanzada)
-3. [Security Overview en Profundidad](#security-overview-profundo)
-4. [Comparativas Críticas](#comparativas-criticas)
-5. [Trampas Comunes del Examen](#exam-traps)
-6. [Escenarios del Mundo Real](#escenarios-reales)
-7. [100 Preguntas de Práctica](#preguntas-practica)
+1. [Decision-Making Framework](#1)
+2. [Gobernanza y Roles Avanzados](#2)
+3. [Security Overview en Profundidad](#3)
+4. [Comparativas Críticas](#4)
+5. [Trampas Comunes del Examen](#5)
+6. [Escenarios del Mundo Real](#6)
+7. [100 Preguntas de Práctica](#7)
 8. [Estrategia de Examen](#estrategia-examen)
 
 ---
 
-# DECISION-MAKING FRAMEWORK {#decision-framework}
+# DECISION-MAKING FRAMEWORK <a id="1"></a>
 
 ## 🎯 La regla de oro del examen
 
@@ -501,7 +501,7 @@ PR tiene alertas de seguridad
 
 ---
 
-# GOBERNANZA Y ROLES AVANZADOS {#gobernanza-avanzada}
+# GOBERNANZA Y ROLES AVANZADOS <a id="2"></a>
 
 ## 🏢 Jerarquía de Permisos Completa
 
@@ -863,7 +863,7 @@ Webhooks:
 
 ---
 
-# SECURITY OVERVIEW EN PROFUNDIDAD {#security-overview-profundo}
+# SECURITY OVERVIEW EN PROFUNDIDAD <a id="3"></a>
 
 ## 📊 Capabilities de Security Overview
 
@@ -1401,7 +1401,7 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 
 ---
 
-# COMPARATIVAS CRÍTICAS {#comparativas-criticas}
+# COMPARATIVAS CRÍTICAS <a id="4"></a>
 
 ## 🔄 Dependabot: Alerts vs Security Updates vs Version Updates
 
@@ -1831,7 +1831,7 @@ Usa SOLO Third-party cuando:
 
 ---
 
-# TRAMPAS COMUNES DEL EXAMEN {#exam-traps}
+# TRAMPAS COMUNES DEL EXAMEN <a id="5"></a>
 
 ## 🎯 Top 20 Trampas que Reprueba a Candidatos
 
@@ -2528,7 +2528,7 @@ Por qué es trampa:
 
 ---
 
-# ESCENARIOS DEL MUNDO REAL {#escenarios-reales}
+# ESCENARIOS DEL MUNDO REAL <a id="6"></a>
 
 ## 🏢 Caso 1: Startup Tech Escalando
 
@@ -3174,7 +3174,7 @@ Lessons learned:
 
 ---
 
-# 100 PREGUNTAS DE PRÁCTICA {#preguntas-practica}
+# 100 PREGUNTAS DE PRÁCTICA <a id="7"></a>
 
 ## Formato del Examen Real
 
@@ -3738,7 +3738,7 @@ CON grouping:
 
 ---
 
-Pregunta 14 (completada)
+### Pregunta 14 (completada)
 ¿Qué rol mínimo necesita un usuario para VER alertas de Dependabot en un repositorio privado?
 A) Admin
 B) Write
@@ -3762,9 +3762,7 @@ https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-depe
 
 </details>
 
----
-
-Pregunta 15
+### Pregunta 15
 Tienes un monorepo con frontend (npm) y backend (maven). ¿Cuántas entradas en dependabot.yml necesitas?
 A) 1 entrada (Dependabot auto-detecta ambos)
 B) 2 entradas (una por ecosistema)
@@ -3800,7 +3798,9 @@ https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/c
 
 </details>
 
-Pregunta 16
+---
+
+### Pregunta 16
 Un Dependabot PR lleva 30 días abierto sin merge. ¿Qué pasa?
 A) Se cierra automáticamente
 B) Se mergea automáticamente
@@ -3832,7 +3832,9 @@ https://docs.github.com/en/code-security/dependabot/working-with-dependabot/mana
 
 </details>
 
-Pregunta 17
+---
+
+### Pregunta 17
 ¿Cuál es el límite DEFAULT de PRs abiertos simultáneos por Dependabot VERSION updates?
 A) 3
 B) 5
@@ -3873,7 +3875,9 @@ https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/c
 
 </details>
 
-Pregunta 18
+---
+
+### Pregunta 18
 ¿Qué sucede cuando Dependabot detecta una vulnerabilidad en una dependencia transitiva (indirect dependency)?
 A) No crea alerta (solo direct dependencies)
 B) Crea alerta pero NO puede crear PR automático
@@ -3907,7 +3911,9 @@ https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/
 
 </details>
 
-Pregunta 19
+---
+
+### Pregunta 19
 Tu organización tiene 100 repositorios. ¿Cómo habilitas Dependabot security updates para todos a la vez?
 A) Script con GitHub CLI para cada repo
 B) Organization Settings → Enable for all
@@ -3942,7 +3948,9 @@ https://docs.github.com/en/organizations/keeping-your-organization-secure/managi
 
 </details>
 
-Pregunta 20
+---
+
+### Pregunta 20
 Un dependency tiene múltiples vulnerabilidades con diferentes severidades (1 critical, 2 high, 5 medium). ¿Cuántas alertas de Dependabot se crean?
 A) 1 alerta (agrupadas)
 B) 3 alertas (por severidad)
@@ -3978,7 +3986,9 @@ https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-an
 
 </details>
 
-Pregunta 21
+---
+
+### Pregunta 21
 Dependabot security updates está habilitado pero no está creando PRs. ¿Cuáles podrían ser las razones? (Selecciona todas las correctas)
 A) El repo tiene >5 PRs abiertos de Dependabot
 B) No hay versión parcheada disponible
@@ -4027,8 +4037,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
 
 </details>
-
-Pregunta 22
+---
+### Pregunta 22
 ¿Qué información NO está incluida en un Dependabot security update PR?
 A) CVE ID
 B) CVSS score
@@ -4076,8 +4086,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
 
 </details>
-
-Pregunta 23
+---
+### Pregunta 23
 Tu equipo quiere que Dependabot solo cree PRs para vulnerabilidades Critical y High, no Medium o Low. ¿Cómo lo configuras?
 A) En dependabot.yml con min-severity: high
 B) En Organization settings
@@ -4134,8 +4144,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
 
 </details>
-
-Pregunta 24
+---
+### Pregunta 24
 ¿Qué información proporciona el Dependency Graph? (Selecciona todas las correctas)
 A) Lista de dependencias directas
 B) Lista de dependencias transitivas
@@ -4176,8 +4186,8 @@ Recursos:
 https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph
 
 </details>
-
-Pregunta 25
+---
+### Pregunta 25
 Tu dependabot.yml tiene un error de sintaxis. ¿Cómo te enteras?
 A) Email notification
 B) Failed check en PR
@@ -4233,8 +4243,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/working-with-dependabot/troubleshooting-dependabot-errors
 
 </details>
-
-Pregunta 26
+---
+### Pregunta 26
 Dependabot puede actualizar qué tipos de archivos? (Selecciona todas las correctas)
 A) package.json (npm)
 B) Dockerfile
@@ -4281,8 +4291,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#package-ecosystem
 
 </details>
-
-Pregunta 27
+---
+### Pregunta 27
 Tu organización tiene una política: "Dependencias con licencias GPL no pueden usarse". ¿Cómo lo enforces con GHAS?
 A) Secret scanning con custom pattern
 B) CodeQL custom query
@@ -4343,8 +4353,8 @@ Recursos:
 https://github.com/actions/dependency-review-action#configuration-options
 
 </details>
-
-Pregunta 28
+---
+### Pregunta 28
 ¿Cuál es el comportamiento de Dependabot cuando encuentra una vulnerabilidad en una dependencia de desarrollo (devDependency)?
 A) Ignora, solo procesa production dependencies
 B) Crea alerta pero no PR
@@ -4398,8 +4408,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
 
 </details>
-
-Pregunta 29
+---
+### Pregunta 29
 Dependency review detecta que un PR introduce una dependencia con licencia GPL-3.0, pero el proyecto NECESITA esa biblioteca. ¿Qué opción es correcta?
 A) Deshabilitar dependency review
 B) Agregar exception en dependency-review config
@@ -4454,8 +4464,8 @@ Recursos:
 https://github.com/actions/dependency-review-action#allow-licenses-and-deny-licenses
 
 </details>
-
-Pregunta 30
+---
+### Pregunta 30
 ¿Cuál es la diferencia entre update-types: ["version-update:semver-patch"] y update-types: ["version-update:semver-minor"] en grouping?
 A) Patch = bug fixes, Minor = nuevas features
 B) Patch = <1.0.0, Minor = >=1.0.0
@@ -4505,8 +4515,8 @@ https://semver.org/
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
 
 </details>
-
-Pregunta 31
+---
+### Pregunta 31
 Un desarrollador hace bypass de Dependency Review para mergear un PR con vulnerabilidad HIGH. ¿Qué pasa?
 A) GitHub bloquea el merge automáticamente
 B) Se crea incident ticket en Security tab
@@ -4558,8 +4568,8 @@ Recursos:
 https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
 
 </details>
-
-Pregunta 32
+---
+### Pregunta 32
 Tu equipo quiere que Dependabot cree PRs solo los lunes a las 9 AM UTC. ¿Cómo lo configuras?
 A) schedule: interval: "weekly" + day: "monday" + time: "09:00"
 B) No es posible, Dependabot no soporta hora específica
@@ -4615,8 +4625,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#schedule
 
 </details>
-
-Pregunta 33
+---
+### Pregunta 33
 ¿Qué hace el campo rebase-strategy en dependabot.yml?
 A) Define cómo Dependabot resuelve conflictos
 B) Controla si Dependabot rebasa PRs cuando hay nuevos commits
@@ -4674,8 +4684,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#rebase-strategy
 
 </details>
-
-Pregunta 34
+---
+### Pregunta 34
 Una alerta de Dependabot muestra "No known patch available". ¿Qué significa?
 A) El maintainer no ha lanzado un fix todavía
 B) Dependabot no puede auto-generar un PR
@@ -4738,8 +4748,8 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
 
 </details>
-
-Pregunta 35
+---
+### Pregunta 35
 ¿Cuántos Dependabot PRs puede haber abiertos simultáneamente para SECURITY updates?
 A) 5 (default limit)
 B) 10 (max limit)
@@ -4789,9 +4799,9 @@ Recursos:
 https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
 
 </details>
-
+---
 DOMINIO 4: CODEQL Y CODE SCANNING
-Pregunta 36
+### Pregunta 36
 ¿Cuál es la diferencia entre CodeQL "default setup" y "advanced setup"?
 A) Default es gratis, advanced requiere GHAS
 B) Default es automático, advanced requiere workflow file
@@ -4820,8 +4830,8 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning/configuring-default-setup-for-code-scanning
 
 </details>
-
-Pregunta 36
+---
+### Pregunta 36
 Tu workflow de CodeQL falla con error "No code found for language: java". ¿Cuál es la causa más probable?
 A) Java no es soportado por CodeQL
 B) El autobuild falló
@@ -4891,8 +4901,8 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning
 
 </details>
-
-Pregunta 37
+---
+### Pregunta 37
 ¿Qué archivo se usa para customizar qué queries ejecuta CodeQL?
 A) codeql.yml
 B) codeql-config.yml
@@ -4948,8 +4958,8 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
 
 </details>
-
-Pregunta 38
+---
+### Pregunta 38
 Un CodeQL scan encuentra 50 alertas. Después de un commit que NO cambia código (solo README), CodeQL re-ejecuta y ahora muestra 52 alertas. ¿Qué puede explicar esto?
 A) False positives en el primer scan
 B) Queries de CodeQL fueron actualizadas
@@ -5008,8 +5018,8 @@ Recursos:
 https://github.com/github/codeql-action/releases
 
 </details>
-
-Pregunta 39
+---
+### Pregunta 39
 ¿Qué significa "category" en un CodeQL workflow?
 A) La categoría de vulnerabilidad (SQL injection, XSS, etc)
 B) Un ID único para diferenciar múltiples análisis
@@ -5062,8 +5072,8 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#specifying-codeql-query-suites
 
 </details>
-
-Pregunta 40
+---
+### Pregunta 40
 Tu workflow de CodeQL tarda 3 horas en completar para un repo grande. ¿Cuál NO es una estrategia válida para reducir el tiempo?
 A) Usar self-hosted runners con más CPUs
 B) Separar análisis por lenguaje en workflows paralelos
@@ -5131,3 +5141,5 @@ Grande (1M+ LOC):
 Recursos:
 
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#improving-the-performance-of-codeql-analysis
+</details>
+---
