@@ -46,7 +46,7 @@
                   │
 ┌─────────────────▼───────────────────────────────────┐
 │ 4. VERIFICAR PREREQUISITOS                          │
-│    ¿Qué se necesita? ¿Permisos? ¿Licencias?        │
+│    ¿Qué se necesita? ¿Permisos? ¿Licencias?         │
 └─────────────────────────────────────────────────────┘
 ```
 
