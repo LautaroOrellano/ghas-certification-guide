@@ -1,15 +1,14 @@
-> 🌐 **Disponible en:** [English 🇬🇧](resources.md) | **Español 🇪🇸**
-
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](recursos.md)
 ---
 
-# RECURSOS Y ENLACES ADICIONALES
+# ADDITIONAL LINKS AND RESOURCES
 
-## Documentación Oficial
+## Official Documentation
 
 ### GitHub Advanced Security
 
 ```
-📚 Documentación Principal:
+📚 Main Documentation:
 https://docs.github.com/en/code-security
 
 📚 About GHAS:
@@ -107,7 +106,7 @@ https://docs.github.com/en/code-security/security-overview/assessing-adoption-co
 https://docs.github.com/en/code-security/security-overview/managing-security-campaigns
 ```
 
-## Tutoriales y Guías
+## Tutorials and Guides
 
 ### GitHub Skills
 
@@ -148,7 +147,7 @@ https://github.com/advisories
 https://github.blog/category/security/
 ```
 
-## Referencias Técnicas
+## Technical References
 
 ### Standards & Frameworks
 
@@ -172,7 +171,7 @@ https://www.nist.gov/cyberframework
 https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html
 ```
 
-### APIs y Automation
+### APIs and Automation
 
 ```
 🔧 GitHub REST API - Security:
@@ -203,7 +202,7 @@ https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-codeql
 https://github.com/features/copilot
 
 🛠 GitHub Security Alerts (VS Code):
-Integrado nativamente
+Natively integrated
 ```
 
 ### CLI Tools
@@ -236,8 +235,8 @@ https://learn.github.com/certification/GHAS
 https://examregistration.github.com/overview/GHAS
 
 📝 Practice Labs:
-Usar repositorios de prueba con vulnerabilidades
-conocidas (WebGoat, DVWA, Juice Shop)
+Use vulnerable test repositories
+(WebGoat, DVWA, Juice Shop)
 ```
 
 ### Sample Repositories
@@ -262,9 +261,9 @@ https://github.com/cr0hn/vulnerable-node
 ### Hands-on Practice
 
 ```
-💻 Enable GHAS en un repo de prueba
-💻 Configure Dependabot con dependabot.yml
-💻 Setup CodeQL con custom queries
+💻 Enable GHAS on a test repository
+💻 Configure Dependabot with dependabot.yml
+💻 Setup CodeQL with custom queries
 💻 Create custom secret patterns
 💻 Practice triaging & dismissing alerts
 💻 Configure branch protection rules
@@ -273,7 +272,7 @@ https://github.com/cr0hn/vulnerable-node
 💻 Use CodeQL CLI locally
 ```
 
-## Videos y Webinars
+## Videos and Webinars
 
 ```
 🎥 GitHub Universe:
@@ -283,7 +282,7 @@ https://www.youtube.com/@GitHub
 https://www.youtube.com/c/GitHubGuides
 
 🎥 GitHub Advanced Security Demo:
-Buscar en YouTube: "GitHub Advanced Security"
+Search on YouTube: "GitHub Advanced Security"
 ```
 
 ## Community & Support
@@ -401,32 +400,32 @@ CWE-798: Hardcoded Credentials
 ## Final Tips
 
 ```
-✅ Práctica hands-on es esencial
-✅ Entiende el "por qué", no solo el "cómo"
-✅ Conoce las diferencias entre repos públicos y privados
-✅ Familiarízate con la UI de GitHub (Security tab)
-✅ Practica troubleshooting de workflows
-✅ Entiende el SDLC y dónde encaja cada tool
-✅ Lee la documentación oficial (está actualizada)
-✅ Usa labs de práctica con vulnerabilidades reales
-✅ Entiende los trade-offs de cada configuración
-✅ Conoce los límites de cada herramienta
+✅ Hands-on practice is essential
+✅ Understand the "why", not just the "how"
+✅ Know the differences between public and private repos
+✅ Familiarize yourself with the GitHub UI (Security tab)
+✅ Practice troubleshooting workflows
+✅ Understand the SDLC and where each tool fits
+✅ Read official documentation (it is updated regularly)
+✅ Use practice labs with real vulnerabilities
+✅ Understand the trade-offs of each configuration
+✅ Know the limits of each tool
 ```
 
 ---
 
-# FIN DE LA GUÍA
+# END OF THE GUIDE
 
-**Última actualización**: Abril 2026  
-**Versión**: 2.0  
-**Autor**: Lautaro Orellano
+**Last Update**: April 2026  
+**Version**: 2.0  
+**Author**: Lautaro Orellano
 
-Esta guía cubre todos los dominios del examen GH-500 GitHub Advanced Security con:
-- ✅ Ejemplos prácticos
-- ✅ Código real
-- ✅ Configuraciones completas
+This guide covers all domains of the GH-500 GitHub Advanced Security exam with:
+- ✅ Practical examples
+- ✅ Real code
+- ✅ Complete configurations
 - ✅ Troubleshooting
 - ✅ Best practices
-- ✅ Enlaces a documentación oficial
+- ✅ Links to official documentation
 
-**¡Buena suerte en tu certificación! 🚀**
+**Good luck on your certification! 🚀**

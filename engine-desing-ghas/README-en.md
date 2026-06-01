@@ -1,4 +1,4 @@
-> 🌐 **Disponible en:** [English 🇬🇧](README-en.md) | **Español 🇪🇸**
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](README.md)
 
 ---
 

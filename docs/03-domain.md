@@ -1,32 +1,31 @@
-> 🌐 **Disponible en:** [English 🇬🇧](03-domain.md) | **Español 🇪🇸**
-
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](03-dominio.md)
 ---
 
-# DOMINIO 3: CONFIGURAR Y USAR DEPENDABOT Y DEPENDENCY REVIEW (35%)
+# DOMAIN 3: CONFIGURE AND USE DEPENDABOT AND DEPENDENCY REVIEW (35%)
 
 <a id="d3-1"></a>
-## 3.1 Herramientas para gestionar vulnerabilidades en dependencias
+## 3.1 Tools for managing vulnerabilities in dependencies
 
 ### Dependency Graph
 
-**Definición:**
-Representación visual y analítica de todas las dependencias de un proyecto, incluyendo dependencias directas y transitivas (indirectas).
+**Definition:**
+Visual and analytical representation of all dependencies of a project, including direct and transitive (indirect) dependencies.
 
-**¿Cómo se genera?**
+**How is it generated?**
 
 ```
-1. GitHub detecta archivos de manifest:
+1. GitHub detects manifest files:
    ├─ package.json, package-lock.json (npm/Node.js)
    ├─ Gemfile, Gemfile.lock (Ruby)
-   ├─ requirements.txt, Pipfile.lock (Python)
+   ├─ requirements.txt, poetry.lock (Python)
    ├─ pom.xml, build.gradle (Java/Maven/Gradle)
    ├─ go.mod, go.sum (Go)
    ├─ Cargo.toml, Cargo.lock (Rust)
    ├─ composer.json, composer.lock (PHP)
    └─ *.csproj, packages.config (NuGet/.NET)
 
-2. Parser extrae dependencias:
-   ├─ Direct dependencies (en manifest)
+2. Parser extracts dependencies:
+   ├─ Direct dependencies (in manifest)
    └─ Transitive dependencies (lockfile)
 
 3. Build dependency tree:
@@ -51,7 +50,7 @@ Representación visual y analítica de todas las dependencias de un proyecto, in
    - Calculate CVSS scores
 ```
 
-**Visualización del Dependency Graph:**
+**Visualizing the Dependency Graph:**
 
 ```
 Repository → Insights → Dependency graph
@@ -69,7 +68,7 @@ Repository → Insights → Dependency graph
       └─ Remediation PRs
 ```
 
-**Ecosistemas soportados:**
+**Supported Ecosystems:**
 
 | Ecosystem | Manifest Files | Lockfiles | Dependency Graph | Dependabot Alerts |
 |-----------|----------------|-----------|------------------|-------------------|
@@ -92,7 +91,7 @@ Repository → Insights → Dependency graph
 
 **Dependency Submission API:**
 
-Para ecosistemas NO soportados nativamente o builds custom:
+For ecosystems NOT natively supported or custom builds:
 
 ```javascript
 // submit-dependencies.js
@@ -141,10 +140,10 @@ await octokit.rest.dependency.submitSnapshot({
 
 ### Software Bill of Materials (SBOM)
 
-**Definición:**
-Lista completa y formal de todos los componentes de software, bibliotecas y dependencias que componen una aplicación.
+**Definition:**
+Formal and complete list of all software components, libraries, and dependencies that make up an application.
 
-**Formato SPDX (usado por GitHub):**
+**SPDX Format (used by GitHub):**
 
 ```json
 {
@@ -194,7 +193,7 @@ Lista completa y formal de todos los componentes de software, bibliotecas y depe
 }
 ```
 
-**Generar SBOM desde GitHub:**
+**Generate SBOM from GitHub:**
 
 ```bash
 # Via API
@@ -206,7 +205,7 @@ curl -H "Authorization: token $GITHUB_TOKEN" \
 # Via GitHub CLI
 gh api /repos/OWNER/REPO/dependency-graph/sbom > sbom.json
 
-# En GitHub Actions
+# In GitHub Actions
 - name: Generate SBOM
   run: |
     gh api repos/${{ github.repository }}/dependency-graph/sbom \
@@ -221,36 +220,36 @@ gh api /repos/OWNER/REPO/dependency-graph/sbom > sbom.json
     path: sbom.spdx.json
 ```
 
-**Casos de uso de SBOM:**
+**SBOM Use Cases:**
 
 ```yaml
 1. Compliance:
-   - NIST guidelines require SBOM
-   - Executive Order 14028 (US)
-   - EU Cyber Resilience Act
+    - NIST guidelines require SBOM
+    - Executive Order 14028 (US)
+    - EU Cyber Resilience Act
 
 2. Supply chain security:
-   - Identificar componentes con vulnerabilidades conocidas
-   - Auditoría de licencias
-   - Track de actualizaciones
+    - Identify components with known vulnerabilities
+    - License audit
+    - Track updates
 
 3. Incident response:
-   - "¿Estamos afectados por Log4Shell?"
-   - Query SBOM por "log4j" → Sí/No inmediato
-   - Version exacta → Patch priority
+    - "Are we affected by Log4Shell?"
+    - Query SBOM for "log4j" → Yes/No immediately
+    - Exact version → Patch priority
 
 4. Procurement:
-   - Vendors deben proporcionar SBOM
-   - Verificar componentes antes de compra
-   - Due diligence automatizado
+    - Vendors must provide SBOM
+    - Verify components before purchase
+    - Automated due diligence
 ```
 
-### Vulnerabilidad de dependencia
+### Dependency Vulnerabilities
 
-**Definición:**
-Defecto de seguridad conocido (CVE) en una dependencia que puede ser explotado para comprometer la aplicación.
+**Definition:**
+Known security defect (CVE) in a dependency that can be exploited to compromise the application.
 
-**Anatomía de una vulnerabilidad:**
+**Anatomy of a Vulnerability:**
 
 ```yaml
 CVE-2022-24999:
@@ -284,14 +283,14 @@ CVE-2022-24999:
     server memory, causing denial of service.
 ```
 
-**Severidad (CVSS Score):**
+**Severity (CVSS Score):**
 
-| Score | Rating | Prioridad | SLA |
+| Score | Rating | Priority | SLA |
 |-------|--------|-----------|-----|
-| 9.0-10.0 | Critical | P0 | 24 horas |
-| 7.0-8.9 | High | P1 | 7 días |
-| 4.0-6.9 | Medium | P2 | 30 días |
-| 0.1-3.9 | Low | P3 | 90 días |
+| 9.0-10.0 | Critical | P0 | 24 hours |
+| 7.0-8.9 | High | P1 | 7 days |
+| 4.0-6.9 | Medium | P2 | 30 days |
+| 0.1-3.9 | Low | P3 | 90 days |
 
 **GitHub Advisory Database:**
 
@@ -307,35 +306,35 @@ Sources:
   ├─ Rust Security Advisory Database
   └─ Community contributions
 
-Actualización: Múltiples veces al día
+Update frequency: Multiple times a day
 ```
 
 ### Dependabot Alerts
 
-**¿Qué son?**
-Notificaciones automáticas cuando una dependencia tiene una vulnerabilidad conocida.
+**What are they?**
+Automated notifications when a dependency has a known vulnerability.
 
-**Cómo funcionan:**
+**How they work:**
 
 ```
-1. Dependency Graph identifica dependencias
+1. Dependency Graph identifies dependencies
      ↓
-2. GitHub Advisory Database tiene nueva CVE
+2. GitHub Advisory Database gets a new CVE
      ↓
 3. Match: lodash@4.17.15 → CVE-2021-23337
      ↓
-4. Calcular severidad: High (CVSS 7.2)
+4. Calculate severity: High (CVSS 7.2)
      ↓
-5. Crear alert en Security tab
+5. Create alert in Security tab
      ↓
 6. Notify:
-     ├─ Email a repository admins
+     ├─ Email to repository admins
      ├─ Web notification
-     ├─ Webhook (si configurado)
+     ├─ Webhook (if configured)
      └─ Security Overview
 ```
 
-**Formato de alerta:**
+**Alert Format:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -363,25 +362,25 @@ Notificaciones automáticas cuando una dependencia tiene una vulnerabilidad cono
 
 ### Dependabot Security Updates
 
-**¿Qué son?**
-Pull requests automáticos que actualizan dependencias vulnerables a versiones parcheadas.
+**What are they?**
+Automated pull requests that update vulnerable dependencies to patched versions.
 
-**Funcionamiento:**
+**Functioning:**
 
 ```
-1. Dependabot alert creada para lodash@4.17.15
+1. Dependabot alert created for lodash@4.17.15
      ↓
-2. Dependabot verifica si hay versión parcheada
-     ├─ lodash@4.17.21 existe
-     └─ Es backward compatible (patch/minor)
+2. Dependabot checks if patched version exists
+     ├─ lodash@4.17.21 exists
+     └─ It is backward compatible (patch/minor)
      ↓
-3. Crear branch: dependabot/npm_and_yarn/lodash-4.17.21
+3. Create branch: dependabot/npm_and_yarn/lodash-4.17.21
      ↓
-4. Update package.json y lockfile
+4. Update package.json and lockfile
      ↓
-5. Run tests (si hay CI configurado)
+5. Run tests (if CI is configured)
      ↓
-6. Abrir PR con detalles:
+6. Open PR with details:
      ├─ Changelog
      ├─ Commits
      ├─ Compatibility score
@@ -392,7 +391,7 @@ Pull requests automáticos que actualizan dependencias vulnerables a versiones p
 8. Alert auto-closed
 ```
 
-**Ejemplo de PR de Dependabot:**
+**Dependabot PR Example:**
 
 ```markdown
 ## Bump lodash from 4.17.15 to 4.17.21
@@ -427,44 +426,44 @@ Dependabot will merge this PR once CI passes on it, as requested by @you.
 
 ### Dependency Review
 
-**¿Qué es?**
-Feature que analiza cambios de dependencias en PRs y bloquea merge si se introducen vulnerabilidades.
+**What is it?**
+A feature that analyzes dependency changes in PRs and blocks the merge if vulnerabilities are introduced.
 
-**Diferencia clave:**
+**Key Difference:**
 
 ```
 Dependabot Alerts:
-  - Escanea dependencias existentes
-  - Reactivo (alerta después de merge)
+  - Scans existing dependencies
+  - Reactive (alerts after merge)
   - Security tab
 
 Dependency Review:
-  - Escanea cambios en PR
-  - Proactivo (bloquea antes de merge)
+  - Scans changes in PR
+  - Proactive (blocks before merge)
   - PR checks
 ```
 
-**Funcionamiento:**
+**Functioning:**
 
 ```
-Developer crea PR:
+Developer creates PR:
   package.json: lodash@4.17.15 → lodash@4.17.10 (downgrade!)
      ↓
-Dependency Review Action ejecuta:
+Dependency Review Action runs:
      ↓
-Compara:
-  Base branch (main): lodash@4.17.15 (sin vulnerabilidades)
+Compares:
+  Base branch (main): lodash@4.17.15 (no vulnerabilities)
   PR branch: lodash@4.17.10 (CVE-2020-8203: HIGH)
      ↓
-Resultado:
+Result:
   ❌ Check failed: 1 high severity vulnerability introduced
      ↓
-Bloquea merge:
+Blocks merge:
   - PR status: ❌ Dependency review — Changes introduce known vulnerabilities
   - Requires: Fix before merge
 ```
 
-**Configuración de Dependency Review Action:**
+**Dependency Review Action Configuration:**
 
 ```yaml
 # .github/workflows/dependency-review.yml
@@ -486,7 +485,7 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
         with:
-          # Fail on high/critical only
+          # Fail on moderate or higher only
           fail-on-severity: moderate
           
           # Allow specific licenses
@@ -502,9 +501,9 @@ jobs:
           warn-on-openssf-scorecard-level: 3
 ```
 
-### Generación de alertas para dependencias vulnerables
+### Alert Generation for Vulnerable Dependencies
 
-**Pipeline completo:**
+**Complete Pipeline:**
 
 ```
 ┌──────────────────────────────────────────────────┐
@@ -526,9 +525,9 @@ jobs:
 │      - Calculate CVSS score                      │
 └──────────────────┬───────────────────────────────┘
                    │
-              ┌────┴────┐
-              │ Match?  │
-              └────┬────┘
+               ┌────┴────┐
+               │ Match?  │
+               └────┬────┘
                    │
          ┌─────────┴─────────┐
         YES                  NO
@@ -558,24 +557,24 @@ jobs:
 └───────────────────────────────────────────────────┘
 ```
 
-### Diferencia entre Dependabot y Dependency Review
+### Difference between Dependabot and Dependency Review
 
-**Tabla comparativa completa:**
+**Complete Comparative Table:**
 
-| Aspecto | Dependabot Alerts | Dependabot Security Updates | Dependency Review |
+| Aspect | Dependabot Alerts | Dependabot Security Updates | Dependency Review |
 |---------|------------------|----------------------------|-------------------|
-| **Cuándo actúa** | Después de commit | Después de alert | Durante PR |
-| **Objetivo** | Detectar vulnerabilidades existentes | Automatizar fixes | Prevenir nuevas vulnerabilidades |
-| **Ubicación** | Security tab | Pull requests tab | PR checks |
-| **Acción** | Crear alerta | Crear PR de fix | Bloquear/aprobar merge |
-| **Reactivo/Proactivo** | Reactivo | Reactivo | Proactivo |
-| **Requiere GHAS** | No (públicos), Sí (privados) | No (públicos), Sí (privados) | Sí |
-| **Bloquea código** | No | No | Sí (configurable) |
-| **Auto-remediation** | No | Sí (PR) | No |
-| **Scope** | Todo el repo | Dependencias vulnerables | Cambios en PR |
-| **Configuración** | Settings → Dependabot | Settings → Dependabot | GitHub Actions workflow |
+| **When it acts** | After commit | After alert | During PR |
+| **Objective** | Detect existing vulnerabilities | Automate fixes | Prevent new vulnerabilities |
+| **Location** | Security tab | Pull requests tab | PR checks |
+| **Action** | Create alert | Create fix PR | Block/approve merge |
+| **Reactive/Proactive** | Reactive | Reactive | Proactive |
+| **Requires GHAS** | No (public), Yes (private) | No (public), Yes (private) | Yes |
+| **Blocks code** | No | No | Yes (configurable) |
+| **Auto-remediation** | No | Yes (PR) | No |
+| **Scope** | Entire repo | Vulnerable dependencies | Changes in PR |
+| **Configuration** | Settings → Dependabot | Settings → Dependabot | GitHub Actions workflow |
 
-**Flujo combinado ideal:**
+**Ideal Combined Flow:**
 
 ```
 ┌─────────────────────────────────────────┐
@@ -628,95 +627,96 @@ jobs:
 └─────────────────────────────────────────┘
 ```
 
-**Cuándo usar cada herramienta:**
+**When to use each tool:**
 
 ```yaml
 Dependabot Alerts:
-  Usa para:
-    - ✅ Monitoring continuo de dependencias
-    - ✅ Detectar vulnerabilidades en main branch
+  Use for:
+    - ✅ Continuous monitoring of dependencies
+    - ✅ Detecting vulnerabilities in main branch
     - ✅ Compliance reporting
     - ✅ Security overview metrics
 
 Dependabot Security Updates:
-  Usa para:
-    - ✅ Automatizar updates de seguridad
-    - ✅ Reducir tiempo de remediación
-    - ✅ Keep dependencies current
+  Use for:
+    - ✅ Automating security updates
+    - ✅ Reducing remediation time
+    - ✅ Keeping dependencies current
     - ✅ Batch updates (via grouping)
 
 Dependency Review:
-  Usa para:
-    - ✅ Gate PRs con vulnerabilidades
-    - ✅ Prevenir regresiones de seguridad
+  Use for:
+    - ✅ Gating PRs with vulnerabilities
+    - ✅ Preventing security regressions
     - ✅ License compliance
-    - ✅ Enforce security policies
-    - ✅ Educate developers at PR time
+    - ✅ Enforcing security policies
+    - ✅ Educating developers at PR time
 ```
-**Enlaces:**
+
+**Links:**
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-the-dependency-graph
 - https://docs.github.com/en/code-security/dependabot
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
 
 ---
 <a id="d3-2"></a>
-## 3.2 Configuración predeterminada para alertas de Dependabot
+## 3.2 Default configuration for Dependabot alerts
 
-### Repositorios Públicos
+### Public Repositories
 
-**Configuración automática:**
+**Automatic Configuration:**
 
 ```yaml
-Dependabot Alerts: ✅ HABILITADO por defecto
-Dependency Graph: ✅ HABILITADO por defecto
-Dependabot Security Updates: ✅ HABILITADO por defecto
+Dependabot Alerts: ✅ ENABLED by default
+Dependency Graph: ✅ ENABLED by default
+Dependabot Security Updates: ✅ ENABLED by default
 
-Características incluidas:
-  - Alertas automáticas de vulnerabilidades
-  - PRs de seguridad automáticos
-  - Notificaciones por email
-  - Security tab visible
-  - Dependency graph público
+Included features:
+  - Automatic vulnerability alerts
+  - Automatic security PRs
+  - Email notifications
+  - Visible Security tab
+  - Public dependency graph
 ```
 
-**No requiere:**
-- ❌ Licencia GHAS
-- ❌ Configuración manual
-- ❌ GitHub Actions minutes (los PRs son gratuitos)
+**Does not require:**
+- ❌ GHAS License
+- ❌ Manual configuration
+- ❌ GitHub Actions minutes (Dependabot PRs are free)
 
-### Repositorios Privados
+### Private Repositories
 
-**Sin GHAS:**
+**Without GHAS:**
 ```yaml
-Dependabot Alerts: ✅ HABILITADO por defecto (desde 2022)
-Dependency Graph: ✅ HABILITADO por defecto
-Dependabot Security Updates: ❌ DESHABILITADO (requiere habilitar)
-Dependency Review: ❌ NO DISPONIBLE (requiere GHAS)
+Dependency Graph: ✅ ENABLED by default
+Dependabot Alerts: ✅ ENABLED by default (since 2022)
+Dependabot Security Updates: ❌ DISABLED (requires enabling)
+Dependency Review: ❌ NOT AVAILABLE (requires GHAS)
 ```
 
-**Con GHAS (GitHub Code Security):**
+**With GHAS (GitHub Code Security):**
 ```yaml
-Dependabot Alerts: ✅ HABILITADO
-Dependency Graph: ✅ HABILITADO
-Dependabot Security Updates: ✅ Puede habilitarse
-Dependency Review: ✅ DISPONIBLE
-Custom Auto-triage Rules: ✅ DISPONIBLE
+Dependency Graph: ✅ ENABLED
+Dependabot Alerts: ✅ ENABLED
+Dependabot Security Updates: ✅ Can be enabled
+Dependency Review: ✅ AVAILABLE
+Custom Auto-triage Rules: ✅ AVAILABLE
 ```
 
-### Tabla comparativa de configuración predeterminada
+### Comparative Table of Default Configurations
 
-| Feature | Público | Privado sin GHAS | Privado con GHAS |
+| Feature | Public | Private without GHAS | Private with GHAS |
 |---------|---------|------------------|------------------|
 | **Dependency Graph** | ✅ Auto | ✅ Auto | ✅ Auto |
 | **Dependabot Alerts** | ✅ Auto | ✅ Auto | ✅ Auto |
 | **Dependabot Security Updates** | ✅ Auto | Opt-in | Opt-in |
 | **Dependabot Version Updates** | Opt-in | Opt-in | Opt-in |
-| **Dependency Review** | ❌ | ❌ | ✅ Requiere config |
+| **Dependency Review** | ❌ | ❌ | ✅ Requires config |
 | **Custom Auto-triage** | ❌ | ❌ | ✅ |
 | **Security Overview** | ❌ | ❌ | ✅ |
 | **Grouped Updates** | Opt-in | Opt-in | Opt-in |
 
-### Verificar configuración actual
+### Verify Current Configuration
 
 ```bash
 # Via GitHub CLI
@@ -738,20 +738,20 @@ Repository → Settings → Code security and analysis
   └─ Dependabot security updates: [Enabled/Disabled]
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/about-dependabot-alerts
 - https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-security-and-analysis-settings-for-your-repository
 - https://docs.github.com/en/code-security/getting-started/securing-your-repository
 
 ---
 <a id="d3-3"></a>
-## 3.3 Permisos y roles para Dependabot
+## 3.3 Permissions and roles for Dependabot
 
-### Permisos para HABILITAR alertas de Dependabot
+### Permissions to ENABLE Dependabot Alerts
 
-**A nivel de repositorio:**
+**At Repository Level:**
 
-| Rol | Habilitar Dependabot Alerts | Habilitar Security Updates | Configurar dependabot.yml |
+| Role | Enable Dependabot Alerts | Enable Security Updates | Configure dependabot.yml |
 |-----|----------------------------|---------------------------|---------------------------|
 | **Read** | ❌ | ❌ | ❌ |
 | **Triage** | ❌ | ❌ | ❌ |
@@ -759,19 +759,19 @@ Repository → Settings → Code security and analysis
 | **Maintain** | ❌ | ❌ | ✅ |
 | **Admin** | ✅ | ✅ | ✅ |
 
-**A nivel de organización:**
+**At Organization Level:**
 
-| Rol | Habilitar para org | Policies | Bulk enable |
+| Role | Enable for Org | Policies | Bulk Enable |
 |-----|-------------------|----------|-------------|
 | **Member** | ❌ | ❌ | ❌ |
 | **Owner** | ✅ | ✅ | ✅ |
 | **Security Manager** | ✅ | ✅ | ✅ |
 
-### Permisos para VER alertas de Dependabot
+### Permissions to VIEW Dependabot Alerts
 
-**Importante:** Las alertas de Dependabot tienen visibilidad diferente que otras alertas de seguridad.
+**Important:** Dependabot alerts have different visibility rules than other security alerts.
 
-| Rol | Ver Dependabot Alerts | Ver detalles | Dismiss alerts | Ver PRs |
+| Role | View Dependabot Alerts | View Details | Dismiss Alerts | View PRs |
 |-----|----------------------|--------------|----------------|---------|
 | **Read** | ✅ | ✅ | ❌ | ✅ |
 | **Triage** | ✅ | ✅ | ❌ | ✅ |
@@ -780,19 +780,19 @@ Repository → Settings → Code security and analysis
 | **Admin** | ✅ | ✅ | ✅ | ✅ |
 | **Security Manager** | ✅ | ✅ | ✅ | ✅ |
 
-**Diferencia con Code Scanning:**
+**Difference with Code Scanning:**
 ```yaml
 Code Scanning:
-  - Solo Admin y Security Manager ven alertas
-  
+  - Only Admin and Security Manager can view alerts
+
 Dependabot:
-  - Todos los colaboradores con Read+ ven alertas
-  - Razón: Developers necesitan ver dependencias para su trabajo
+  - All collaborators with Read+ can view alerts
+  - Reason: Developers need to see dependencies to do their work
 ```
 
-### Configuración de acceso granular
+### Granular Access Configuration
 
-**Otorgar acceso a team:**
+**Grant access to a team:**
 
 ```bash
 # Via GitHub CLI
@@ -813,21 +813,21 @@ curl -X PUT \
 **Security Manager role (organization level):**
 
 ```bash
-# Agregar security manager a org
+# Add security manager to org
 gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   /orgs/ORG/security-managers/teams/TEAM_SLUG
 
-# Listar security managers
+# List security managers
 gh api /orgs/ORG/security-managers/teams
 ```
 
-**Custom notification groups:**
+**Custom Notification Groups:**
 
 ```yaml
-# No hay configuración nativa para custom groups
-# Solución: Usar webhooks + automation
+# No native configuration for custom groups
+# Solution: Use webhooks + automation
 
 # .github/workflows/dependabot-router.yml
 name: Route Dependabot Alerts
@@ -863,7 +863,7 @@ jobs:
             });
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/repository-roles-for-an-organization
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts
 - https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-security-managers-in-your-organization
@@ -871,55 +871,55 @@ jobs:
 
 ---
 <a id="d3-4"></a>
-## 3.4 Habilitar Dependabot para repositorios privados
+## 3.4 Enable Dependabot for private repositories
 
-### Método 1: Via Web UI (Individual)
+### Method 1: Via Web UI (Individual)
 
-**Paso a paso:**
+**Step-by-Step:**
 
 ```
-1. Ir al repositorio
+1. Go to the repository
    └─ Settings tab
 
-2. Navegar a Code security and analysis
-   └─ Sidebar izquierdo
+2. Navigate to Code security and analysis
+   └─ Left sidebar
 
-3. Habilitar Dependency graph (si no está habilitado)
+3. Enable Dependency graph (if not enabled)
    ├─ Click [Enable]
-   └─ Esperar 1-2 minutos para el análisis inicial
+   └─ Wait 1-2 minutes for the initial analysis
 
-4. Habilitar Dependabot alerts
+4. Enable Dependabot alerts
    ├─ Click [Enable]
-   └─ Confirmar
+   └─ Confirm
 
-5. [Opcional] Habilitar Dependabot security updates
+5. [Optional] Enable Dependabot security updates
    ├─ Click [Enable]
-   └─ Esto permite PRs automáticos
+   └─ This allows automatic PRs
 ```
 
-### Método 2: Via GitHub CLI
+### Method 2: Via GitHub CLI
 
 ```bash
-# Habilitar todo de una vez
+# Enable everything at once
 gh api \
   --method PATCH \
   -H "Accept: application/vnd.github+json" \
   /repos/OWNER/REPO \
   -f has_dependency_graph=true
 
-# Habilitar vulnerability alerts
+# Enable vulnerability alerts
 gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   /repos/OWNER/REPO/vulnerability-alerts
 
-# Habilitar security updates
+# Enable security updates
 gh api \
   --method PUT \
   -H "Accept: application/vnd.github+json" \
   /repos/OWNER/REPO/automated-security-fixes
 
-# Verificar
+# Verify
 gh api repos/OWNER/REPO | jq '{
   dependency_graph: .has_dependency_graph,
   alerts: .vulnerability_alerts_enabled,
@@ -927,7 +927,7 @@ gh api repos/OWNER/REPO | jq '{
 }'
 ```
 
-### Método 3: Via API (Programático)
+### Method 3: Via API (Programmatic)
 
 ```python
 import requests
@@ -940,7 +940,7 @@ headers = {
     "Accept": "application/vnd.github+json"
 }
 
-# Obtener todos los repos privados
+# Get all private repos
 repos_response = requests.get(
     f"https://api.github.com/orgs/{ORG}/repos",
     headers=headers,
@@ -952,13 +952,13 @@ for repo in repos_response.json():
     
     print(f"Enabling Dependabot for {repo_name}...")
     
-    # Habilitar vulnerability alerts
+    # Enable vulnerability alerts
     alerts_response = requests.put(
         f"https://api.github.com/repos/{repo_name}/vulnerability-alerts",
         headers=headers
     )
     
-    # Habilitar automated security fixes
+    # Enable automated security fixes
     fixes_response = requests.put(
         f"https://api.github.com/repos/{repo_name}/automated-security-fixes",
         headers=headers
@@ -970,7 +970,7 @@ for repo in repos_response.json():
         print(f"  ❌ {repo_name}: Error - {alerts_response.status_code}")
 ```
 
-### Método 4: Bulk habilitación (Organization level)
+### Method 4: Bulk Enablement (Organization level)
 
 **Via UI:**
 
@@ -979,7 +979,7 @@ Organization Settings
   → Code security and analysis
   → Dependabot
       ├─ [Enable for all repositories]
-      │   └─ Seleccionar:
+      │   └─ Select:
       │       ├─ All repositories
       │       ├─ All private repositories
       │       └─ Selected repositories
@@ -989,7 +989,7 @@ Organization Settings
           └─ New private repositories
 ```
 
-**Script de habilitación masiva:**
+**Bulk Enablement Script:**
 
 ```bash
 #!/bin/bash
@@ -998,7 +998,7 @@ Organization Settings
 ORG="my-org"
 TOKEN="$GITHUB_TOKEN"
 
-# Obtener todos los repos
+# Get all repos
 repos=$(gh api --paginate "/orgs/$ORG/repos" --jq '.[].name')
 
 echo "Found $(echo "$repos" | wc -l) repositories"
@@ -1025,8 +1025,7 @@ done
 echo "Done! Dependabot enabled for all repositories."
 ```
 
-**Enlaces:**
-
+**Links:**
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts
 - https://docs.github.com/en/rest/repos/repos#enable-vulnerability-alerts
 - https://docs.github.com/en/rest/repos/repos#enable-automated-security-fixes
@@ -1034,11 +1033,11 @@ echo "Done! Dependabot enabled for all repositories."
 
 ---
 <a id="d3-5"></a>
-## 3.5 Habilitar Dependabot para organizaciones
+## 3.5 Enable Dependabot for organizations
 
-### Políticas a nivel de organización
+### Organization-level Policies
 
-**Opción 1: Habilitar para todos**
+**Option 1: Enable for all**
 
 ```
 Organization Settings
@@ -1049,7 +1048,7 @@ Organization Settings
           └─ [Confirm]
 ```
 
-**Opción 2: Política por defecto para nuevos repos**
+**Option 2: Default policy for new repos**
 
 ```
 Organization Settings
@@ -1060,10 +1059,10 @@ Organization Settings
           └─ Private repositories: [✓] Enabled
 ```
 
-**Opción 3: Políticas condicionales (GitHub Enterprise)**
+**Option 3: Conditional Policies (GitHub Enterprise)**
 
 ```yaml
-# Solo disponible en GitHub Enterprise Cloud
+# Only available in GitHub Enterprise Cloud
 # Via Enterprise Settings
 
 Enterprise Settings
@@ -1080,10 +1079,10 @@ Enterprise Settings
           └─ Disabled
 ```
 
-### Configuración de notificaciones a nivel org
+### Organization-level Notification Configuration
 
 ```yaml
-# Configurar destinatarios por defecto
+# Configure default recipients
 
 Organization Settings
   → Code security
@@ -1094,10 +1093,10 @@ Organization Settings
           └─ Webhook: https://api.company.com/webhooks/dependabot
 ```
 
-### Reporte y compliance
+### Reporting and Compliance
 
 ```bash
-# Script para generar reporte de coverage
+# Script to generate coverage report
 
 #!/bin/bash
 ORG="my-org"
@@ -1110,7 +1109,7 @@ total_repos=0
 enabled_repos=0
 disabled_repos=0
 
-# Obtener todos los repos
+# Get all repos
 repos=$(gh api --paginate "/orgs/$ORG/repos" --jq '.[].name')
 total_repos=$(echo "$repos" | wc -l)
 
@@ -1138,17 +1137,16 @@ echo "Enabled: $enabled_repos / $total_repos ($(( enabled_repos * 100 / total_re
 echo "Disabled: $disabled_repos / $total_repos"
 ```
 
-**Enlaces:**
-
+**Links:**
 - https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/managing-security-and-analysis-settings-for-your-organization
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/configuring-dependabot-alerts#managing-dependabot-alerts-for-your-organization
 - https://docs.github.com/en/enterprise-cloud@latest/admin/policies/enforcing-policies-for-your-enterprise/enforcing-policies-for-code-security-and-analysis-for-your-enterprise
 
 ---
 <a id="d3-6"></a>
-## 3.6 Crear archivo de configuración de Dependabot (dependabot.yml)
+## 3.6 Create Dependabot configuration file (dependabot.yml)
 
-### Estructura básica
+### Basic Structure
 
 ```yaml
 # .github/dependabot.yml
@@ -1182,10 +1180,10 @@ updates:
       include: "scope"
 ```
 
-### Ecosistemas soportados
+### Supported Ecosystems
 
 ```yaml
-# Todos los ecosistemas disponibles:
+# All available ecosystems:
 
 updates:
   - package-ecosystem: "npm"           # JavaScript (npm, yarn, pnpm)
@@ -1205,9 +1203,9 @@ updates:
   - package-ecosystem: "swift"         # Swift Package Manager
 ```
 
-### Configuración de grupos (Grouping updates)
+### Grouping Updates
 
-**Agrupar updates para reducir PRs:**
+**Group updates to reduce PR noise:**
 
 ```yaml
 # .github/dependabot.yml
@@ -1218,28 +1216,28 @@ updates:
     schedule:
       interval: "weekly"
     
-    # Agrupar por tipo de dependencia
+    # Group by dependency type
     groups:
-      # Grupo para todas las dev dependencies
+      # Group for all dev dependencies
       development-dependencies:
         dependency-type: "development"
         update-types:
           - "minor"
           - "patch"
       
-      # Grupo para production dependencies (solo patches)
+      # Group for production dependencies (patches only)
       production-dependencies:
         dependency-type: "production"
         update-types:
           - "patch"
       
-      # Grupo por patrón de nombre
+      # Group by name pattern
       react-related:
         patterns:
           - "react*"
           - "@types/react*"
       
-      # Grupo para testing frameworks
+      # Group for testing frameworks
       testing-frameworks:
         patterns:
           - "jest"
@@ -1247,7 +1245,7 @@ updates:
           - "vitest"
 ```
 
-**Ejemplo de agrupación avanzada:**
+**Advanced Grouping Example:**
 
 ```yaml
 version: 2
@@ -1270,7 +1268,7 @@ updates:
       major-updates:
         update-types:
           - "major"
-        # No agrupar - un PR por major update
+        # Do not group - one PR per major update
       
       # Framework updates
       angular:
@@ -1291,23 +1289,23 @@ updates:
           - "eslint*"
 ```
 
-**Resultado de grouping:**
+**Grouping Results:**
 
 ```
-Sin grouping:
+Without grouping:
   ├─ PR #1: Bump eslint from 8.0.0 to 8.0.1
   ├─ PR #2: Bump eslint-config-airbnb from 19.0.0 to 19.0.1
   ├─ PR #3: Bump eslint-plugin-import from 2.25.0 to 2.25.1
-  └─ ... (10 PRs más para tooling)
+  └─ ... (10 more PRs for tooling)
 
-Con grouping:
+With grouping:
   └─ PR #1: Bump build-tools group (13 dependencies)
       ├─ eslint: 8.0.0 → 8.0.1
       ├─ eslint-config-airbnb: 19.0.0 → 19.0.1
-      └─ ... (11 más)
+      └─ ... (11 more)
 ```
 
-### Configuración de automerge
+### Automerge Configuration
 
 ```yaml
 # .github/dependabot.yml
@@ -1321,13 +1319,9 @@ updates:
     # Pull request branch name
     pull-request-branch-name:
       separator: "-"
-    
-    # Auto-merge configuration (requires GitHub CLI or Actions)
-    # Note: Dependabot no tiene auto-merge nativo
-    # Se configura via branch protection rules o Actions
 ```
 
-**GitHub Actions workflow para auto-merge:**
+**GitHub Actions workflow for auto-merge:**
 
 ```yaml
 # .github/workflows/dependabot-auto-merge.yml
@@ -1369,14 +1363,14 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Configuración avanzada de scheduling
+### Advanced Scheduling Configuration
 
 ```yaml
 version: 2
 updates:
-  # Diferentes schedules para diferentes ecosistemas
+  # Different schedules for different ecosystems
   
-  # npm: Diario (alta frecuencia de updates)
+  # npm: Daily (high frequency of updates)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -1384,7 +1378,7 @@ updates:
       time: "03:00"
       timezone: "UTC"
   
-  # Docker: Semanal (menos frecuente)
+  # Docker: Weekly (less frequent)
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -1392,22 +1386,22 @@ updates:
       day: "sunday"
       time: "04:00"
   
-  # GitHub Actions: Mensual (muy estables)
+  # GitHub Actions: Monthly (very stable)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
     
-  # Terraform: Solo security updates
+  # Terraform: Security updates only
   - package-ecosystem: "terraform"
     directory: "/infrastructure"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 0  # No version updates
-    # Solo security updates a través de Dependabot alerts
+    # Security updates only through Dependabot alerts
 ```
 
-### Ignore configurations
+### Ignore Configurations
 
 ```yaml
 version: 2
@@ -1417,26 +1411,26 @@ updates:
     schedule:
       interval: "weekly"
     
-    # Ignorar dependencias específicas
+    # Ignore specific dependencies
     ignore:
-      # Nunca actualizar React (pinned version)
+      # Never update React (pinned version)
       - dependency-name: "react"
         update-types: ["version-update:semver-major"]
       
-      # Ignorar patches de lodash (demasiados updates)
+      # Ignore patches of lodash (too many updates)
       - dependency-name: "lodash"
         update-types: ["version-update:semver-patch"]
       
-      # Ignorar todas las major versions de Angular
+      # Ignore all major versions of Angular
       - dependency-name: "@angular/*"
         update-types: ["version-update:semver-major"]
       
-      # Ignorar versiones específicas que rompen
+      # Ignore specific versions that break
       - dependency-name: "webpack"
         versions: ["5.x"]
 ```
 
-### Configuración para monorepos
+### Configuration for Monorepos
 
 ```yaml
 version: 2
@@ -1478,23 +1472,21 @@ updates:
       interval: "monthly"
 ```
 
-### Validación del archivo
+### File Validation
 
 ```bash
-# GitHub no tiene validador oficial, pero puedes usar:
-
-# 1. Linter YAML básico
+# YAML linter check
 yamllint .github/dependabot.yml
 
-# 2. Verificar sintaxis con Python
+# Verify syntax with Python
 python -c "import yaml; yaml.safe_load(open('.github/dependabot.yml'))"
 
-# 3. Verificar después de commit
-# GitHub validará el archivo automáticamente
-# Errores aparecerán en:
+# Verification after commit
+# GitHub will validate the file automatically
+# Errors will appear in:
 # Repository → Insights → Dependency graph → Dependabot
 
-# 4. Test in workflow
+# Validation workflow check
 # .github/workflows/validate-dependabot.yml
 name: Validate Dependabot Config
 
@@ -1534,7 +1526,7 @@ jobs:
           EOF
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 - https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates
 - https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates
@@ -1543,18 +1535,18 @@ jobs:
 
 ---
 <a id="d3-7"></a>
-# 3.7 Custom Auto-triage Rules para Dependabot
+## 3.7 Custom Auto-triage Rules for Dependabot
 
-**Disponible con GitHub Code Security**
+**Available with GitHub Code Security**
 
-### ¿Qué son las auto-triage rules?
+### What are Auto-triage Rules?
 
-Reglas automáticas para gestionar alertas de Dependabot a escala:
-- Auto-dismiss alertas de baja prioridad
-- Auto-snooze hasta que haya patch disponible
-- Auto-trigger security updates para criterios específicos
+Automated rules to manage Dependabot alerts at scale:
+- Auto-dismiss low-priority alerts
+- Auto-snooze until a patch is available
+- Auto-trigger security updates for specific criteria
 
-### Crear reglas de auto-triage
+### Create Auto-triage Rules
 
 **Via UI:**
 
@@ -1566,7 +1558,7 @@ Repository/Organization Settings
       → [New rule]
 ```
 
-**Ejemplo 1: Descartar low severity hasta patch**
+**Example 1: Dismiss low severity without patch**
 
 ```yaml
 Rule name: Dismiss low severity without patch
@@ -1579,7 +1571,7 @@ Action: Dismiss
 Reason: "Low severity, will address when patch available"
 ```
 
-**Ejemplo 2: Auto-approve patches de desarrollo**
+**Example 2: Auto-approve dev dependency patches**
 
 ```yaml
 Rule name: Auto-approve dev dependency patches
@@ -1595,7 +1587,7 @@ Auto-merge: Yes (if CI passes)
 **Via API:**
 
 ```bash
-# Crear auto-triage rule
+# Create auto-triage rule
 gh api \
   --method POST \
   -H "Accept: application/vnd.github+json" \
@@ -1612,9 +1604,9 @@ gh api \
   -f dismissal_reason="Low severity without available patch"
 ```
 
-### Casos de uso comunes
+### Common Use Cases
 
-**1. Gestión de deuda técnica:**
+**1. Technical Debt Management:**
 
 ```yaml
 Rule: Snooze medium severity for legacy code
@@ -1625,7 +1617,7 @@ Action: Snooze for 90 days
 Reason: "Legacy code scheduled for deprecation"
 ```
 
-**2. Priorización por ecosistema:**
+**2. Prioritization by Ecosystem:**
 
 ```yaml
 Rule: High priority for production npm packages
@@ -1638,7 +1630,7 @@ Assign: @org/security-team
 Labels: P0, security, npm
 ```
 
-**3. Desarrollo vs Producción:**
+**3. Development vs Production:**
 
 ```yaml
 # Rule 1: Auto-fix dev dependencies
@@ -1654,8 +1646,7 @@ Conditions:
 Action: Create PR + notify team
 ```
 
-**Enlaces:**
-
+**Links:**
 - https://docs.github.com/en/code-security/dependabot/dependabot-auto-triage-rules/about-dependabot-auto-triage-rules
 - https://docs.github.com/en/code-security/dependabot/dependabot-auto-triage-rules/customizing-auto-triage-rules-to-prioritize-dependabot-alerts
 - https://github.blog/changelog/2024-01-24-dependabot-auto-triage-rules-and-custom-rules-public-beta/
@@ -1664,9 +1655,9 @@ Action: Create PR + notify team
 <a id="d3-8"></a>
 ## 3.8 Dependency Review Workflow
 
-### Configurar Dependency Review Action
+### Configure Dependency Review Action
 
-**Configuración básica:**
+**Basic Configuration:**
 
 ```yaml
 # .github/workflows/dependency-review.yml
@@ -1689,7 +1680,7 @@ jobs:
         uses: actions/dependency-review-action@v4
 ```
 
-### Configuración avanzada con umbrales
+**Advanced Configuration with Thresholds:**
 
 ```yaml
 # .github/workflows/dependency-review.yml
@@ -1711,13 +1702,13 @@ jobs:
       - name: 'Dependency Review'
         uses: actions/dependency-review-action@v4
         with:
-          # Fallar solo en severidad moderate o superior
+          # Fail only on moderate or higher severity
           fail-on-severity: moderate
           
-          # Fallar en scopes específicos
+          # Fail on specific scopes
           fail-on-scopes: runtime, production
           
-          # Licencias permitidas
+          # Allowed licenses
           allow-licenses: |
             MIT
             Apache-2.0
@@ -1726,36 +1717,36 @@ jobs:
             ISC
             0BSD
           
-          # Licencias denegadas
+          # Denied licenses
           deny-licenses: |
             GPL-3.0
             AGPL-3.0
             LGPL-3.0
           
-          # Comentar resumen en PR
+          # Comment summary in PR
           comment-summary-in-pr: always
           
-          # Fallar en dependencias con OpenSSF Scorecard bajo
+          # Fail on dependencies with low OpenSSF Scorecard level
           warn-on-openssf-scorecard-level: 3
           
-          # Configurar GitHub token
+          # Configure GitHub token
           github-token: ${{ secrets.GITHUB_TOKEN }}
           
-          # Base y head para comparación
+          # Base and head for comparison
           base-ref: ${{ github.event.pull_request.base.sha }}
           head-ref: ${{ github.event.pull_request.head.sha }}
 ```
 
-### Configuración de licencias
+### License Configuration
 
-**Definir políticas de licencia:**
+**Define License Policies:**
 
 ```yaml
 # .github/workflows/dependency-review.yml
 - name: 'Dependency Review with License Check'
   uses: actions/dependency-review-action@v4
   with:
-    # Permitir solo licencias open source permisivas
+    # Allow only permissive open source licenses
     allow-licenses: |
       MIT
       Apache-2.0
@@ -1764,59 +1755,59 @@ jobs:
       ISC
       Unlicense
     
-    # Denegar copyleft estricto
+    # Deny strict copyleft
     deny-licenses: |
       GPL-2.0
       GPL-3.0
       AGPL-3.0
       LGPL-3.0
     
-    # Permitir excepciones para dependencias específicas
+    # Allow exceptions for specific dependencies
     allow-dependencies-licenses: |
       pkg:npm/some-gpl-package@1.0.0, GPL-3.0
     
-    # Acción en violación de licencia
+    # License check action configuration
     license-check: true
     fail-on-severity: high
 ```
 
-**Matriz de licencias comunes:**
+**Common Licenses Matrix:**
 
-| Licencia | Tipo | Permitida corporativamente | Requiere atribución |
+| License | Type | Allowed Corporate Use | Requires Attribution |
 |----------|------|---------------------------|---------------------|
-| MIT | Permisiva | ✅ | ✅ |
-| Apache-2.0 | Permisiva | ✅ | ✅ |
-| BSD-3-Clause | Permisiva | ✅ | ✅ |
-| ISC | Permisiva | ✅ | ✅ |
+| MIT | Permissive | ✅ | ✅ |
+| Apache-2.0 | Permissive | ✅ | ✅ |
+| BSD-3-Clause | Permissive | ✅ | ✅ |
+| ISC | Permissive | ✅ | ✅ |
 | GPL-3.0 | Copyleft | ⚠️ | ✅ |
-| AGPL-3.0 | Copyleft fuerte | ❌ | ✅ |
+| AGPL-3.0 | Strong Copyleft | ❌ | ✅ |
 | Unlicense | Public Domain | ✅ | ❌ |
-| Proprietary | Propietaria | ⚠️ | Varía |
+| Proprietary | Proprietary | ⚠️ | Varies |
 
-### Configurar umbrales de severidad personalizados
+### Configure Custom Severity Thresholds
 
 ```yaml
-# Diferentes políticas por tipo de proyecto
+# Different policies per project type
 
-# Aplicación crítica de producción
+# Critical production app
 - name: 'Dependency Review - Production'
   uses: actions/dependency-review-action@v4
   with:
-    fail-on-severity: low  # Muy estricto
+    fail-on-severity: low  # Very strict
     fail-on-scopes: runtime
     
-# Proyecto interno de desarrollo
+# Internal development tool
 - name: 'Dependency Review - Dev Tool'
   uses: actions/dependency-review-action@v4
   with:
-    fail-on-severity: high  # Más relajado
+    fail-on-severity: high  # More relaxed
     fail-on-scopes: runtime, production
 ```
 
-### Integración con branch protection
+### Integration with Branch Protection
 
 ```yaml
-# Configurar en GitHub UI
+# Configure in GitHub UI
 Repository → Settings → Branches → Branch protection rules
 
 Rules for 'main':
@@ -1830,9 +1821,9 @@ Rules for 'main':
   └─ [✓] Do not allow bypassing the above settings
 ```
 
-### Casos de uso avanzados
+### Advanced Use Cases
 
-**1. Diferentes políticas por directorio:**
+**1. Different Policies by Directory:**
 
 ```yaml
 # .github/workflows/dependency-review-frontend.yml
@@ -1859,18 +1850,18 @@ allow_licenses:
   - 'Apache-2.0'
 ```
 
-**2. Monitoreo sin bloqueo (warning mode):**
+**2. Monitor Without Blocking (Warning Mode):**
 
 ```yaml
 - name: 'Dependency Review - Warn Only'
   uses: actions/dependency-review-action@v4
   with:
-    fail-on-severity: critical  # Solo critical bloquea
-    warn-only: true  # Comentar pero no fallar
+    fail-on-severity: critical  # Only critical blocks
+    warn-only: true  # Comment but do not fail
     comment-summary-in-pr: always
 ```
 
-**3. Custom output y reporting:**
+**3. Custom Output and Reporting:**
 
 ```yaml
 - name: 'Dependency Review'
@@ -1908,20 +1899,19 @@ allow_licenses:
       }
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-dependency-review
 - https://github.com/actions/dependency-review-action
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/dependency-review-enforcement
-- https://github.com/actions/dependency-review-action#configuration-options
 
 ---
 <a id="d3-9"></a>
-## 3.9 Identificar y corregir dependencias vulnerables
+## 3.9 Identify and correct vulnerable dependencies
 
-### Identificar vulnerabilidades
+### Identify Vulnerabilities
 
-**Desde Dependabot Alert:**
+**From Dependabot Alert:**
 
 ```
 Repository → Security tab → Dependabot alerts
@@ -1944,7 +1934,7 @@ Alert details:
       └─ [Dismiss] if false positive
 ```
 
-*Desde Pull Request:**
+**From Pull Request:**
 
 ```
 PR checks:
@@ -1962,103 +1952,103 @@ Details:
   └────────────────────────────────────────────────────┘
 ```
 
-### Solucionar desde Security tab
+### Resolve from Security Tab
 
-**Flujo de remediación:**
+**Remediation Flow:**
 
 ```
-1. Ir a Security → Dependabot alerts
+1. Go to Security → Dependabot alerts
    
-2. Click en alert específica
+2. Click on a specific alert
    
-3. Revisar detalles:
-   ├─ Leer descripción del CVE
-   ├─ Entender el impacto
-   └─ Verificar si el código afectado se usa
+3. Review details:
+   ├─ Read CVE description
+   ├─ Understand the impact
+   └─ Verify if the affected code is actually used
    
-4. Opciones de remediación:
+4. Remediation options:
    
-   Opción A: Aceptar PR de Dependabot
+   Option A: Accept Dependabot PR
      ├─ Click [Review security update]
-     ├─ Ver PR con cambios
-     ├─ Verificar tests pasan
+     ├─ View PR with changes
+     ├─ Verify tests pass
      ├─ [Merge pull request]
-     └─ Alert se cierra automáticamente
+     └─ Alert auto-closes
    
-   Opción B: Actualizar manualmente
+   Option B: Update manually
      ├─ Click [Dismiss alert]
      ├─ Reason: "Fix is being prepared"
-     ├─ Actualizar package.json:
+     ├─ Update package.json:
      │   "lodash": "4.17.15"  →  "lodash": "^4.17.21"
      ├─ npm update lodash
      ├─ git commit & push
-     └─ Alert se cierra automáticamente
+     └─ Alert auto-closes
    
-   Opción C: Eliminar dependencia
-     ├─ Si no es necesaria
+   Option C: Remove dependency
+     ├─ If not necessary
      ├─ npm uninstall lodash
-     ├─ Refactor código para no usar lodash
+     ├─ Refactor code to stop using lodash
      ├─ git commit & push
-     └─ Alert se cierra automáticamente
+     └─ Alert auto-closes
 ```
 
-### Solucionar desde Pull Request
+### Resolve from Pull Request
 
-**Cuando Dependency Review bloquea el PR:**
+**When Dependency Review blocks the PR:**
 
 ```
-Scenario: PR introduce axios@0.21.0 (vulnerable)
+Scenario: PR introduces axios@0.21.0 (vulnerable)
 
-1. Ver el error en PR checks:
+1. View the error in PR checks:
    ❌ Dependency Review — High severity vulnerability
 
-2. Click en "Details" del check
+2. Click on "Details" of the check
 
-3. Ver reporte:
+3. See report:
    Package: axios@0.21.0
    Vulnerability: CVE-2021-3749
    Fix: axios@0.27.0+
 
-4. Actualizar en el PR:
-   # En tu branch local
+4. Update in the PR:
+   # In your local branch
    npm update axios@^0.27.0
    git add package*.json
    git commit -m "fix: Update axios to resolve CVE-2021-3749"
    git push
 
-5. Dependency Review re-ejecuta:
+5. Dependency Review re-runs:
    ✅ Dependency Review — No vulnerabilities detected
 
-6. PR ahora puede mergearse
+6. PR can now be merged
 ```
 
-### Actualizar dependencias transitivas
+### Update Transitive Dependencies
 
-**Problema:** La vulnerabilidad está en una dependencia indirecta
+**Problem:** The vulnerability is in an indirect (transitive) dependency.
 
 ```
 Dependency tree:
   my-app
     └─ express@4.16.0
-        └─ lodash@4.17.15  ← Vulnerable (transitiva)
+        └─ lodash@4.17.15  ← Vulnerable (transitive)
 ```
 
-**Solución 1: Actualizar la dependencia padre**
+**Solution 1: Update the parent dependency**
 
 ```bash
-# Actualizar express a versión que use lodash seguro
+# Update express to a version that uses a secure lodash version
 npm update express
-# o
+# or
 npm install express@latest
 
-# Verificar árbol de dependencias
+# Verify dependency tree
 npm list lodash
 # my-app@1.0.0
 # └─ express@4.18.2
 #     └─ lodash@4.17.21  ✅ Fixed
 ```
 
-**Solución 2: Resolution/override (npm 8.3+)**
+**Solution 2: Resolution/override (npm 8.3+)**
 
 ```json
 // package.json
@@ -2068,14 +2058,14 @@ npm list lodash
   }
 }
 
-// Para yarn
+// For yarn
 {
   "resolutions": {
     "lodash": "^4.17.21"
   }
 }
 
-// Para pnpm
+// For pnpm
 {
   "pnpm": {
     "overrides": {
@@ -2085,23 +2075,23 @@ npm list lodash
 }
 ```
 
-**Solución 3: npm audit fix**
+**Solution 3: npm audit fix**
 
 ```bash
 # Auto-fix vulnerabilities
 npm audit fix
 
-# Fix aggressive (puede romper compatibilidad)
+# Aggressive fix (can break compatibility)
 npm audit fix --force
 
-# Ver qué se va a arreglar sin aplicar
+# View what will be fixed without applying
 npm audit fix --dry-run
 
-# Generar reporte
+# Generate report
 npm audit --json > audit-report.json
 ```
 
-### Testing después de actualización
+### Testing After Update
 
 ```yaml
 # .github/workflows/test-after-update.yml
@@ -2146,55 +2136,53 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Merge de Dependabot PRs
+### Merging Dependabot PRs
 
 **Best practices:**
 
 ```yaml
 ✅ DO:
-  - Review changelog de la actualización
-  - Verificar breaking changes
-  - Run tests completos
+  - Review update changelog
+  - Check for breaking changes
+  - Run full test suite
   - Check bundle size impact
-  - Verificar deprecation warnings
-  - Test en staging antes de prod
+  - Verify deprecation warnings
+  - Test in staging before production
 
 ❌ DON'T:
-  - Auto-merge major versions sin review
-  - Ignorar test failures
+  - Auto-merge major versions without review
+  - Ignore test failures
   - Skip security patches
-  - Merge sin verificar compatibility
+  - Merge without verifying compatibility
 ```
 
-**Workflow de merge:**
+**Merge Workflow:**
 
 ```bash
-# 1. Checkout PR de Dependabot
+# 1. Checkout Dependabot PR
 gh pr checkout 123
 
-# 2. Verificar cambios
+# 2. Verify changes
 git diff main HEAD
 
-# 3. Run tests localmente
+# 3. Run tests locally
 npm test
 
-# 4. Build y verificar
+# 4. Build and verify
 npm run build
 
-# 5. Si todo OK, merge
+# 5. If everything OK, merge
 gh pr merge 123 --squash --delete-branch
 
-# 6. Verificar que alert se cierra
+# 6. Verify alert closes
 gh api repos/:owner/:repo/dependabot/alerts | \
   jq '.[] | select(.state == "fixed")'
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/dependabot/working-with-dependabot/managing-pull-requests-for-dependency-updates
 - https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates
 - https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
 - https://docs.github.com/en/code-security/dependabot/working-with-dependabot/automating-dependabot-with-github-actions
 - https://docs.npmjs.com/cli/v8/commands/npm-audit
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/troubleshooting-the-dependency-graph
-
----
