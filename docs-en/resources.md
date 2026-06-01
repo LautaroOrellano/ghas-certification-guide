@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](recursos.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/recursos.md)
 ---
 
 # ADDITIONAL LINKS AND RESOURCES

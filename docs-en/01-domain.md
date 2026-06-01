@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](01-dominio.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/01-dominio.md)
 ---
 
 # DOMAIN 1: SECURITY FEATURES AND CAPABILITIES OF GHAS (15%)

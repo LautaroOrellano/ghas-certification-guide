@@ -1,4 +1,4 @@
-> 🌐 **Disponible en:** [English 🇬🇧](resources.md) | **Español 🇪🇸**
+> 🌐 **Disponible en:** [English 🇬🇧](../docs-en/resources.md) | **Español 🇪🇸**
 
 ---
 

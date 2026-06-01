@@ -5187,3 +5187,9 @@ Recursos:
 https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages#improving-the-performance-of-codeql-analysis
 </details>
 ---
+
+# ESTRATEGIA DE EXAMEN <a id="estrategia-examen"></a>
+
+> 🌐 **Disponible en:** [English 🇬🇧](stractegic-guide-for-the-ghas-exam-en.md) | **Español 🇪🇸**
+
+*Nota: La sección de Estrategia de Examen original es un bosquejo interactivo para ser continuado, pero para la consistencia del mapeo en inglés, proveemos esta sección correspondiente.*

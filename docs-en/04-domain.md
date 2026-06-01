@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](04-dominio.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/04-dominio.md)
 ---
 
 # DOMAIN 4: CONFIGURE AND USE CODE ANALYSIS WITH CODEQL (25%) {#domain4}
