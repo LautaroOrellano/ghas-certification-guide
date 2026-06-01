@@ -1,29 +1,28 @@
-> 🌐 **Disponible en:** [English 🇬🇧](05-domain.md) | **Español 🇪🇸**
-
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](05-dominio.md)
 ---
 
-# DOMINIO 5: MEJORES PRÁCTICAS, RESULTADOS Y MEDIDAS CORRECTIVAS (10%)
+# DOMAIN 5: GHAS BEST PRACTICES, RESULTS, AND REMEDIATION MEASURES (10%)
 
 <a id="d5-1"></a>
-## 5.1 Usar CVE y CWE para describir alertas
+## 5.1 Use CVE and CWE to describe alerts
 
 ### CVE (Common Vulnerabilities and Exposures)
 
-**¿Qué es un CVE?**
+**What is a CVE?**
 
-Identificador único para vulnerabilidades de seguridad conocidas públicamente.
+A unique identifier for publicly known security vulnerabilities.
 
-**Formato:**
+**Format:**
 ```
 CVE-YYYY-NNNNN
 
-Ejemplo: CVE-2021-44228 (Log4Shell)
-  ├─ CVE: Prefijo
-  ├─ 2021: Año de publicación
-  └─ 44228: Número secuencial
+Example: CVE-2021-44228 (Log4Shell)
+  ├─ CVE: Prefix
+  ├─ 2021: Year of publication
+  └─ 44228: Sequential number
 ```
 
-**Información de un CVE:**
+**CVE Information:**
 
 ```yaml
 CVE-2021-44228: Log4Shell
@@ -63,15 +62,15 @@ References:
 
 ### CWE (Common Weakness Enumeration)
 
-**¿Qué es un CWE?**
+**What is a CWE?**
 
-Categorización de tipos de debilidades de software que conducen a vulnerabilidades.
+A categorization system for software weaknesses that lead to vulnerabilities.
 
-**Ejemplos comunes:**
+**Common Examples:**
 
 ```yaml
 CWE-79: Cross-site Scripting (XSS)
-  Description: Software no sanitiza input antes de output a HTML
+  Description: Software does not sanitize input before outputting to HTML
   
   Example:
     <div>Welcome, <%= user.name %></div>
@@ -86,7 +85,7 @@ CWE-79: Cross-site Scripting (XSS)
     <div>Welcome, <%= escapeHtml(user.name) %></div>
 
 CWE-89: SQL Injection
-  Description: SQL queries construidas con concatenación de input
+  Description: SQL queries built by concatenating untrusted input
   
   Example:
     query = "SELECT * FROM users WHERE id = " + userId
@@ -105,7 +104,7 @@ CWE-89: SQL Injection
     stmt.setInt(1, userId);
 
 CWE-22: Path Traversal
-  Description: Input usado en file paths sin validación
+  Description: User input used in file paths without validation
   
   Example:
     filename = request.getParameter("file")
@@ -125,21 +124,21 @@ CWE-22: Path Traversal
     }
 
 CWE-502: Deserialization of Untrusted Data
-  Description: Deserializar objetos de fuentes no confiables
+  Description: Deserializing objects from untrusted sources
   
   Example:
     ObjectInputStream in = new ObjectInputStream(request.getInputStream());
     User user = (User) in.readObject();
     
     Attack:
-      # Payload malicioso que ejecuta código
+      # Malicious payload that executes arbitrary commands
     
   Fix:
-    # Usar JSON en lugar de serialización Java
-    # O whitelist de clases permitidas
+    # Use JSON instead of Java serialization
+    # Or use a whitelist of allowed classes
 
 CWE-798: Hard-coded Credentials
-  Description: Credenciales en el código fuente
+  Description: Credentials stored directly in the source code
   
   Example:
     String password = "admin123"
@@ -148,7 +147,7 @@ CWE-798: Hard-coded Credentials
     String password = System.getenv("DB_PASSWORD")
 ```
 
-### Top 25 CWEs más peligrosos (2024)
+### Top 25 Most Dangerous CWEs (2024)
 
 ```yaml
 1. CWE-787: Out-of-bounds Write
@@ -178,9 +177,9 @@ CWE-798: Hard-coded Credentials
 25. CWE-276: Incorrect Default Permissions
 ```
 
-### Describir una alerta usando CVE y CWE
+### Describing an Alert Using CVE and CWE
 
-**Template de descripción:**
+**Description Template:**
 
 ```markdown
 ## Alert: SQL Injection in UserController
@@ -221,18 +220,14 @@ PreparedStatement stmt = connection.prepareStatement(query);
 stmt.setInt(1, Integer.parseInt(userId));
 ResultSet rs = stmt.executeQuery();
 
-
 #### Option 2: Input Validation
 if (!userId.matches("\\d+")) {
     throw new IllegalArgumentException("Invalid user ID");
 }
 // Still use prepared statement
 
-
 #### Option 3: ORM Framework
-
 User user = entityManager.find(User.class, userId);
-
 
 ### References
 - CWE-89: https://cwe.mitre.org/data/definitions/89.html
@@ -245,7 +240,7 @@ User user = entityManager.find(User.class, userId);
 - **Target**: 2026-05-04
 ```
 
-**Enalces:**
+**Links:**
 - https://cve.mitre.org/
 - https://nvd.nist.gov/vuln
 - https://cwe.mitre.org/
@@ -255,61 +250,61 @@ User user = entityManager.find(User.class, userId);
 
 ---
 <a id="d5-2"></a>
-## 5.2 Proceso de toma de decisiones para cerrar/descartar alertas
+## 5.2 Decision-making process for closing/dismissing alerts
 
-### Framework de decisión
+### Decision Framework
 
 ```
 ┌─────────────────────────────────────────────┐
-│ NUEVA ALERTA APARECE                        │
+│ NEW ALERT APPEARS                           │
 └──────────────┬──────────────────────────────┘
                │
 ┌──────────────▼──────────────────────────────┐
-│ PASO 1: VERIFICAR AUTENTICIDAD              │
-│ ¿Es un verdadero positivo?                  │
+│ STEP 1: VERIFY AUTHENTICITY                 │
+│ Is it a true positive?                      │
 └──────────────┬──────────────────────────────┘
                │
         ┌──────┴──────┐
-       SÍ            NO
+       YES            NO
         │              │
         │    ┌─────────▼──────────────┐
         │    │ DISMISS: False Positive│
-        │    │ Documentar por qué     │
+        │    │ Document why           │
         │    └────────────────────────┘
         │
 ┌───────▼───────────────────────────────────┐
-│ PASO 2: EVALUAR EXPLOTABILIDAD            │
-│ ¿El código vulnerable está en uso?        │
-│ ¿Es accesible por usuarios/atacantes?     │
+│ STEP 2: EVALUATE EXPLOITABILITY           │
+│ Is the vulnerable code in use?            │
+│ Is it reachable by users/attackers?       │
 └──────────────┬────────────────────────────┘
                │
         ┌──────┴──────┐
-       SÍ            NO
+       YES            NO
         │              │
         │    ┌─────────▼──────────────────┐
         │    │ DISMISS: Used in tests     │
-        │    │ O bajo riesgo              │
-        │    │ Documentar contexto        │
+        │    │ OR low risk                │
+        │    │ Document context           │
         │    └────────────────────────────┘
         │
 ┌───────▼─────────────────────────────────────┐
-│ PASO 3: EVALUAR IMPACTO                     │
-│ ¿Qué es el worst-case scenario?             │
-│ ¿Qué datos están en riesgo?                 │
+│ STEP 3: EVALUATE IMPACT                     │
+│ What is the worst-case scenario?            │
+│ What data is at risk?                       │
 └──────────────┬──────────────────────────────┘
                │
 ┌──────────────▼──────────────────────────────┐
-│ PASO 4: VERIFICAR MITIGACIONES              │
-│ ¿Existen controles compensatorios?          │
+│ STEP 4: VERIFY MITIGATIONS                  │
+│ Are there compensating controls?            │
 │ - WAF rules                                 │
 │ - Network segmentation                      │
-│ - Input validation en otro layer            │
+│ - Input validation in another layer         │
 │ - Authentication/authorization checks       │
 └──────────────┬──────────────────────────────┘
                │
         ┌──────┴──────┐
-  Mitigaciones       No
-   suficientes    mitigado
+   Sufficient         No
+   mitigations     mitigations
         │              │
         ▼              ▼
 ┌─────────────┐  ┌─────────────┐
@@ -318,9 +313,9 @@ User user = entityManager.find(User.class, userId);
 └─────────────┘  └─────────────┘
 ```
 
-### Documentación de decisiones
+### Documenting Decisions
 
-**Template de documentación:**
+**Documentation Template:**
 
 ```yaml
 Alert ID: GH-SA-2024-001
@@ -334,7 +329,7 @@ Context:
   - CWE: CWE-89
 
 Analysis:
-  1. Explotabilidad:
+  1. Exploitability:
      - Code is in admin-only reporting feature
      - Requires authenticated admin user
      - Admin panel is IP-restricted to corp network
@@ -374,9 +369,9 @@ Approved By:
 Review Date: 2027-04-27
 ```
 
-### Decisión basada en datos
+### Data-driven Decisions
 
-**Métricas a considerar:**
+**Metrics to Consider:**
 
 ```yaml
 Technical Metrics:
@@ -394,7 +389,7 @@ Business Metrics:
   - Compliance: PCI-DSS, GDPR
 
 Risk Metrics:
-  - Likelihood: Medium (some barriers)
+  - Likelihood: Medium (some barriers exist)
   - Impact: High (data breach)
   - Detection: Medium (some monitoring)
   - Response: Fast (incident response ready)
@@ -412,7 +407,7 @@ Decision:
   - Compliance requirements
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/managing-code-scanning-alerts-for-your-repository#dismissing-or-deleting-alerts
 - https://docs.github.com/en/code-security/secret-scanning/managing-alerts-from-secret-scanning
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
@@ -422,55 +417,55 @@ Decision:
 <a id="d5-3"></a>
 ## 5.3 CodeQL query suites
 
-### Query suites predeterminados
+### Default Query Suites
 
 ```yaml
 security-and-quality:
-  Description: Todas las queries de seguridad y calidad
-  Use case: Análisis comprehensivo
+  Description: All security and quality queries
+  Use case: Comprehensive analysis
   Queries: ~300
   Runtime: 15-30 min
-  Recomendado para: CI regular
+  Recommended for: Regular CI
 
 security-extended:
-  Description: Todas las queries de seguridad (más cobertura)
+  Description: All security queries (more coverage)
   Use case: Security-focused analysis
   Queries: ~200
   Runtime: 10-20 min
-  Recomendado para: PRs, security reviews
+  Recommended for: PRs, security reviews
 
 security:
-  Description: Queries de seguridad core (menos false positives)
+  Description: Core security queries (low false positives)
   Use case: Quick security check
   Queries: ~100
   Runtime: 5-10 min
-  Recomendado para: Fast feedback
+  Recommended for: Fast feedback
 
 code-scanning:
-  Description: Optimizado para code scanning (balance)
+  Description: Optimized for code scanning (balanced)
   Use case: GitHub Code Scanning default
   Queries: ~150
   Runtime: 8-15 min
-  Recomendado para: Default setup
+  Recommended for: Default setup
 ```
 
-### Comparación de query suites
+### Comparison of Query Suites
 
 | Suite | Queries | Security | Quality | False Positives | Runtime |
 |-------|---------|----------|---------|-----------------|---------|
-| **security** | ~100 | ✅✅✅ | ❌ | Bajo | Rápido |
-| **security-extended** | ~200 | ✅✅✅✅ | ❌ | Medio | Medio |
-| **security-and-quality** | ~300 | ✅✅✅ | ✅✅✅ | Medio-Alto | Lento |
-| **code-scanning** | ~150 | ✅✅✅ | ✅ | Bajo-Medio | Medio |
+| **security** | ~100 | ✅✅✅ | ❌ | Low | Fast |
+| **security-extended** | ~200 | ✅✅✅✅ | ❌ | Medium | Medium |
+| **security-and-quality** | ~300 | ✅✅✅ | ✅✅✅ | Medium-High | Slow |
+| **code-scanning** | ~150 | ✅✅✅ | ✅ | Low-Medium | Medium |
 
-### Configurar query suite
+### Configure Query Suite
 
 ```yaml
 # Default setup
 - name: Initialize CodeQL
   uses: github/codeql-action/init@v3
   with:
-    queries: security-extended  # Suite recomendado
+    queries: security-extended  # Recommended suite
 
 # Multiple suites
 - name: Initialize CodeQL
@@ -478,7 +473,7 @@ code-scanning:
   with:
     queries: |
       security-extended
-      +security-and-quality  # '+' agrega queries
+      +security-and-quality  # '+' adds queries
 
 # Custom queries
 - name: Initialize CodeQL
@@ -490,7 +485,7 @@ code-scanning:
       company/custom-queries@main
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/codeql-query-suites
 - https://codeql.github.com/docs/codeql-cli/creating-codeql-query-suites/
 - https://github.com/github/codeql/tree/main/suites
@@ -498,82 +493,82 @@ code-scanning:
 
 ---
 <a id="d5-4"></a>
-## 5.4 Cómo CodeQL analiza el código
+## 5.4 How CodeQL analyzes code
 
-### Lenguajes compilados vs interpretados
+### Compiled vs Interpreted Languages
 
-**Lenguajes compilados (Java, C++, C#):**
+**Compiled Languages (Java, C++, C#, Go):**
 
 ```
-1. EXTRACCIÓN:
-   ├─ CodeQL intercepta el compilador
-   ├─ Captura AST (Abstract Syntax Tree)
-   ├─ Captura type information
-   ├─ Captura control flow
-   └─ Genera CodeQL database
+1. EXTRACTION:
+   ├─ CodeQL intercepts the compiler
+   ├─ Captures AST (Abstract Syntax Tree)
+   ├─ Captures type information
+   ├─ Captures control flow
+   └─ Generates CodeQL database
 
-2. CONSTRUCCIÓN DE DATABASE:
+2. DATABASE CONSTRUCTION:
    ├─ Source files → Parse → AST
    ├─ AST → Semantic analysis → Type info
    ├─ Control flow graph
    ├─ Data flow graph
    └─ Call graph
 
-3. ANÁLISIS:
+3. ANALYSIS:
    ├─ Load CodeQL queries
    ├─ Execute queries on database
    ├─ Find patterns (data flow, taint)
    └─ Generate alerts
 
-Ventajas:
-  ✅ Type information precisa
-  ✅ Control flow completo
-  ✅ Call graph exacto
-  ✅ Menos false positives
+Advantages:
+  ✅ Precise type information
+  ✅ Complete control flow
+  ✅ Exact call graph
+  ✅ Fewer false positives
 
-Desventajas:
-  ❌ Requiere build
-  ❌ Más lento
-  ❌ Más complejo setup
+Disadvantages:
+  ❌ Requires a build step
+  ❌ Slower
+  ❌ More complex setup
 ```
 
-**Lenguajes interpretados (JavaScript, Python):**
+**Interpreted Languages (JavaScript, Python, Ruby):**
 
 ```
-1. EXTRACCIÓN:
-   ├─ Parse source files directamente
-   ├─ No requiere build
-   ├─ Infiere types (heurísticas)
-   └─ Genera CodeQL database
+1. EXTRACTION:
+   ├─ Parse source files directly
+   ├─ No build required
+   ├─ Infer types (heuristics)
+   └─ Generates CodeQL database
 
-2. CONSTRUCCIÓN DE DATABASE:
+2. DATABASE CONSTRUCTION:
    ├─ Source files → Parse → AST
    ├─ Type inference (best effort)
-   ├─ Control flow (basado en sintaxis)
+   ├─ Control flow (syntax-based)
    ├─ Data flow (conservative analysis)
-   └─ Call graph (puede ser incompleto)
+   └─ Call graph (may be incomplete)
 
-3. ANÁLISIS:
+3. ANALYSIS:
    ├─ Load CodeQL queries
    ├─ Execute queries on database
    ├─ Handle dynamic features
    └─ Generate alerts
 
-Ventajas:
+Advantages:
   ✅ No build required
-  ✅ Setup simple
-  ✅ Análisis rápido
-  ✅ Bueno para scripts
+  ✅ Simple setup
+  ✅ Fast analysis
+  ✅ Good for scripts
 
-Desventajas:
-  ❌ Type info imprecisa
-  ❌ Más false positives
-  ❌ Puede perder flows dinámicos
+Disadvantages:
+  ❌ Imprecise type info
+  ❌ Higher false positives
+  ❌ May miss dynamic flows
 ```
 
-### Ejemplo de análisis
+### Analysis Example
 
-**Código vulnerable:**
+**Vulnerable Code:**
 
 ```javascript
 // app.js
@@ -590,7 +585,7 @@ app.get('/user', (req, res) => {
 });
 ```
 
-**CodeQL analysis:**
+**CodeQL Analysis:**
 
 ```
 1. PARSE:
@@ -630,7 +625,7 @@ app.get('/user', (req, res) => {
      Severity: High
 ```
 
-**Enlaces:**
+**Links:**
 - https://codeql.github.com/docs/codeql-overview/about-codeql/
 - https://codeql.github.com/docs/codeql-language-guides/basic-query-for-javascript-analysis/
 - https://codeql.github.com/docs/writing-codeql-queries/about-data-flow-analysis/
@@ -639,7 +634,7 @@ app.get('/user', (req, res) => {
 
 ---
 <a id="d5-5"></a>
-## 5.5 Roles y responsabilidades
+## 5.5 Roles and responsibilities
 
 ### Development Team
 
@@ -761,7 +756,7 @@ KPIs:
   - Time allocated to security: 10-15% of sprint
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/organizations/managing-user-access-to-your-organizations-repositories/repository-roles-for-an-organization
 - https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-security-managers-in-your-organization
 - https://docs.github.com/en/code-security/adopting-github-advanced-security-at-scale/introduction-to-adopting-github-advanced-security-at-scale
@@ -769,34 +764,21 @@ KPIs:
 
 ---
 <a id="d5-6"></a>
-## 5.6 Severity thresholds para PR checks
+## 5.6 Severity thresholds for PR checks
 
-### Configurar thresholds
+### Configure Thresholds
 
-**Default behavior:**
-
-```yaml
-# Sin configuración, code scanning REPORTA pero no BLOQUEA
-# Para bloquear, necesitas:
-
-1. Configurar severity threshold en workflow
-2. Configurar branch protection rules
-```
-
-**Configuración en workflow:**
+**Default Behavior:**
 
 ```yaml
-# .github/workflows/codeql.yml
-- name: Perform CodeQL Analysis
-  uses: github/codeql-action/analyze@v3
-  with:
-    category: "/language:${{matrix.language}}"
-    
-    # No bloquea por default
-    # Para bloquear, usar GitHub branch protection
+# Without configuration, code scanning REPORTS but does NOT BLOCK
+# To block, you need:
+
+1. Configure severity threshold in workflow
+2. Configure branch protection rules
 ```
 
-**Branch protection rules:**
+**Branch Protection Rules:**
 
 ```
 Repository → Settings → Branches → Branch protection rule
@@ -810,13 +792,13 @@ Protect matching branches: main
     ✓ CodeQL / Analyze (javascript)
     ✓ CodeQL / Analyze (python)
 
-Configurar qué bloquea:
+Configure what blocks:
   - Critical/High: Block merge
   - Medium: Warning (no block)
   - Low: Info only
 ```
 
-**Custom threshold con filtros:**
+**Custom Threshold with Filters:**
 
 ```yaml
 # .github/workflows/codeql-check.yml
@@ -846,7 +828,7 @@ jobs:
                -f name=${{ github.event.repository.name }} \
                -F pr=${{ github.event.pull_request.number }}
           
-          # Contar alerts por severidad
+          # Count alerts by severity
           critical=$(gh api /repos/${{ github.repository }}/code-scanning/alerts \
             --jq '[.[] | select(.state=="open" and .rule.security_severity_level=="critical")] | length')
           
@@ -869,7 +851,7 @@ jobs:
           exit 1
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches
 - https://docs.github.com/en/code-security/code-scanning/managing-code-scanning-alerts/triaging-code-scanning-alerts-in-pull-requests
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
@@ -877,26 +859,26 @@ jobs:
 
 ---
 <a id="d5-7"></a>
-## 5.7 Filtros y clasificación para priorización
+## 5.7 Filters and classification for prioritization
 
-### Secret scanning filters
+### Secret Scanning Filters
 
-**Filtrar por validez:**
+**Filter by Validity:**
 
 ```yaml
-# En Security tab
+# In Security tab
 Filters:
-  - Validity: Active  # ← MÁXIMA PRIORIDAD
+  - Validity: Active  # ← MAXIMUM PRIORITY
   - Validity: Inactive
   - Validity: Unknown
 
-Workflow de priorización:
+Prioritization Workflow:
   1. Active secrets: Fix NOW (< 1 hour)
   2. Unknown validity: Investigate and fix (< 24 hours)
   3. Inactive secrets: Clean up code (< 7 days)
 ```
 
-**Filtrar por tipo:**
+**Filter by Type:**
 
 ```yaml
 Priority 1 (Critical):
@@ -918,9 +900,9 @@ Priority 3 (Medium):
   - Limited-scope tokens
 ```
 
-### Dependabot filters
+### Dependabot Filters
 
-**Filtrar por severidad + scope:**
+**Filter by Severity + Scope:**
 
 ```yaml
 Priority 1:
@@ -948,12 +930,12 @@ Defer:
   - Fix: Next release cycle
 ```
 
-### Code scanning filters
+### Code Scanning Filters
 
-**Múltiples dimensiones:**
+**Multiple Dimensions:**
 
 ```yaml
-# En Security → Code scanning
+# In Security → Code scanning
 
 Filters:
   Severity:
@@ -983,7 +965,7 @@ Filters:
     - feature/*: Medium priority
 ```
 
-### Sorting strategies
+### Sorting Strategies
 
 ```yaml
 Sort by:
@@ -1001,7 +983,7 @@ Example query:
 Result: Critical & high alerts in main, newest first
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/security-overview/filtering-alerts-in-security-overview
 - https://docs.github.com/en/code-security/secret-scanning/managing-alerts-from-secret-scanning/evaluating-alerts
 - https://docs.github.com/en/code-security/dependabot/dependabot-alerts/viewing-and-updating-dependabot-alerts
@@ -1009,15 +991,15 @@ Result: Critical & high alerts in main, newest first
 
 ---
 <a id="d5-8"></a>
-## 5.8 CodeQL y Dependency Review con rulesets
+## 5.8 CodeQL and Dependency Review with rulesets
 
-### Repository rulesets
+### Repository Rulesets
 
-**¿Qué son?**
+**What are they?**
 
-Nueva forma de configurar branch protection y policies (sucesor de branch protection rules).
+The new way to configure branch protections and policies (successor to branch protection rules).
 
-**Crear ruleset para code security:**
+**Create Ruleset for Code Security:**
 
 ```
 Repository → Settings → Rules → Rulesets
@@ -1047,7 +1029,7 @@ Rules:
   ✓ Require signed commits
 ```
 
-**Aplicar rulesets a múltiples repos:**
+**Apply Rulesets to Multiple Repositories:**
 
 ```yaml
 # Organization-level ruleset
@@ -1071,7 +1053,7 @@ Bypass:
     - From: Security team
 ```
 
-### CodeQL con rulesets
+### CodeQL with Rulesets
 
 **Enforcement:**
 
@@ -1092,7 +1074,7 @@ Merge allowed if:
   ✅ Medium/low alerts present (warning)
 ```
 
-### Dependency Review con rulesets
+### Dependency Review with Rulesets
 
 ```yaml
 Required checks:
@@ -1110,7 +1092,7 @@ Merge allowed if:
   ✅ All licenses approved
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
 - https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/creating-rulesets-for-a-repository
 - https://docs.github.com/en/organizations/managing-organization-settings/managing-rulesets-for-repositories-in-your-organization
@@ -1118,28 +1100,28 @@ Merge allowed if:
 
 ---
 <a id="d5-9"></a>
-## 5.9 Configurar escaneo temprano
+## 5.9 Configure early scanning
 
-### Code scanning en PR
+### Code Scanning in PRs
 
-**Beneficios:**
+**Benefits:**
 
 ```yaml
-✅ Catch vulnerabilities antes de merge
-✅ Developer context (el código está fresco)
-✅ Feedback inmediato
+✅ Catch vulnerabilities before merge
+✅ Developer context (code is fresh)
+✅ Immediate feedback
 ✅ Prevent security debt
 ✅ Educate developers
 ```
 
-**Configuración:**
+**Configuration:**
 
 ```yaml
 # .github/workflows/codeql.yml
 name: "CodeQL"
 
 on:
-  pull_request:  # ← KEY: Escanea en PRs
+  pull_request:  # ← KEY: Scans on PRs
     branches: [main, develop]
     paths:
       - '**.js'
@@ -1152,7 +1134,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Full history para mejor análisis
+          fetch-depth: 0  # Full history for better analysis
       
       - uses: github/codeql-action/init@v3
         with:
@@ -1166,9 +1148,9 @@ jobs:
           category: "/language:${{matrix.language}}/pr:${{github.event.pull_request.number}}"
 ```
 
-### Secret scanning push protection
+### Secret Scanning Push Protection
 
-**Habilitar:**
+**Enablement:**
 
 ```yaml
 Repository Settings
@@ -1176,13 +1158,13 @@ Repository Settings
   → Secret scanning
       └─ [✓] Push protection
 
-Organization Settings (aplicar a todos)
+Organization Settings (apply to all)
   → Code security
   → Secret scanning
       └─ [✓] Enable push protection for all repositories
 ```
 
-**Developer experience:**
+**Developer Experience:**
 
 ```bash
 $ git push origin feature-branch
@@ -1205,16 +1187,16 @@ To github.com:org/repo.git
  ! [remote rejected] feature-branch -> feature-branch (push declined due to secret)
 ```
 
-### Dependency Review en PR
+### Dependency Review in PRs
 
-**Configuración:**
+**Configuration:**
 
 ```yaml
 # .github/workflows/dependency-review.yml
 name: 'Dependency Review'
 
 on: 
-  pull_request:  # ← Ejecuta en TODOS los PRs
+  pull_request:  # ← Runs on ALL PRs
     branches: [main]
 
 permissions:
@@ -1230,10 +1212,10 @@ jobs:
       - uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: moderate  # Block medium+
-          comment-summary-in-pr: always  # Siempre comentar
+          comment-summary-in-pr: always  # Always comment
 ```
 
-**PR experience:**
+**PR Experience:**
 
 ```
 Pull Request #123
@@ -1256,34 +1238,9 @@ Pull Request #123
       This PR cannot be merged until vulnerabilities are resolved.
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/configuring-advanced-setup-for-code-scanning#configuring-frequency
 - https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection
 - https://docs.github.com/en/code-security/secret-scanning/using-advanced-secret-scanning-and-push-protection-features/push-protection-for-repositories-and-organizations
 - https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/configuring-dependency-review
 - https://github.com/actions/dependency-review-action
-
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

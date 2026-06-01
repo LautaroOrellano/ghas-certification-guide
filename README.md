@@ -1,3 +1,7 @@
+> 🌐 **Disponible en:** [English 🇬🇧](README-en.md) | **Español 🇪🇸**
+
+---
+
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20371948.svg)](https://doi.org/10.5281/zenodo.20371948)
 
 # GUÍA COMPLETA CERTIFICACIÓN GITHUB ADVANCED SECURITY (GHAS)

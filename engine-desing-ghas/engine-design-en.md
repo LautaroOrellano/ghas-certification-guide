@@ -1,74 +1,74 @@
-> 🌐 **Disponible en:** [English 🇬🇧](engine-design-en.md) | **Español 🇪🇸**
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](engine-design.md)
 
 ---
 
 ```Shell
 GitHub Security Ecosystem
 │
-├── 🔧 Base de datos / contexto
+├── 🔧 Database / Context
 │   └── Dependency Graph
-│       ├─ Detecta dependencias del repo
-│       ├─ Soporta:
+│       ├─ Detects repo dependencies
+│       ├─ Supports:
 │       │   ├─ Dependabot Alerts
 │       │   └─ Dependency Review
-│       └─ ❗ Sin esto → Dependabot pierde funcionalidad clave
+│       └─ ❗ Without this → Dependabot loses core functionality
 │
-├── 🛡️ Detection Layer (detección de vulnerabilidades)
+├── 🛡️ Detection Layer (vulnerability detection)
 │
 │   ├── Code Scanning
 │   │   └── CodeQL
-│   │       ├─ Analiza código estático
-│   │       ├─ Usa data flow / taint tracking
-│   │       └─ Detecta:
+│   │       ├─ Analyzes static code
+│   │       ├─ Uses data flow / taint tracking
+│   │       └─ Detects:
 │   │           ├─ SQL Injection
 │   │           ├─ XSS
-│   │           └─ Bugs de seguridad
+│   │           └─ Security bugs
 │
 │   ├── Dependabot
-│   │   ├─ Requiere: Dependency Graph
-│   │   ├─ Usa: GitHub Advisory Database
-│   │   ├─ Detecta:
-│   │   │   └─ Vulnerabilidades en librerías
-│   │   └─ Funcionalidades:
+│   │   ├─ Requires: Dependency Graph
+│   │   ├─ Uses: GitHub Advisory Database
+│   │   ├─ Detects:
+│   │   │   └─ Vulnerabilities in libraries
+│   │   └─ Features:
 │   │       ├─ Dependabot Alerts
 │   │       ├─ Dependabot Security Updates
 │   │       └─ Dependabot Version Updates
 │
 │   ├── Secret Scanning
-│   │   ├─ Detecta secretos en código
-│   │   ├─ Usa:
+│   │   ├─ Detects secrets in code
+│   │   ├─ Uses:
 │   │   │   ├─ Regex patterns
-│   │   │   └─ Validadores de partners
+│   │   │   └─ Partner validators
 │   │   └─ Features:
 │   │       ├─ Push Protection
 │   │       ├─ Custom patterns (GHAS)
 │   │       └─ Partner alerts
 │
 │   └── Dependency Review
-│       ├─ Analiza PRs
-│       └─ Detecta nuevas dependencias vulnerables
+│       ├─ Analyzes PRs
+│       └─ Detects new vulnerable dependencies
 │
 ├── ⚙️ Execution Layer
 │
 │   ├── GitHub Actions
-│   │   ├─ Ejecuta:
+│   │   ├─ Runs:
 │   │   │   ├─ CodeQL scans
 │   │   │   └─ Dependency review
-│   │   └─ ❗ Sin Actions:
-│   │       ├─ No hay Code Scanning automático
-│   │       └─ No hay Dependency Review
-│
+│   │   └─ ❗ Without Actions:
+│   │       ├─ No automatic Code Scanning
+│   │       └─ No Dependency Review
+│   │
 │   └── Webhooks / API
-│       └─ Integración externa (SIEM, dashboards)
+│       └─ External integration (SIEM, dashboards)
 │
-├── 🚨 Alerts Layer (resultado)
+├── 🚨 Alerts Layer (result)
 │
 │   ├── Code Scanning Alerts
 │   ├── Dependabot Alerts
 │   ├── Secret Scanning Alerts
 │   └── Dependency Review warnings
 │
-│   👉 Todas alimentan:
+│   👉 All feed into:
 │       └─ Security Overview
 │
 ├── 📊 Visualization & Governance
@@ -79,57 +79,18 @@ GitHub Security Ecosystem
 │   │   └─ Trends
 │   │
 │   └── Audit Log
-│       ├─ Eventos (bypass, cambios, accesos)
-│       └─ Base para SIEM
+│       ├─ Events (bypass, changes, access)
+│       └─ Base for SIEM
 │
 ├── 🔔 Notification Layer
 │
 │   ├─ Emails
 │   ├─ GitHub UI alerts
 │   ├─ PR comments
-│   └─ Integraciones (Slack, SIEM)
+│   └─ Integrations (Slack, SIEM)
 │
 └── 🧠 Governance Layer
-    ├─ SLAs (tiempo de remediación)
+    ├─ SLAs (remediation time)
     ├─ Accountability (assignees / CODEOWNERS)
-    └─ Policies de seguridad
+    └─ Security policies
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

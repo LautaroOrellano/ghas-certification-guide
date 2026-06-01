@@ -1,18 +1,17 @@
-> 🌐 **Disponible en:** [English 🇬🇧](04-domain.md) | **Español 🇪🇸**
-
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](04-dominio.md)
 ---
 
-# DOMINIO 4: CONFIGURAR Y USAR EL ANÁLISIS DE CÓDIGO CON CODEQL (25%) {#dominio4}
+# DOMAIN 4: CONFIGURE AND USE CODE ANALYSIS WITH CODEQL (25%) {#domain4}
 
 <a id="d4-1"></a>
-## 4.1 Herramientas de escaneo de terceros
+## 4.1 Third-party scanning tools
 
-### Habilitar code scanning para terceros
+### Enable Code Scanning for Third-Party Tools
 
-**GitHub soporta herramientas SARIF-compatible:**
+**GitHub supports SARIF-compatible tools:**
 
 ```yaml
-Herramientas compatibles:
+Compatible tools:
   ├─ Snyk
   ├─ SonarQube/SonarCloud
   ├─ Checkmarx
@@ -20,10 +19,10 @@ Herramientas compatibles:
   ├─ Fortify
   ├─ Semgrep
   ├─ ESLint (via SARIF formatter)
-  └─ Cualquier tool que genere SARIF
+  └─ Any tool that generates SARIF
 ```
 
-**Habilitar code scanning (generic):**
+**Enable Code Scanning (generic):**
 
 ```
 Repository → Settings → Code security and analysis
@@ -31,26 +30,26 @@ Repository → Settings → Code security and analysis
       └─ [Set up] → Third-party
 ```
 
-### Comparación CodeQL vs Terceros
+### Comparison: CodeQL vs Third-Party
 
-**Tabla comparativa:**
+**Comparative Table:**
 
-| Aspecto | CodeQL (GitHub) | Herramienta tercera |
+| Aspect | CodeQL (GitHub) | Third-Party Tool |
 |---------|----------------|---------------------|
-| **Setup** | 1-click (default setup) | Requiere configuración |
-| **Cost** | Incluido en GHAS | Licencia aparte |
-| **Hosting** | GitHub-hosted | Self-hosted o SaaS |
-| **Languages** | 15+ lenguajes | Varía por tool |
-| **Integration** | Nativa | Via SARIF upload |
-| **Queries** | Open source | Propietarias |
-| **Customization** | Alta (queries custom) | Varía |
-| **Speed** | Minutos-horas | Varía |
-| **False positives** | Bajo-medio | Varía |
-| **Sarif support** | Sí | Sí |
+| **Setup** | 1-click (default setup) | Requires configuration |
+| **Cost** | Included in GHAS | Separate licensing |
+| **Hosting** | GitHub-hosted | Self-hosted or SaaS |
+| **Languages** | 15+ languages | Varies by tool |
+| **Integration** | Native | Via SARIF upload |
+| **Queries** | Open source | Proprietary |
+| **Customization** | High (custom queries) | Varies |
+| **Speed** | Minutes to hours | Varies |
+| **False Positives** | Low-medium | Varies |
+| **SARIF Support** | Yes | Yes |
 
-### Pasos para usar CodeQL
+### Steps to Use CodeQL
 
-**Default setup (recomendado para mayoría):**
+**Default Setup (recommended for most):**
 
 ```
 1. Repository → Settings → Code security
@@ -59,30 +58,30 @@ Repository → Settings → Code security and analysis
 4. Select query suite (default: security-extended)
 5. Click [Enable CodeQL]
 
-✅ Done! GitHub configura todo automáticamente.
+✅ Done! GitHub automatically configures everything.
 ```
 
-**Advanced setup (para customización):**
+**Advanced Setup (for customization):**
 
 ```
 1. Repository → Security → Code scanning
 2. Click [Set up code scanning]
 3. Select [Advanced]
-4. GitHub crea workflow template:
+4. GitHub creates workflow template:
    .github/workflows/codeql.yml
 5. Customize workflow (queries, schedules, etc.)
 6. Commit workflow
-7. CodeQL ejecuta automáticamente
+7. CodeQL runs automatically
 ```
 
-### Pasos para usar herramienta tercera
+### Steps to Use a Third-Party Tool
 
-**Ejemplo con Snyk:**
+**Example with Snyk:**
 
 ```
-1. Registrar en Snyk
-2. Conectar repository
-3. Configurar workflow:
+1. Register on Snyk
+2. Connect repository
+3. Configure workflow:
 
 # .github/workflows/snyk.yml
 name: Snyk Security Scan
@@ -110,12 +109,12 @@ jobs:
         with:
           sarif_file: snyk.sarif
 
-4. Results appear in Security tab
+4. Results appear in the Security tab
 ```
 
-### Comparación de implementación
+### Implementation Comparison
 
-**CodeQL en GitHub Actions:**
+**CodeQL on GitHub Actions:**
 
 ```yaml
 # .github/workflows/codeql.yml
@@ -160,7 +159,7 @@ jobs:
           category: "/language:${{matrix.language}}"
 ```
 
-**CodeQL en CI tercero (Jenkins):**
+**CodeQL on Third-Party CI (Jenkins):**
 
 ```groovy
 // Jenkinsfile
@@ -202,15 +201,15 @@ pipeline {
 }
 ```
 
-### Upload SARIF desde terceros
+### Upload SARIF from Third-Party Tools
 
-**Via API endpoint:**
+**Via API Endpoint:**
 
 ```bash
-# Generar SARIF con herramienta tercera
+# Generate SARIF with third-party tool
 tool-scan --output=results.sarif
 
-# Comprimir SARIF (requerido)
+# Compress SARIF (required)
 gzip results.sarif
 
 # Upload via API
@@ -236,7 +235,7 @@ curl -X POST \
     category: my-custom-tool
 ```
 
-**Formato SARIF:**
+**SARIF Format:**
 
 ```json
 {
@@ -280,7 +279,7 @@ curl -X POST \
 }
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/about-integration-with-code-scanning
 - https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/uploading-a-sarif-file-to-github
 - https://docs.github.com/en/code-security/code-scanning/integrating-with-code-scanning/sarif-support-for-code-scanning
@@ -289,49 +288,49 @@ curl -X POST \
 
 ---
 <a id="d4-2"></a>
-## 4.2 Describir y habilitar code scanning
+## 4.2 Describe and enable code scanning
 
-### Rol en el SDLC
+### Role in the SDLC
 
 ```
 ┌──────────────────────────────────────────────────┐
-│ CODE SCANNING EN EL CICLO DE DESARROLLO          │
+│ CODE SCANNING IN THE DEVELOPMENT CYCLE           │
 └──────────────────────────────────────────────────┘
 
 1. DEVELOPMENT
-   ├─ CodeQL CLI local (pre-commit)
+   ├─ Local CodeQL CLI (pre-commit)
    ├─ IDE extensions (real-time)
    └─ Pre-push hooks
 
 2. COMMIT & PUSH
-   ├─ CodeQL ejecuta en PR
-   ├─ Results en <15 min
-   └─ Alerts en PR checks
+   ├─ CodeQL runs in PR
+   ├─ Results in <15 min
+   └─ Alerts in PR checks
 
 3. CODE REVIEW
-   ├─ Reviewer ve CodeQL alerts
+   ├─ Reviewer sees CodeQL alerts
    ├─ Discuss vulnerabilities in-line
-   └─ Block merge si critical
+   └─ Block merge if critical
 
 4. MERGE TO MAIN
-   ├─ Full scan en main branch
-   ├─ Baseline establecido
-   └─ Tracking de security debt
+   ├─ Full scan on main branch
+   ├─ Baseline established
+   └─ Security debt tracking
 
 5. SCHEDULED SCANS
    ├─ Weekly full scan
-   ├─ Detect new vulnerabilities en código existente
+   ├─ Detect new vulnerabilities in existing code
    └─ Monitor third-party advisories
 
 6. RELEASE
-   ├─ Verify 0 critical/high antes de deploy
+   ├─ Verify 0 critical/high issues before deploy
    ├─ Generate security report
-   └─ SBOM incluye code scan results
+   └─ SBOM includes code scan results
 ```
 
-### Frecuencia de workflows
+### Frequency of Workflows
 
-**On Push (cada commit):**
+**On Push (every commit):**
 
 ```yaml
 on:
@@ -339,17 +338,17 @@ on:
     branches: [main, develop]
 
 # Pros:
-✅ Detección inmediata de bugs
+✅ Immediate bug detection
 ✅ Fast feedback
 ✅ Prevents accumulation of issues
 
 # Cons:
-❌ Consume GitHub Actions minutes
-❌ Puede ser lento en repos grandes
-❌ Muchos scans si equipo grande
+❌ Consumes GitHub Actions minutes
+❌ Can be slow in large repos
+❌ Many scans if team is large
 ```
 
-**On Pull Request (recomendado):**
+**On Pull Request (recommended):**
 
 ```yaml
 on:
@@ -357,78 +356,78 @@ on:
     branches: [main]
 
 # Pros:
-✅ Catch antes de merge
+✅ Catch issues before merge
 ✅ Code review context
-✅ Menos scans que on-push
+✅ Fewer scans than on-push
 ✅ Required status check
 
 # Cons:
-❌ No escanea main continuamente
-❌ False sense of security si no PRs
+❌ Does not scan main continuously
+❌ False sense of security if no PRs are used
 ```
 
-**Scheduled (complementario):**
+**Scheduled (complementary):**
 
 ```yaml
 on:
   schedule:
-    - cron: '0 0 * * 1'  # Lunes 00:00
+    - cron: '0 0 * * 1'  # Monday 00:00
 
 # Pros:
-✅ Detecta nuevas vulnerabilidades en código existente
-✅ Nuevas queries de CodeQL
-✅ Predecible consumption de minutes
-✅ No afecta developer flow
+✅ Detects new vulnerabilities in existing code
+✅ New CodeQL queries are included
+✅ Predictable minutes consumption
+✅ Does not affect developer flow
 
 # Cons:
-❌ Feedback tardío
-❌ Puede acumular issues
+❌ Late feedback
+❌ Can accumulate issues
 ```
 
-**Comparación de frecuencias:**
+**Comparison of Frequencies:**
 
-| Trigger | Cuando ejecuta | Use case | Minutes consumption |
+| Trigger | When it runs | Use case | Minutes consumption |
 |---------|---------------|----------|---------------------|
-| **push** | Cada commit | CI/CD rápido | Alto |
-| **pull_request** | En PRs | Gate para merge | Medio |
-| **schedule** | Semanalmente | Mantenimiento | Bajo |
-| **workflow_dispatch** | Manual | Testing, audits | Mínimo |
-| **push + schedule** | Ambos | Híbrido (recomendado) | Medio-alto |
+| **push** | Every commit | Fast CI/CD | High |
+| **pull_request** | In PRs | Gate for merge | Medium |
+| **schedule** | Weekly | Maintenance | Low |
+| **workflow_dispatch** | Manual | Testing, audits | Minimum |
+| **push + schedule** | Both | Hybrid (recommended) | Medium-high |
 
-### Seleccionar eventos trigger
+### Select Trigger Events
 
-**Pattern 1: Desarrollo activo**
+**Pattern 1: Active Development**
 
 ```yaml
-# Para equipos grandes, desarrollo rápido
+# For large teams, fast development
 on:
   pull_request:
     branches: [main]
     paths:
       - '**.java'
       - '**.js'
-      - '!tests/**'  # Excluir tests
+      - '!tests/**'  # Exclude tests
   schedule:
     - cron: '0 2 * * *'  # Daily 2 AM
 ```
 
-**Pattern 2: Proyecto crítico**
+**Pattern 2: Critical Project**
 
 ```yaml
-# Máxima seguridad
+# Maximum security
 on:
   push:
     branches: [main, release/*]
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 0 * * 1,4'  # Lunes y Jueves
+    - cron: '0 0 * * 1,4'  # Monday and Thursday
 ```
 
-**Pattern 3: Open source público**
+**Pattern 3: Public Open Source**
 
 ```yaml
-# Balance seguridad y minutes
+# Balance security and minutes
 on:
   pull_request:
     branches: [main]
@@ -437,28 +436,28 @@ on:
     paths:
       - 'src/**'
   schedule:
-    - cron: '0 0 * * 0'  # Domingo
+    - cron: '0 0 * * 0'  # Sunday
 ```
 
-**Trigger por paths específicos:**
+**Trigger by Specific Paths:**
 
 ```yaml
 on:
   push:
     branches: [main]
     paths:
-      # Incluir
+      # Include
       - 'src/**'
       - 'lib/**'
-      # Excluir
+      # Exclude
       - '!docs/**'
       - '!**.md'
       - '!tests/**'
 ```
 
-### Editar workflow de CodeQL
+### Edit CodeQL Workflow
 
-**Template predeterminado:**
+**Default Template:**
 
 ```yaml
 # .github/workflows/codeql.yml
@@ -504,7 +503,7 @@ jobs:
         category: "/language:${{matrix.language}}"
 ```
 
-**Customización para producción:**
+**Production Customization:**
 
 ```yaml
 name: "CodeQL Advanced"
@@ -518,7 +517,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 2 * * 1'  # Lunes 2 AM
+    - cron: '0 2 * * 1'  # Monday 2 AM
   workflow_dispatch:  # Manual trigger
 
 jobs:
@@ -531,7 +530,7 @@ jobs:
       actions: read
       contents: read
       security-events: write
-      pull-requests: write  # Para comentar en PRs
+      pull-requests: write  # To comment on PRs
     
     strategy:
       fail-fast: false
@@ -551,7 +550,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Full history para mejor análisis
+        fetch-depth: 0  # Full history for better analysis
     
     - name: Setup Java
       if: matrix.language == 'java'
@@ -569,15 +568,15 @@ jobs:
         # Query suites
         queries: +security-and-quality
         
-        # Config file (opcional)
+        # Config file (optional)
         config-file: ./.github/codeql/codeql-config.yml
         
-        # Packs adicionales
+        # Additional packs
         packs: |
           codeql/javascript-queries
           company/custom-queries
     
-    # Manual build para lenguajes compilados
+    # Manual build for compiled languages
     - name: Build Java
       if: matrix.language == 'java' && matrix.build-mode == 'manual'
       run: |
@@ -607,14 +606,14 @@ jobs:
         sarif_file: filtered.sarif
 ```
 
-### Ver resultados de code scanning
+### View Code Scanning Results
 
-**Security tab:**
+**Security Tab:**
 
 ```
 Repository → Security → Code scanning
 
-Views disponibles:
+Available views:
   ├─ Open alerts (default)
   ├─ Closed alerts
   ├─ Dismissed alerts
@@ -645,10 +644,10 @@ Details:
       └─ Path traversal in FileHandler.java:15
 ```
 
-**Alert details:**
+**Alert Details:**
 
 ```
-Click on alert para ver:
+Click on alert to view:
 
 ┌─────────────────────────────────────────────────┐
 │ 🔴 SQL Injection (CWE-89)                       │
@@ -670,7 +669,7 @@ Click on alert para ver:
 └─────────────────────────────────────────────────┘
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning
 - https://docs.github.com/en/code-security/code-scanning/enabling-code-scanning/configuring-default-setup-for-code-scanning
 - https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/configuring-advanced-setup-for-code-scanning
@@ -679,9 +678,9 @@ Click on alert para ver:
 
 ---
 <a id="d4-3"></a>
-## 4.3 Troubleshooting de workflows CodeQL
+## 4.3 Troubleshooting CodeQL workflows
 
-### Errores comunes y soluciones
+### Common Errors and Solutions
 
 **Error 1: "No language detected"**
 
@@ -689,12 +688,12 @@ Click on alert para ver:
 Error:
   No CodeQL languages found to analyze
 
-Causa:
-  - No hay código en lenguajes soportados
-  - Paths incorrectos en workflow
+Cause:
+  - No code in supported languages
+  - Incorrect paths in workflow
 
-Solución:
-# Especificar languages explícitamente
+Solution:
+# Specify languages explicitly
 - name: Initialize CodeQL
   uses: github/codeql-action/init@v3
   with:
@@ -707,17 +706,17 @@ Solución:
 Error:
   Autobuild failed for language 'java'
 
-Causa:
-  - Dependencias faltantes
-  - Comando de build incorrecto
+Cause:
+  - Missing dependencies
+  - Incorrect build command
   - Timeout
 
-Solución 1: Manual build
+Solution 1: Manual build
 - name: Build
   run: |
     mvn clean compile -DskipTests
 
-Solución 2: Especificar build command
+Solution 2: Specify build command
 - name: Initialize CodeQL
   with:
     languages: java
@@ -725,7 +724,7 @@ Solución 2: Especificar build command
     
 - run: mvn clean compile
 
-Solución 3: Aumentar timeout
+Solution 3: Increase timeout
 jobs:
   analyze:
     timeout-minutes: 360  # 6 hours
@@ -737,24 +736,24 @@ jobs:
 Error:
   CodeQL database creation failed
 
-Causa:
-  - Código mal formado
-  - Dependencias circulares
+Cause:
+  - Malformed code
+  - Circular dependencies
   - Out of memory
 
-Solución:
-# Aumentar memoria
+Solution:
+# Increase memory
 jobs:
   analyze:
-    runs-on: ubuntu-latest-large  # Más CPU/RAM
+    runs-on: ubuntu-latest-large  # More CPU/RAM
     
-# O self-hosted runner con más recursos
+# Or self-hosted runner with more resources
     runs-on: [self-hosted, linux, x64, large]
 ```
 
-### Custom configuration file
+### Custom Configuration File
 
-**Crear config personalizado:**
+**Create Custom Config:**
 
 ```yaml
 # .github/codeql/codeql-config.yml
@@ -794,7 +793,7 @@ packs:
     - codeql/java-queries
 ```
 
-**Usar config en workflow:**
+**Use Config in Workflow:**
 
 ```yaml
 - name: Initialize CodeQL
@@ -804,13 +803,13 @@ packs:
     config-file: ./.github/codeql/codeql-config.yml
 ```
 
-### Show paths (data flow)
+### Show Paths (Data Flow)
 
-**¿Qué es "show paths"?**
+**What is "Show Paths"?**
 
-Feature que muestra el flujo de datos desde la fuente (source) hasta el sumidero (sink) de una vulnerabilidad.
+A feature that displays the data flow from the source (user input) to the sink (vulnerable function) of a vulnerability.
 
-**Ejemplo visual:**
+**Visual Example:**
 
 ```java
 // UserController.java
@@ -827,7 +826,7 @@ public User getUser(HttpRequest request) {
 }
 ```
 
-**Show paths muestra:**
+**Show Paths Displays:**
 
 ```
 Path 1 of 1 for SQL Injection
@@ -858,9 +857,9 @@ Recommendation:
   stmt.setString(1, userId);
 ```
 
-### Documentación de alertas
+### Alert Documentation
 
-**Cada alerta incluye:**
+**Each alert includes:**
 
 ```
 Alert: SQL Injection
@@ -898,27 +897,27 @@ References:
   - MITRE ATT&CK T1190
 ```
 
-### Determinar si descartar alert
+### Determining if an Alert Should be Dismissed
 
-**Criterios para dismiss:**
+**Dismissal Criteria:**
 
 ```yaml
-✅ Dismiss si:
-  - False positive (código no es vulnerable)
+✅ Dismiss if:
+  - False positive (code is not actually vulnerable)
   - Code is in test files (not production)
-  - Vulnerability is not exploitable (context)
+  - Vulnerability is not exploitable (contextual mitigation)
   - Risk accepted (documented exception)
-  - Will fix later (in backlog)
+  - Will fix later (added to backlog)
 
-❌ NO dismiss si:
-  - Es un verdadero positive
-  - Está en código de producción
-  - Es exploitable
-  - No hay mitigación
-  - Severidad critical/high sin análisis
+❌ DO NOT dismiss if:
+  - It is a true positive
+  - It is in production code
+  - It is exploitable
+  - No mitigation exists
+  - Critical/high severity without analysis
 ```
 
-**Razones de dismissal:**
+**Dismissal Reasons:**
 
 ```
 Repository → Security → Code scanning → Alert
@@ -937,7 +936,7 @@ Repository → Security → Code scanning → Alert
       └─ Custom reason required
 ```
 
-**Documentar dismissal:**
+**Document Dismissal:**
 
 ```
 Reason: Won't fix
@@ -956,7 +955,7 @@ Comment:
   - WAF rules prevent SQL metacharacters
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/code-scanning/troubleshooting-code-scanning
 - https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/codeql-code-scanning-for-compiled-languages
 - https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning
@@ -968,46 +967,46 @@ Comment:
 <a id="d4-4"></a>
 ## 4.4 CodeQL internals
 
-### Limitaciones de CodeQL
+### Limitations of CodeQL
 
-**Por lenguaje compilado:**
-
-```yaml
-Lenguajes compilados (Java, C++, C#, Go):
-  Requieren:
-    - ✅ Build completo
-    - ✅ Todas las dependencias
-    - ✅ Compilación exitosa
-    - ✅ Más tiempo de análisis
-  
-  Limitaciones:
-    - ❌ No puede analizar código que no compila
-    - ❌ Requiere configuración de build
-    - ❌ Más consumo de recursos
-    - ❌ Más lento (minutos a horas)
-```
-
-**Por lenguaje interpretado:**
+**For Compiled Languages:**
 
 ```yaml
-Lenguajes interpretados (JavaScript, Python, Ruby):
-  Ventajas:
-    - ✅ No requiere build
-    - ✅ Análisis más rápido
-    - ✅ Menos recursos
-    - ✅ Setup más simple
+Compiled Languages (Java, C++, C#, Go):
+  Require:
+    - ✅ Full build
+    - ✅ All dependencies
+    - ✅ Successful compilation
+    - ✅ Longer analysis time
   
-  Limitaciones:
-    - ⚠️ Análisis estático limitado
-    - ⚠️ Type inference menos preciso
-    - ⚠️ Puede perder algunos flows dinámicos
+  Limitations:
+    - ❌ Cannot analyze code that does not compile
+    - ❌ Requires build configuration
+    - ❌ Higher resource consumption
+    - ❌ Slower (minutes to hours)
 ```
 
-### Compatibilidad con lenguajes
+**For Interpreted Languages:**
 
-**Matriz de soporte:**
+```yaml
+Interpreted Languages (JavaScript, Python, Ruby):
+  Advantages:
+    - ✅ No build required
+    - ✅ Faster analysis
+    - ✅ Fewer resources
+    - ✅ Simpler setup
+  
+  Limitations:
+    - ⚠️ Limited static analysis
+    - ⚠️ Less precise type inference
+    - ⚠️ May miss some dynamic flows
+```
 
-| Lenguaje | Soporte | Build mode | Tiempo típico |
+### Language Compatibility
+
+**Support Matrix:**
+
+| Language | Support | Build Mode | Typical Time |
 |----------|---------|------------|---------------|
 | **JavaScript/TypeScript** | ✅ Full | none | 2-10 min |
 | **Python** | ✅ Full | none | 2-10 min |
@@ -1019,10 +1018,10 @@ Lenguajes interpretados (JavaScript, Python, Ruby):
 | **Kotlin** | ✅ Via java-kotlin | manual/autobuild | 10-60 min |
 | **Swift** | ✅ Full | manual/autobuild | 10-60 min |
 | **Rust** | ⚠️ Beta | manual | 10-60 min |
-| **PHP** | ❌ No soportado | - | - |
-| **Scala** | ❌ No soportado | - | - |
+| **PHP** | ❌ Not supported | - | - |
+| **Scala** | ❌ Not supported | - | - |
 
-**Frameworks soportados por lenguaje:**
+**Supported Frameworks by Language:**
 
 ```yaml
 JavaScript/TypeScript:
@@ -1051,32 +1050,32 @@ C#:
   - Entity Framework ✅
 ```
 
-### Propósito de categoría SARIF
+### Purpose of SARIF Category
 
-**¿Qué es una categoría SARIF?**
+**What is a SARIF Category?**
 
-Identificador único que agrupa resultados de un análisis específico.
+A unique identifier that groups results from a specific analysis.
 
-**Por qué es importante:**
+**Why it matters:**
 
 ```yaml
-Sin categoría:
-  - CodeQL ejecuta múltiples veces
-  - Resultados se sobrescriben
-  - Solo ves el último scan
-  - Pierdes contexto histórico
+Without Category:
+  - CodeQL runs multiple times
+  - Results overwrite each other
+  - You only see the latest scan
+  - Historical context is lost
 
-Con categoría:
-  - Cada análisis tiene ID único
-  - Resultados se acumulan
-  - Ves evolución temporal
-  - Puedes comparar branches/lenguajes
+With Category:
+  - Each analysis has a unique ID
+  - Results are accumulated
+  - You see the temporal evolution
+  - You can compare branches/languages
 ```
 
-**Ejemplo de uso:**
+**Usage Example:**
 
 ```yaml
-# Múltiples análisis en el mismo workflow
+# Multiple analyses in the same workflow
 
 - name: CodeQL Analysis - Security
   uses: github/codeql-action/analyze@v3
@@ -1088,67 +1087,38 @@ Con categoría:
   with:
     category: "/language:${{matrix.language}}/suite:quality"
 
-# Resultado: Dos conjuntos de alerts separados
+# Result: Two separate sets of alerts
 ```
 
-**Naming conventions:**
+**Naming Conventions:**
 
 ```yaml
-Categorías recomendadas:
+Recommended Categories:
 
-Por lenguaje:
+By Language:
   "/language:javascript"
   "/language:python"
 
-Por suite:
+By Suite:
   "/suite:security-extended"
   "/suite:security-and-quality"
 
-Por branch:
+By Branch:
   "/branch:main"
   "/branch:develop"
 
-Por ambiente:
+By Environment:
   "/env:production"
   "/env:staging"
 
-Combinadas:
+Combined:
   "/language:java/suite:security/branch:main"
 ```
 
-**Enlaces:**
+**Links:**
 - https://codeql.github.com/docs/codeql-overview/about-codeql/
 - https://codeql.github.com/docs/codeql-language-guides/
 - https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql
 - https://codeql.github.com/docs/codeql-cli/about-codeql-databases/
 - https://docs.github.com/en/code-security/code-scanning/managing-your-code-scanning-configuration/codeql-query-suites
 - https://codeql.github.com/docs/writing-codeql-queries/
-
----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,7 @@
+> 🌐 **Disponible en:** [English 🇬🇧](01-domain.md) | **Español 🇪🇸**
+
+---
+
 # DOMINIO 1: CARACTERÍSTICAS Y FUNCIONALIDADES DE SEGURIDAD DE GHAS (15%)
 
 <a id="d1-1"></a>

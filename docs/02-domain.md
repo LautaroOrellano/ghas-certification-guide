@@ -1,30 +1,29 @@
-> 🌐 **Disponible en:** [English 🇬🇧](02-domain.md) | **Español 🇪🇸**
-
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](02-dominio.md)
 ---
 
-# DOMINIO 2: CONFIGURAR Y USAR EL ESCANEO DE SECRETOS (15%)
+# DOMAIN 2: CONFIGURE AND USE SECRET SCANNING (15%)
 
 <a id="d2-1"></a>
-## 2.1 Describir el escaneo de secretos
+## 2.1 Describe secret scanning
 
-### ¿Qué es Secret Scanning?
+### What is Secret Scanning?
 
-**Definición**: Feature de GHAS que detecta credenciales, tokens y otros secretos que han sido commiteados accidentalmente en repositorios.
+**Definition**: A GHAS feature that detects credentials, tokens, and other secrets that have been accidentally committed to repositories.
 
-**Funcionamiento interno:**
+**Internal Functioning:**
 
-1. **Escaneo inicial**: Al habilitar, escanea todo el historial del repositorio
-2. **Escaneo continuo**: Cada push nuevo es escaneado automáticamente
-3. **Pattern matching**: Usa regex patterns para identificar secretos
-4. **Validación**: Verifica con el provider si el secreto es válido
-5. **Alertas**: Notifica al usuario y al service provider
+1. **Initial Scan**: Upon enablement, scans the entire history of the repository.
+2. **Continuous Scan**: Every new push is scanned automatically.
+3. **Pattern Matching**: Uses regex patterns to identify secrets.
+4. **Validation**: Verifies with the service provider whether the secret is valid.
+5. **Alerts**: Notifies the user and the service provider.
 
-### Tipos de secretos detectados
+### Types of Secrets Detected
 
-**Categorías principales:**
+**Main Categories:**
 
 ```yaml
-Tokens de autenticación:
+Authentication Tokens:
   - GitHub Personal Access Tokens (PAT)
   - OAuth tokens
   - JWT tokens
@@ -38,19 +37,19 @@ API Keys:
   - Twilio Auth tokens
   - +200 providers
 
-Certificados y claves:
+Certificates and Keys:
   - Private SSH keys
   - PGP private keys
   - TLS/SSL certificates
   - Code signing certificates
 
-Credenciales de base de datos:
+Database Credentials:
   - MongoDB connection strings
   - PostgreSQL passwords
   - MySQL credentials
   - Redis authentication
 
-Cloud credentials:
+Cloud Credentials:
   - AWS IAM credentials
   - Azure service principals
   - GCP service account keys
@@ -65,47 +64,47 @@ Passwords:
 ### Partner Patterns vs Custom Patterns
 
 **Partner Patterns (GitHub + Providers):**
-- 200+ patterns predefinidos
-- Validación automática con providers
-- Revocación automática posible
-- Actualizados por GitHub
-- **Ejemplos**: AWS, Stripe, Slack, Azure
+- 200+ predefined patterns
+- Automatic validation with providers
+- Automatic revocation possible
+- Maintained by GitHub
+- **Examples**: AWS, Stripe, Slack, Azure
 
 **Custom Patterns (User-defined):**
-- Patrones específicos de organización
-- Regex personalizados
-- No hay validación automática
-- Mantenimiento manual
-- **Ejemplos**: Internal API keys, proprietary tokens
+- Specific organization patterns
+- Custom regexes
+- No automatic validation
+- Manual maintenance
+- **Examples**: Internal API keys, proprietary tokens
 
-### Validity Checks (Comprobaciones de validez)
+### Validity Checks
 
-**¿Qué son?**
+**What are they?**
 
-Cuando secret scanning detecta un secreto, intenta verificar si aún es válido:
+When secret scanning detects a secret, it attempts to verify if it is still valid:
 
 ```
-Secreto detectado → Pattern match
+Secret detected → Pattern match
         ↓
-¿Provider soporta validación?
-        ├─ SÍ → Llamar API del provider
-        │        ├─ Activo ✅ → CRITICAL alert
-        │        ├─ Inactivo ❌ → Low priority
+Does provider support validation?
+        ├─ YES → Call provider's API
+        │        ├─ Active ✅ → CRITICAL alert
+        │        ├─ Inactive ❌ → Low priority
         │        └─ Unknown ⚠️ → Medium priority
         │
-        └─ NO → Crear alerta sin validación
+        └─ NO → Create alert without validation
 ```
 
-**Estados de validez:**
+**Validity States:**
 
-| Estado | Significado | Prioridad | Acción |
+| State | Meaning | Priority | Action |
 |--------|-------------|-----------|--------|
-| **Active** | Secreto válido y activo | 🔴 Critical | Revocar INMEDIATAMENTE |
-| **Inactive** | Secreto revocado/expirado | 🟢 Low | Limpiar código |
-| **Unknown** | No se pudo verificar | 🟡 Medium | Investigar manualmente |
-| **No check** | Provider no soporta validación | 🟡 Medium | Asumir activo |
+| **Active** | Valid and active secret | 🔴 Critical | Revoke IMMEDIATELY |
+| **Inactive** | Revoked/expired secret | 🟢 Low | Clean code |
+| **Unknown** | Could not be verified | 🟡 Medium | Investigate manually |
+| **No check** | Provider doesn't support validation | 🟡 Medium | Assume active |
 
-**Providers con validity checks:**
+**Providers with Validity Checks:**
 
 - ✅ GitHub (tokens)
 - ✅ AWS (IAM keys)
@@ -115,30 +114,30 @@ Secreto detectado → Pattern match
 - ✅ Slack
 - ✅ Twilio
 - ✅ Dropbox
-- ❌ Muchos custom patterns
+- ❌ Many custom patterns
 
-**Ejemplo práctico:**
+**Practical Example:**
 
 ```python
-# secrets.py - INCORRECTO ❌
+# secrets.py - INCORRECT ❌
 GITHUB_TOKEN = "ghp_AbCd1234567890EfGhIjKlMnOpQrStUv"
 AWS_KEY = "AKIA2345678901234567"
 
-# Secret scanning detecta:
+# Secret scanning detects:
 # 1. GitHub token
-#    → Valida con GitHub API
-#    → Estado: Active ✅
-#    → Alerta: CRITICAL
-#    → Acción: Token auto-revocado por GitHub
+#    → Validates with GitHub API
+#    → State: Active ✅
+#    → Alert: CRITICAL
+#    → Action: Token auto-revoked by GitHub
 #
 # 2. AWS key
-#    → Valida con AWS
-#    → Estado: Active ✅
-#    → Alerta: CRITICAL
-#    → Acción: Notificar al AWS account owner
+#    → Validates with AWS
+#    → State: Active ✅
+#    → Alert: CRITICAL
+#    → Action: Notify AWS account owner
 ```
 
-### Arquitectura de Secret Scanning
+### Secret Scanning Architecture
 
 ```
 ┌──────────────────────────────────────────┐
@@ -172,37 +171,37 @@ AWS_KEY = "AKIA2345678901234567"
                │
                ├──────────────┬────────────────┐
                ▼              ▼                ▼
-      ┌─────────────┐  ┌──────────┐  ┌────────────┐
-      │GitHub Alert │  │ Provider │  │  Webhook   │
-      │   (UI)      │  │Notificat.│  │  (SIEM)    │
-      └─────────────┘  └──────────┘  └────────────┘
+       ┌─────────────┐  ┌──────────┐  ┌────────────┐
+       │GitHub Alert │  │ Provider │  │  Webhook   │
+       │   (UI)      │  │Notificat.│  │  (SIEM)    │
+       └─────────────┘  └──────────┘  └────────────┘
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning
 - https://docs.github.com/en/code-security/secret-scanning/introduction/supported-secret-scanning-patterns
 
 ---
 <a id="d2-2"></a>
-## 2.2 Describir Push Protection
+## 2.2 Describe Push Protection
 
-### ¿Qué es Push Protection?
+### What is Push Protection?
 
-**Definición**: Feature que **bloquea en tiempo real** cualquier push que contenga secretos, previniendo que lleguen al repositorio.
+**Definition**: A feature that **blocks in real-time** any push containing secrets, preventing them from reaching the repository.
 
-**Diferencia con secret scanning tradicional:**
+**Difference with Traditional Secret Scanning:**
 
 ```
-Secret Scanning (tradicional):
+Secret Scanning (Traditional):
   Developer commit → Push → Repository → Scan → Alert
-  ❌ Secreto YA está en historial
+  ❌ Secret is ALREADY in history
 
 Push Protection:
-  Developer commit → Push BLOQUEADO → Notificación → Fix → Push again
-  ✅ Secreto NUNCA llega al repositorio
+  Developer commit → Push BLOCKED → Notification → Fix → Push again
+  ✅ Secret NEVER reaches the repository
 ```
-### Cómo funciona Push Protection
 
+### How Push Protection Works
 
 ```
 ┌─────────────────┐
@@ -218,14 +217,14 @@ Push Protection:
 │  └─ Check validity          │
 └────────┬────────────────────┘
          │
-    ┌────┴────┐
-    │ Secret? │
-    └────┬────┘
+     ┌────┴────┐
+     │ Secret? │
+     └────┬────┘
          │
-    ┌────┴─────┐
-   YES        NO
-    │          │
-    ▼          ▼
+     ┌────┴─────┐
+    YES        NO
+     │          │
+     ▼          ▼
 ┌─────────┐  ┌──────────┐
 │ BLOCK   │  │ ALLOW    │
 │ Push    │  │ Push     │
@@ -246,28 +245,28 @@ Push Protection:
 └──────────────────────────────┘
 ```
 
-### Configuración de Push Protection
+### Configuring Push Protection
 
-**Niveles de habilitación:**
+**Enablement Levels:**
 
 ```yaml
-Repositorio:
+Repository:
   Settings → Code security → Secret scanning
   ├─ Enable secret scanning ✅
   └─ Enable push protection ✅
 
-Organización:
+Organization:
   Settings → Code security → Secret scanning
   ├─ Enable for all repositories
   ├─ Enable for new repositories
   └─ Enable push protection
 
-Empresa:
+Enterprise:
   Settings → Policies → Advanced Security
   └─ Push protection policy for all orgs
 ```
 
-**Opciones de bypass:**
+**Bypass Options:**
 
 ```yaml
 Bypass settings:
@@ -284,17 +283,16 @@ Delegated bypass (Enterprise):
   - auto_dismiss_after: 7days
 ```
 
-### Bypass workflow
+### Bypass Workflow
 
-**Cuando un developer necesita bypass:**
-
+**When a developer needs a bypass:**
 
 ```
-Developer encuentra push bloqueado
+Developer encounters blocked push
         ↓
 Click "Bypass protection"
         ↓
-Proveer justificación:
+Provide justification:
   - "Testing vulnerability fix"
   - "False positive - not real secret"
   - "Legacy code - will fix in separate PR"
@@ -302,8 +300,8 @@ Proveer justificación:
     ┌───┴────┐
     │ Policy │
     └───┬────┘
-        │
-   ┌────┴────┐
+         │
+   ┌─────┴─────┐
 Auto-approve  Require approval
    │              │
    ▼              ▼
@@ -316,9 +314,9 @@ Push allowed   Pending review
          Push allowed  Push blocked
 ```
 
-**Audit trail:**
+**Audit Trail:**
 
-Todo bypass queda registrado:
+Every bypass is recorded:
 
 ```json
 {
@@ -333,9 +331,9 @@ Todo bypass queda registrado:
 }
 ```
 
-### Experiencia del developer
+### Developer Experience
 
-**Sin push protection:**
+**Without Push Protection:**
 ```bash
 $ git push origin main
 Enumerating objects: 5, done.
@@ -345,11 +343,11 @@ Total 3 (delta 0), reused 0 (delta 0)
 To github.com:company/api.git
    abc123..def456  main -> main
 
-# ⚠️ Secreto está en el repositorio
-# ⚠️ Alert aparece 30 segundos después
+# ⚠️ Secret is in the repository
+# ⚠️ Alert appears 30 seconds later
 ```
 
-**Con push protection:**
+**With Push Protection:**
 ```bash
 $ git push origin main
 Enumerating objects: 5, done.
@@ -380,131 +378,131 @@ To github.com:company/api.git
  ! [remote rejected] main -> main (push declined due to secret)
 error: failed to push some refs to 'github.com:company/api.git'
 
-# ✅ Secreto NO está en el repositorio
-# ✅ Developer puede actuar ANTES de exposición
+# ✅ Secret is NOT in the repository
+# ✅ Developer can act BEFORE exposure
 ```
 
-### Casos de uso y best practices
+### Use Cases and Best Practices
 
-**Escenarios donde push protection es crítico:**
+**Scenarios where push protection is critical:**
 
-1. **Servicios cloud (AWS, Azure, GCP)**
-   - Keys tienen acceso a recursos costosos
-   - Explotación puede resultar en cryptomining
-   - Facturas de $10k+ en 24 horas
+1. **Cloud Services (AWS, Azure, GCP)**
+   - Keys have access to expensive resources.
+   - Exploitation can result in cryptomining.
+   - Bills of $10k+ in 24 hours.
 
-2. **Payment processors (Stripe, PayPal)**
-   - Acceso a transacciones financieras
-   - PCI-DSS compliance requirements
-   - Riesgo legal y reputacional
+2. **Payment Processors (Stripe, PayPal)**
+   - Access to financial transactions.
+   - PCI-DSS compliance requirements.
+   - Legal and reputational risk.
 
-3. **Database credentials**
-   - Acceso a customer PII
-   - GDPR compliance
-   - Data breach notifications
+3. **Database Credentials**
+   - Access to customer PII.
+   - GDPR compliance.
+   - Data breach notifications.
 
 4. **Third-party APIs**
-   - Quota exhaustion
-   - Account suspension
-   - Service disruption
+   - Quota exhaustion.
+   - Account suspension.
+   - Service disruption.
 
-**Best practices:**
+**Best Practices:**
 
 ```yaml
 ✅ DO:
-  - Habilitar push protection en todos los repos
+  - Enable push protection in all repositories
   - Require bypass justification
-  - Set up delegated bypass for sensitive repos
-  - Educate developers on secret management
+  - Set up delegated bypass for sensitive repositories
+  - Educate developers on secrets management
   - Use secret managers (Vault, AWS Secrets Manager)
   - Rotate secrets regularly
   - Monitor bypass patterns
 
 ❌ DON'T:
-  - Allow bypasses sin approval para production repos
-  - Ignorar push protection alerts
-  - Hardcode secrets "temporalmente"
-  - Use comentarios como excusa para bypass
-  - Disable push protection para "convenience"
+  - Allow bypasses without approval for production repositories
+  - Ignore push protection alerts
+  - Hardcode secrets "temporarily"
+  - Use comments as an excuse for bypass
+  - Disable push protection for "convenience"
 ```
 
-**Integración con secret managers:**
+**Integration with Secret Managers:**
 
 ```javascript
-// ❌ INCORRECTO - Hardcoded
+// ❌ INCORRECT - Hardcoded
 const apiKey = "sk_live_1234567890";
 
-// ✅ CORRECTO - Secret manager
+// ✅ CORRECT - Secret manager
 const apiKey = await secretManager.getSecret('stripe_api_key');
 
-// ✅ CORRECTO - Environment variables
+// ✅ CORRECT - Environment variables
 const apiKey = process.env.STRIPE_API_KEY;
 
-// ✅ CORRECTO - GitHub Secrets (Actions)
-// En workflow:
+// ✅ CORRECT - GitHub Secrets (Actions)
+// In workflow:
 # ${{ secrets.STRIPE_API_KEY }}
 ```
 
-### Limitaciones de Push Protection
+### Limitations of Push Protection
 
-**No protege contra:**
-- ❌ Secrets en archivos binarios (imágenes, PDFs)
-- ❌ Secrets obfuscados intencionalmente
-- ❌ Secrets en repositorios privados no monitoreados
-- ❌ Secrets compartidos verbalmente o por email
-- ❌ Secrets en wikis, issues, discussions
+**It does not protect against:**
+- ❌ Secrets in binary files (images, PDFs)
+- ❌ Secrets obfuscated intentionally
+- ❌ Secrets in unmonitored private repositories
+- ❌ Secrets shared verbally or via email
+- ❌ Secrets in wikis, issues, discussions
 
-**Workarounds necesarios:**
-- Pre-commit hooks locales
+**Necessary Workarounds:**
+- Local pre-commit hooks
 - IDE plugins (VS Code extension)
-- Git hooks en workstation
+- Git hooks on workstation
 - Security awareness training
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection
 - https://docs.github.com/en/code-security/secret-scanning/using-advanced-secret-scanning-and-push-protection-features/delegated-bypass-for-push-protection
 
 ---
 <a id="d2-3"></a>
-## 2.3 Disponibilidad de Secret Scanning por tipo de repositorio
+## 2.3 Secret Scanning availability by repository type
 
-### Repositorios Públicos
+### Public Repositories
 
-**Secret scanning: ✅ GRATIS (habilitado por defecto)**
+**Secret scanning: ✅ FREE (Enabled by default)**
 
-Características incluidas:
-- ✅ Escaneo automático de todo el historial
+Included Features:
+- ✅ Automatic scanning of the entire history
 - ✅ 200+ partner patterns
-- ✅ Validity checks con providers
-- ✅ Notificaciones a service providers
-- ✅ Revocación automática (algunos providers)
-- ✅ Push protection (NUEVO desde 2025)
-- ❌ Custom patterns (no disponible)
-- ❌ Security overview (no disponible)
-- ❌ Delegated bypass (no disponible)
+- ✅ Validity checks with providers
+- ✅ Notifications to service providers
+- ✅ Automatic revocation (some providers)
+- ✅ Push protection (NEW since 2025)
+- ❌ Custom patterns (not available)
+- ❌ Security overview (not available)
+- ❌ Delegated bypass (not available)
 
-**Razón**: Proteger el ecosistema open source y prevenir leaked credentials.
+**Reason**: Protect the open source ecosystem and prevent leaked credentials.
 
-### Repositorios Privados SIN GHAS
+### Private Repositories WITHOUT GHAS
 
-**Secret scanning: ❌ NO DISPONIBLE**
+**Secret scanning: ❌ NOT AVAILABLE**
 
-Para habilitar, necesitas:
-- **GitHub Secret Protection** ($19/mes por committer), o
-- **GitHub Enterprise** (incluía GHAS hasta abril 2025)
+To enable, you need:
+- **GitHub Secret Protection** ($19/month per active committer), or
+- **GitHub Enterprise** (legacy bundle)
 
-Sin licencia:
-- ❌ No hay escaneo de secretos
-- ❌ No hay push protection
-- ❌ No hay alertas
-- ⚠️ Riesgo: secretos pueden estar expuestos sin detección
+Without license:
+- ❌ No secrets scanning
+- ❌ No push protection
+- ❌ No alerts
+- ⚠️ Risk: secrets can be exposed without detection
 
-### Repositorios Privados CON GHAS (GitHub Secret Protection)
+### Private Repositories WITH GHAS (GitHub Secret Protection)
 
-**Secret scanning: ✅ COMPLETO**
+**Secret scanning: ✅ COMPLETE**
 
-Características adicionales:
-- ✅ Escaneo de repositorios privados
+Additional Features:
+- ✅ Private repository scanning
 - ✅ Push protection
 - ✅ Custom patterns (organization-level)
 - ✅ Delegated bypass workflows
@@ -514,9 +512,9 @@ Características adicionales:
 - ✅ Copilot secret scanning (AI-powered)
 - ✅ Advanced analytics
 
-**Comparación completa:**
+**Complete Comparison:**
 
-| Feature | Público | Privado sin GHAS | Privado con Secret Protection |
+| Feature | Public | Private without GHAS | Private with Secret Protection |
 |---------|---------|------------------|-------------------------------|
 | Repository scanning | ✅ | ❌ | ✅ |
 | Partner patterns | ✅ (200+) | ❌ | ✅ (200+) |
@@ -533,9 +531,9 @@ Características adicionales:
 | API access | Basic | ❌ | Full |
 | Webhooks | Basic | ❌ | Full |
 
-### Habilitación por nivel
+### Enablement by Level
 
-**A nivel de repositorio:**
+**At Repository Level:**
 ```yaml
 Settings → Code security and analysis
   └─ Secret scanning
@@ -543,7 +541,7 @@ Settings → Code security and analysis
       └─ [✓] Push protection (Free for public, GHAS for private)
 ```
 
-**A nivel de organización:**
+**At Organization Level:**
 ```yaml
 Settings → Code security and analysis
   ├─ Enable for all existing repositories
@@ -554,7 +552,7 @@ Settings → Code security and analysis
       └─ Custom patterns: [Add patterns]
 ```
 
-**A nivel de empresa:**
+**At Enterprise Level:**
 ```yaml
 Policies → Advanced Security
   ├─ Enforce for all organizations
@@ -562,45 +560,45 @@ Policies → Advanced Security
   └─ Billing (per active committer)
 ```
 
-### Casos especiales
-**Forked repositories:**
+### Special Cases
+**Forked Repositories:**
 - Public fork of public: ✅ Secret scanning enabled
 - Private fork of private: ⚠️ Depends on parent's GHAS license
 - Private fork of public: ❌ Requires GHAS license
 
-**Archived repositories:**
-- ✅ Secret scanning continúa activo
-- ❌ No se generan nuevas alertas (no hay nuevos commits)
-- ℹ️ Alertas existentes permanecen visibles
+**Archived Repositories:**
+- ✅ Secret scanning remains active
+- ❌ No new alerts generated (no new commits)
+- ℹ️ Existing alerts remain visible
 
-**Template repositories:**
-- Settings se copian a repos creados desde template
-- GHAS se requiere en cada repo, no se hereda
+**Template Repositories:**
+- Settings are copied to repositories created from templates.
+- GHAS is required in each repository, it is not inherited.
 
-**Mirrored repositories:**
-- ✅ Secret scanning funciona en mirrors
-- ⚠️ Alertas se crean en el repo espejo
-- ℹ️ Push protection aplica en mirror, no en origen
+**Mirrored Repositories:**
+- ✅ Secret scanning works on mirrors.
+- ⚠️ Alerts are created in the mirrored repository.
+- ℹ️ Push protection applies to the mirror, not the origin.
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/get-started/learning-about-github/about-github-advanced-security#about-advanced-security-features
 
 ---
 <a id="d2-4"></a>
-## 2.4 Habilitar Secret Scanning para repositorios privados
+## 2.4 Enable Secret Scanning for private repositories
 
-### Prerrequisitos
+### Prerequisites
 
-**Licencias requeridas:**
-- ✅ GitHub Secret Protection ($19/active committer/mes), o
+**Required Licenses:**
+- ✅ GitHub Secret Protection ($19/active committer/month), or
 - ✅ GitHub Enterprise (legacy bundle)
 
-**Permisos necesarios:**
+**Required Permissions:**
 - Repository: Admin role
-- Organization: Owner o Security manager
+- Organization: Owner or Security manager
 - Enterprise: Enterprise owner
 
-**Verificación de elegibilidad:**
+**Eligibility Verification:**
 
 ```bash
 # Via GitHub CLI
@@ -623,36 +621,36 @@ gh api /orgs/:org/settings/billing/advanced-security
 }
 ```
 
-### Habilitación paso a paso
+### Step-by-Step Enablement
 
-#### Método 1: Via Web UI (Repositorio individual)
+#### Method 1: Via Web UI (Individual Repository)
 
-**Paso 1**: Navegar a Settings
+**Step 1**: Navigate to Settings
 ```
-Repositorio → Settings tab
+Repository → Settings tab
 ```
 
-**Paso 2**: Ir a Security
+**Step 2**: Go to Security
 ```
 Sidebar → Code security and analysis
 ```
 
-**Paso 3**: Habilitar Advanced Security
+**Step 3**: Enable Advanced Security
 ```
 [ ] GitHub Advanced Security
-    └─ [Enable] ← Click aquí primero
+    └─ [Enable] ← Click here first
 ```
 
-**Paso 4**: Habilitar Secret Scanning
+**Step 4**: Enable Secret Scanning
 ```
-[✓] GitHub Advanced Security (ahora habilitado)
+[✓] GitHub Advanced Security (now enabled)
     ├─ [ ] Secret scanning
-    │   └─ [Enable] ← Click para habilitar
+    │   └─ [Enable] ← Click to enable
     └─ [ ] Push protection
-        └─ [Enable] ← Opcional pero recomendado
+        └─ [Enable] ← Optional but recommended
 ```
 
-**Paso 5**: Esperar escaneo inicial
+**Step 5**: Wait for initial scan
 ```
 ⏳ Scanning repository history...
    Commits scanned: 1,234 / 5,678
@@ -662,9 +660,9 @@ Sidebar → Code security and analysis
    0 secrets found
 ```
 
-#### Método 2: Via API (Programático)
+#### Method 2: Via API (Programmatic)
 
-**Habilitar GHAS:**
+**Enable GHAS:**
 ```bash
 curl -X PATCH \
   https://api.github.com/repos/OWNER/REPO \
@@ -685,7 +683,7 @@ curl -X PATCH \
   }'
 ```
 
-**Verificar estado:**
+**Verify Status:**
 ```bash
 curl \
   https://api.github.com/repos/OWNER/REPO \
@@ -706,31 +704,31 @@ curl \
 }
 ```
 
-#### Método 3: Via GitHub CLI
+#### Method 3: Via GitHub CLI
 
 ```bash
-# Habilitar GHAS + Secret Scanning
+# Enable GHAS + Secret Scanning
 gh api -X PATCH /repos/:owner/:repo \
   -f security_and_analysis[advanced_security][status]=enabled \
   -f security_and_analysis[secret_scanning][status]=enabled \
   -f security_and_analysis[secret_scanning_push_protection][status]=enabled
 
-# Verificar
+# Verify
 gh api /repos/:owner/:repo | jq '.security_and_analysis'
 ```
 
-#### Método 4: Bulk habilitación (Organización)
+#### Method 4: Bulk Enablement (Organization)
 
 **Via UI:**
 ```
 Organization Settings
   → Code security and analysis
   → Configure security and analysis features
-      ├─ [Enable all] ← Habilitar para todos los repos
+      ├─ [Enable all] ← Enable for all repositories
       └─ [✓] Automatically enable for new repositories
 ```
 
-**Via script (Python):**
+**Via Script (Python):**
 ```python
 import requests
 
@@ -751,7 +749,7 @@ repos = requests.get(
 for repo in repos:
     repo_name = repo["full_name"]
     
-    # Habilitar GHAS + Secret Scanning
+    # Enable GHAS + Secret Scanning
     response = requests.patch(
         f"https://api.github.com/repos/{repo_name}",
         headers=HEADERS,
@@ -770,9 +768,9 @@ for repo in repos:
         print(f"❌ {repo_name}: {response.json()['message']}")
 ```
 
-### Configuración post-habilitación
+### Post-Enablement Configuration
 
-**1. Configurar notificaciones:**
+**1. Configure Notifications:**
 
 ```
 Settings → Notifications
@@ -784,7 +782,7 @@ Settings → Notifications
           └─ #security-alerts
 ```
 
-**2. Configurar custom patterns (opcional):**
+**2. Configure Custom Patterns (Optional):**
 
 ```
 Settings → Code security → Secret scanning
@@ -796,7 +794,7 @@ Settings → Code security → Secret scanning
           └─ [Save pattern]
 ```
 
-**3. Configurar bypass policies:**
+**3. Configure Bypass Policies:**
 
 ```
 Organization Settings → Code security
@@ -808,7 +806,7 @@ Organization Settings → Code security
           └─ Bypass expires: [7 days ▼]
 ```
 
-**4. Configurar CODEOWNERS para alertas:**
+**4. Configure CODEOWNERS for Alerts:**
 
 ```bash
 # .github/CODEOWNERS
@@ -820,40 +818,40 @@ Organization Settings → Code security
 **/config*.* @org/security
 ```
 
-### Troubleshooting común
+### Common Troubleshooting
 
-**Problema 1**: "Advanced Security not available"
+**Problem 1**: "Advanced Security not available"
 ```
-Causa: No hay licencias GHAS disponibles
-Solución: Comprar más seats o liberar seats no usados
+Cause: No GHAS licenses available
+Solution: Buy more seats or release unused seats
 
 # Check usage:
 gh api /orgs/:org/settings/billing/advanced-security
 ```
 
-**Problema 2**: "Secret scanning failed to start"
+**Problem 2**: "Secret scanning failed to start"
 ```
-Causa: Repository es fork sin GHAS habilitado en parent
-Solución: Habilitar GHAS en parent repository o desconectar fork
+Cause: Repository is a fork without GHAS enabled on the parent
+Solution: Enable GHAS on the parent repository or detach the fork
 
-# Desconectar fork:
+# Detach fork:
 # Settings → Danger Zone → "Detach fork"
 ```
 
-**Problema 3**: "No scan results after 1 hour"
+**Problem 3**: "No scan results after 1 hour"
 ```
-Causa: Repository muy grande o muchos commits
-Solución: Esperar más tiempo o contactar GitHub Support
+Cause: Very large repository or many commits
+Solution: Wait longer or contact GitHub Support
 
 # Monitor status:
 gh api /repos/:owner/:repo/code-scanning/analyses | \
   jq '.[0].created_at'
 ```
 
-**Problema 4**: "Push protection not working"
+**Problem 4**: "Push protection not working"
 ```
-Causa: Feature no habilitado o bypass configurado
-Solución:
+Cause: Feature not enabled or bypass configured
+Solution:
 # Verify:
 gh api /repos/:owner/:repo | \
   jq '.security_and_analysis.secret_scanning_push_protection.status'
@@ -861,132 +859,132 @@ gh api /repos/:owner/:repo | \
 # Should be: "enabled"
 ```
 
-### Best practices
+### Best Practices
 
 ```yaml
-✅ Rollout strategy:
-  1. Pilot con 5-10 repos no-críticos
-  2. Evaluar false positives
-  3. Ajustar custom patterns
-  4. Expandir a 50% de repos
-  5. Habilitar push protection
-  6. Full rollout a 100%
+✅ Rollout Strategy:
+  1. Pilot with 5-10 non-critical repositories
+  2. Evaluate false positives
+  3. Adjust custom patterns
+  4. Expand to 50% of repositories
+  5. Enable push protection
+  6. Full rollout to 100%
 
-✅ Team enablement:
-  - Training session sobre secret management
-  - Documentación de workflows
-  - Runbooks para common scenarios
-  - Regular retros de alerts
+✅ Team Enablement:
+  - Training session on secrets management
+  - Document workflows
+  - Runbooks for common scenarios
+  - Regular retros of alerts
 
 ✅ Monitoring:
-  - Weekly reports de:
-      - Nuevas alertas
-      - Alertas resueltas
+  - Weekly reports of:
+      - New alerts
+      - Resolved alerts
       - Bypass requests
       - False positive rate
-  - Dashboard con métricas clave
-  - Alerting para critical findings
+  - Dashboard with key metrics
+  - Alerting for critical findings
 
-❌ Evitar:
-  - Habilitar en producción sin testing
-  - No configurar notificaciones
-  - Ignorar alertas por "alert fatigue"
-  - No entrenar al equipo
-  - Deshabilitar push protection "temporalmente"
+❌ Avoid:
+  - Enabling in production without testing
+  - Not configuring notifications
+  - Ignoring alerts due to "alert fatigue"
+  - Failing to train the team
+  - Disabling push protection "temporarily"
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/secret-scanning/configuring-secret-scanning-for-your-repositories
 - https://docs.github.com/en/code-security/secret-scanning/introduction/about-push-protection
 
 ---
 <a id="d2-5"></a>
-## 2.5 Respuestas apropiadas a alertas de Secret Scanning
+## 2.5 Appropriate responses to Secret Scanning alerts
 
-### Workflow de decisión
+### Decision Workflow
 
 ```
-Alerta de secret scanning aparece
+Secret scanning alert appears
         ↓
-[1] EVALUAR VALIDEZ
+[1] EVALUATE VALIDITY
         ├─ Active → 🔴 CRITICAL
         ├─ Inactive → 🟡 MEDIUM
         └─ Unknown → 🟠 HIGH
         ↓
-[2] VERIFICAR EXPOSICIÓN
-        ├─ ¿Cuánto tiempo expuesto?
-        ├─ ¿Repositorio público o privado?
-        ├─ ¿Quién tiene acceso?
-        └─ ¿Se usó el secreto?
+[2] VERIFY EXPOSURE
+        ├─ How long exposed?
+        ├─ Public or private repository?
+        ├─ Who has access?
+        └─ Was the secret used?
         ↓
-[3] EVALUAR IMPACTO
-        ├─ ¿Qué recursos protege?
-        ├─ ¿Cuál es el blast radius?
-        ├─ ¿Hay datos sensibles accesibles?
-        └─ ¿Compliance implications?
+[3] EVALUATE IMPACT
+        ├─ What resources does it protect?
+        ├─ What is the blast radius?
+        ├─ Are sensitive data accessible?
+        └─ Compliance implications?
         ↓
-[4] DECIDIR ACCIÓN
+[4] DECIDE ACTION
 ```
 
-### Matriz de decisión
+### Decision Matrix
 
-| Validez | Tipo de repo | Tiempo expuesto | Acción |
+| Validity | Repo Type | Time Exposed | Action |
 |---------|--------------|-----------------|--------|
-| **Active** | Público | Cualquiera | 🚨 EMERGENCY |
-| **Active** | Privado | >24h | 🔴 URGENT |
-| **Active** | Privado | <24h | 🟠 HIGH |
-| **Inactive** | Cualquiera | Cualquiera | 🟡 MEDIUM |
-| **Unknown** | Público | >7d | 🔴 URGENT |
-| **Unknown** | Privado | Cualquiera | 🟠 HIGH |
+| **Active** | Public | Any | 🚨 EMERGENCY |
+| **Active** | Private | >24h | 🔴 URGENT |
+| **Active** | Private | <24h | 🟠 HIGH |
+| **Inactive** | Any | Any | 🟡 MEDIUM |
+| **Unknown** | Public | >7d | 🔴 URGENT |
+| **Unknown** | Private | Any | 🟠 HIGH |
 
-### Acciones por tipo de secreto
+### Actions by Secret Type
 
 #### A) GitHub Personal Access Token
 
-**Si es Active:**
+**If Active:**
 
 ```bash
-# 1. REVOCAR INMEDIATAMENTE
+# 1. REVOKE IMMEDIATELY
 https://github.com/settings/tokens
    → Locate token
-   → [Delete] o [Revoke]
+   → [Delete] or [Revoke]
 
-# 2. VERIFICAR USO
+# 2. VERIFY USE
 gh api /user/events | jq '.[] | select(.created_at > "2026-04-26")'
-# Revisar:
-# - IPs de acceso
-# - Repositories accedidos
-# - Actions realizadas
+# Review:
+# - Access IPs
+# - Repositories accessed
+# - Actions performed
 
-# 3. ROTAR
-# Crear nuevo token con scopes mínimos necesarios
+# 3. ROTATE
+# Create new token with minimum scopes required
 gh auth login --scopes repo,read:org
 
-# 4. ACTUALIZAR DEPENDENCIAS
+# 4. UPDATE DEPENDENCIES
 # CI/CD pipelines
 # GitHub Actions secrets
-# Aplicaciones que usan el token
+# Applications using the token
 
-# 5. LIMPIAR CÓDIGO
+# 5. CLEAN CODE
 git filter-repo --invert-paths --path config.js
 git push --force
 
-# 6. DOCUMENTAR INCIDENT
-# Crear postmortem:
-# - Timeline de exposición
-# - Scope de compromiso
-# - Actions tomadas
+# 6. DOCUMENT INCIDENT
+# Create postmortem:
+# - Exposure timeline
+# - Compromise scope
+# - Actions taken
 # - Prevention measures
 ```
 
-**Si es Inactive:**
+**If Inactive:**
 
 ```bash
-# 1. VERIFICAR REVOCACIÓN
-# Confirmar que el token ya no funciona
+# 1. VERIFY REVOCATION
+# Confirm the token no longer works
 
-# 2. LIMPIAR CÓDIGO
-# Remover referencias al token
+# 2. CLEAN CODE
+# Remove references to the token
 git rm config/secrets.js
 git commit -m "Remove revoked GitHub token"
 
@@ -998,10 +996,10 @@ git commit -m "Remove revoked GitHub token"
 
 #### B) AWS Access Key
 
-**Si es Active:**
+**If Active:**
 
 ```bash
-# 1. REVOCAR INMEDIATAMENTE
+# 1. REVOKE IMMEDIATELY
 aws iam delete-access-key \
   --access-key-id AKIA... \
   --user-name compromised-user
@@ -1013,63 +1011,63 @@ aws cloudtrail lookup-events \
   --end-time 2026-04-27 \
   > cloudtrail-audit.json
 
-# Buscar:
+# Look for:
 # - EC2 instances launched
 # - S3 buckets accessed
 # - IAM changes
 # - Unusual regions/IPs
 
-# 3. VERIFICAR RECURSOS NO AUTORIZADOS
-# EC2 instances de cryptomining
+# 3. VERIFY UNAUTHORIZED RESOURCES
+# EC2 cryptomining instances
 aws ec2 describe-instances --filters "Name=key-name,Values=*"
 
-# S3 buckets expuestos
+# Exposed S3 buckets
 aws s3api list-buckets
 
-# Lambda functions sospechosas
+# Suspicious Lambda functions
 aws lambda list-functions
 
-# 4. ROTAR CREDENCIALES
+# 4. ROTATE CREDENTIALS
 aws iam create-access-key --user-name production-app
 
-# 5. APLICAR LEAST PRIVILEGE
+# 5. APPLY LEAST PRIVILEGE
 aws iam attach-user-policy \
   --user-name production-app \
   --policy-arn arn:aws:iam::aws:policy/ReadOnlyAccess
 
-# 6. HABILITAR MFA
+# 6. ENABLE MFA
 aws iam enable-mfa-device \
   --user-name production-app \
   --serial-number arn:aws:iam::123456:mfa/app \
   --authentication-code1 123456 \
   --authentication-code2 789012
 
-# 7. CONFIGURAR ALERTAS
-# CloudWatch alarm para API calls no autorizadas
+# 7. CONFIGURE ALERTS
+# CloudWatch alarm for unauthorized API calls
 aws cloudwatch put-metric-alarm \
   --alarm-name UnauthorizedAPICalls \
   --alarm-actions arn:aws:sns:us-east-1:123456:security-alerts
 
 # 8. BILLING REVIEW
-# Check por charges inesperados
+# Check for unexpected charges
 aws ce get-cost-and-usage \
   --time-period Start=2026-04-01,End=2026-04-27 \
   --granularity DAILY \
   --metrics UnblendedCost
 ```
 
-**Caso real - Cryptomining:**
+**Real Case - Cryptomining:**
 
 ```bash
 # Scenario: AWS key leaked, used for cryptomining
 
 # 1. Detected:
-#    - CloudWatch: EC2 CPU 100% en us-west-2
+#    - CloudWatch: EC2 CPU 100% in us-west-2
 #    - 50 c5.24xlarge instances (!!!!)
 #    - Cost: $120/hour = $86,400/month
 
 # 2. Response:
-# Terminate todas las instances sospechosas
+# Terminate all suspicious instances
 aws ec2 terminate-instances \
   --instance-ids $(aws ec2 describe-instances \
     --filters "Name=instance-state-name,Values=running" \
@@ -1093,38 +1091,38 @@ aws budgets create-budget \
 
 #### C) Database Connection String
 
-**Si es Active:**
+**If Active:**
 
 ```sql
--- 1. VERIFICAR CONEXIONES ACTIVAS
+-- 1. VERIFY ACTIVE CONNECTIONS
 SELECT pid, usename, application_name, client_addr, backend_start
 FROM pg_stat_activity
 WHERE usename = 'compromised_user'
 ORDER BY backend_start DESC;
 
--- 2. KILL SESIONES SOSPECHOSAS
+-- 2. KILL SUSPICIOUS SESSIONS
 SELECT pg_terminate_backend(pid)
 FROM pg_stat_activity
 WHERE usename = 'compromised_user'
   AND client_addr NOT IN ('10.0.1.5', '10.0.1.6');
 
--- 3. CAMBIAR PASSWORD
+-- 3. CHANGE PASSWORD
 ALTER USER compromised_user WITH PASSWORD 'new_secure_password_12345!';
 
--- 4. REVISAR AUDIT LOGS
+-- 4. REVIEW AUDIT LOGS
 SELECT * FROM pg_stat_statements
 WHERE userid = (SELECT oid FROM pg_user WHERE usename = 'compromised_user')
 ORDER BY calls DESC
 LIMIT 100;
 
--- 5. CHECK POR DATA EXFILTRATION
--- Queries con grandes resultsets
+-- 5. CHECK FOR DATA EXFILTRATION
+-- Queries with large resultsets
 SELECT query, calls, total_time, rows
 FROM pg_stat_statements
 WHERE rows > 10000
 ORDER BY total_time DESC;
 
--- 6. ROTAR CREDENCIALES EN APLICACIONES
+-- 6. ROTATE CREDENTIALS IN APPLICATIONS
 -- Update connection strings in:
 # - Kubernetes secrets
 # - AWS Secrets Manager
@@ -1132,7 +1130,7 @@ ORDER BY total_time DESC;
 # - Application configs
 
 -- 7. RESTRICT ACCESS
--- Limitar por IP
+-- Limit by IP
 -- pg_hba.conf:
 host    dbname    username    10.0.1.0/24    md5
 host    dbname    username    0.0.0.0/0      reject
@@ -1148,7 +1146,7 @@ WHERE query LIKE '%ALTER%' OR query LIKE '%DROP%';
 
 #### D) API Keys (Stripe, Twilio, etc.)
 
-**Si es Active:**
+**If Active:**
 
 ```javascript
 // 1. REVOKE KEY
@@ -1218,50 +1216,54 @@ try {
 
 ### False Positives
 
-**Cómo identificar:**
+**How to identify:**
 
 ```yaml
-Indicadores de false positive:
-  - Secret en archivo de test: *_test.py, *_spec.js
-  - Secret en comentario explicativo
-  - Secret en documentación (README, docs/)
-  - Secret es ejemplo/placeholder: "your-api-key-here"
-  - Secret es hash/checksum, no credencial
-  - Pattern match pero no es secreto real
+False positive indicators:
+  - Secret in a test file: *_test.py, *_spec.js
+  - Secret in an explanatory comment
+  - Secret in documentation (README, docs/)
+  - Secret is an example/placeholder: "your-api-key-here"
+  - Secret is a hash/checksum, not a credential
+  - Pattern match but not a real secret
 ```
 
-**Cómo manejar:**
+**How to handle:**
 
 ```bash
-# 1. VERIFICAR que es false positive
-# NO ASUMIR sin verificación
+# 1. VERIFY it is a false positive
+# DO NOT ASSUME without verification
 
 # 2. DISMISS ALERT
 # GitHub UI → Alert → Dismiss
 # Reason: "False positive"
 # Comment: "This is a test fixture, not a real API key. File: tests/fixtures/sample.json"
 
-# 3. PREVENIR RECURRENCIA
-# Opción A: Exclude path from scanning
+# 3. PREVENT RECURRENCE
+# Option A: Exclude path from scanning
 # .github/secret_scanning.yml
 paths-ignore:
   - 'tests/**'
+  - 'test/**'
+  - '__tests__/**'
+  - '**/*.test.js'
+  - '**/*.spec.ts'
   - 'docs/**'
   - '**/*.md'
 
-# Opción B: Comment in code
-# Algunos scanners respetan:
+# Option B: Comment in code
+# Some scanners respect:
 # secretlint-disable-next-line
 API_KEY = "example_key_12345"
 
-# Opción C: Use placeholder values
+# Option C: Use placeholder values
 # Good:
 API_KEY = "sk_test_YOUR_KEY_HERE"
 # Bad:
 API_KEY = "sk_test_4eC39HqLyjWDarjtT1zdp7dc"  # ← Looks real!
 ```
 
-### Workflow automatizado con GitHub Actions
+### Automated Workflow with GitHub Actions
 
 ```yaml
 # .github/workflows/secret-alert-handler.yml
@@ -1325,19 +1327,19 @@ jobs:
             });
 ```
 
-### SLAs recomendados
+### Recommended SLAs
 
-| Severidad | Validez | Repo tipo | SLA para resolución |
+| Severity | Validity | Repo Type | SLA for Resolution |
 |-----------|---------|-----------|---------------------|
-| Critical | Active | Public | 1 hora |
-| Critical | Active | Private | 4 horas |
-| High | Active | Any | 24 horas |
-| High | Unknown | Public | 24 horas |
-| Medium | Inactive | Any | 7 días |
-| Medium | Unknown | Private | 7 días |
-| Low | Inactive | Private | 30 días |
+| Critical | Active | Public | 1 hour |
+| Critical | Active | Private | 4 hours |
+| High | Active | Any | 24 hours |
+| High | Unknown | Public | 24 hours |
+| Medium | Inactive | Any | 7 days |
+| Medium | Unknown | Private | 7 days |
+| Low | Inactive | Private | 30 days |
 
-### Checklist de respuesta
+### Response Checklist
 
 ```markdown
 ## Secret Scanning Alert Response Checklist
@@ -1373,17 +1375,17 @@ jobs:
 - [ ] Document lessons learned
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/secret-scanning/managing-alerts-from-secret-scanning
 - https://docs.github.com/en/code-security/secret-scanning/secret-scanning-partnership-program
 
 ---
 <a id="d2-6"></a>
-## 2.6 Personalizar el comportamiento de Secret Scanning
+## 2.6 Customize the behavior of Secret Scanning
 
-### Configurar destinatarios de alertas
+### Configure Alert Recipients
 
-**A nivel de repositorio:**
+**At Repository Level:**
 
 ```
 Settings → Code security and analysis
@@ -1401,7 +1403,7 @@ Settings → Code security and analysis
             └─ Webhook: https://api.company.com/security/webhooks
 ```
 
-**Granular access control:**
+**Advanced Granular Access Control:**
 
 ```yaml
 # Via GitHub API
@@ -1426,7 +1428,7 @@ gh api \
   -f permission='maintain'  # Can view and dismiss alerts
 ```
 
-**Roles y permisos detallados:**
+**Detailed Roles and Permissions:**
 
 | Action | Read | Triage | Write | Maintain | Admin | Security Manager |
 |--------|------|--------|-------|----------|-------|------------------|
@@ -1437,7 +1439,7 @@ gh api \
 | Configure scanning | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | View audit log | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 
-**Notification routing avanzado:**
+**Advanced Notification Routing:**
 
 ```javascript
 // GitHub App / Webhook handler
@@ -1494,24 +1496,24 @@ app.post('/webhooks/secret-scanning', async (req, res) => {
 });
 ```
 
-### Excluir archivos del escaneo
+### Exclude Files from Scanning
 
-**Opción 1: .gitignore (no suficiente)**
+**Option 1: .gitignore (Not Sufficient)**
 
 ```bash
-# ⚠️ .gitignore NO afecta a secret scanning
-# Secret scanning escanea TODO el historial, incluso archivos ignorados
+# ⚠️ .gitignore DOES NOT affect secret scanning
+# Secret scanning scans the ENTIRE history, including ignored files
 
 # .gitignore
 secrets.json
 .env
 ```
 
-**Opción 2: Path exclusions (Repository level)**
+**Option 2: Path Exclusions (Repository level)**
 
 ```yaml
 # .github/secret_scanning.yml
-# Excluir paths específicos
+# Exclude specific paths
 
 paths-ignore:
   - 'tests/**'
@@ -1524,13 +1526,13 @@ paths-ignore:
   - 'examples/**'
   - 'node_modules/**'  # Usually auto-ignored
   - 'vendor/**'
-  - '.github/workflows/**'  # Si usas secretos de ejemplo en workflows
+  - '.github/workflows/**'  # If using sample secrets in workflows
 ```
 
-**Opción 3: File-level exclusions (Custom patterns)**
+**Option 3: File-level Exclusions (Custom patterns)**
 
 ```yaml
-# Excluir archivos específicos por nombre
+# Exclude specific files by name
 # Settings → Secret scanning → Custom patterns
 
 # Pattern name: Internal test fixture
@@ -1540,11 +1542,11 @@ paths-ignore:
 #   - tests/integration/*.test.js
 ```
 
-**Opción 4: Inline comments (Limited support)**
+**Option 4: Inline Comments (Limited support)**
 
 ```javascript
-// Algunos patterns pueden ser suprimidos con comentarios
-// NO TODOS LOS SCANNERS lo soportan
+// Some patterns can be suppressed with comments
+// NOT ALL SCANNERS support this
 
 // gitleaks:ignore
 const API_KEY = "test_key_12345";
@@ -1552,15 +1554,15 @@ const API_KEY = "test_key_12345";
 // secret-scanner-ignore
 const PASSWORD = "example_password";
 
-// ⚠️ Esto NO funciona para GitHub secret scanning nativo
-// Solo funciona para algunas herramientas terceras
+// ⚠️ This DOES NOT work for native GitHub secret scanning
+// Only works for some third-party tools
 ```
 
-**Opción 5: Organization-level exclusions**
+**Option 5: Organization-level Exclusions**
 
 ```yaml
 # Organization Settings → Secret scanning
-# → Path exclusions (aplica a todos los repos)
+# → Path exclusions (applies to all repos)
 
 Global exclusions:
   - '**/test/**'
@@ -1572,68 +1574,68 @@ Global exclusions:
   - '**/docs/**'
 ```
 
-**Best practices para exclusiones:**
+**Best Practices for Exclusions:**
 
 ```yaml
-✅ EXCLUIR:
-  - Test fixtures con datos fake
-  - Documentación con ejemplos
-  - Vendored dependencies (ya escaneadas)
+✅ EXCLUDE:
+  - Test fixtures with fake data
+  - Documentation with examples
+  - Vendored dependencies (already scanned)
   - Generated files (build artifacts)
 
-❌ NO EXCLUIR:
+❌ DO NOT EXCLUDE:
   - Production code
   - Configuration files
-  - Scripts de deployment
-  - Infrastructure as code
-  - CI/CD workflows (a menos que sea solo ejemplos)
+  - Deployment scripts
+  - Infrastructure as Code
+  - CI/CD workflows (unless only examples)
 
 ⚠️ CAUTION:
-  - Over-excluding crea blind spots
-  - Revisar exclusiones trimestralmente
-  - Document WHY cada exclusion existe
+  - Over-excluding creates blind spots
+  - Review exclusions quarterly
+  - Document WHY each exclusion exists
 ```
 
-**Verificar efectividad de exclusiones:**
+**Verify Exclusions Effectiveness:**
 
 ```bash
 # Test if exclusion works
-# 1. Commit un secreto falso en path excluido
+# 1. Commit a fake secret in excluded path
 echo "test_key_12345" > tests/fixtures/fake-secret.json
 git add tests/fixtures/fake-secret.json
 git commit -m "test: Add test fixture"
 git push
 
-# 2. Verificar que NO se genera alerta
+# 2. Verify NO alert is generated
 gh api /repos/:owner/:repo/secret-scanning/alerts | \
   jq '.[] | select(.locations[].path | contains("tests/fixtures"))'
 
-# 3. Si aparece alerta = exclusion no funcionó
-# 4. Si NO aparece = exclusion efectiva ✅
+# 3. If alert appears = exclusion failed
+# 4. If NO alert appears = exclusion effective ✅
 ```
 
-### Habilitar Custom Patterns
+### Enable Custom Patterns
 
-**¿Por qué custom patterns?**
+**Why custom patterns?**
 
-GitHub patterns cubren 200+ tipos de secretos comunes, pero NO cubren:
-- ❌ Internal API keys de sistemas propietarios
+GitHub patterns cover 200+ common secret types, but DO NOT cover:
+- ❌ Internal API keys of proprietary systems
 - ❌ Legacy authentication schemes
 - ❌ Custom encryption keys
 - ❌ Organization-specific token formats
 
-**Requisitos:**
+**Requirements:**
 
 - ✅ GitHub Advanced Security (Secret Protection)
-- ✅ Organization owner o Security manager role
-- ✅ Knowledge de regex patterns
+- ✅ Organization owner or Security manager role
+- ✅ Knowledge of regex patterns
 
-**Creación de custom pattern paso a paso:**
+**Custom Pattern Creation Step-by-Step:**
 
-**Step 1**: Identificar el pattern
+**Step 1**: Identify the pattern
 
 ```regex
-# Ejemplo: Internal API key
+# Example: Internal API key
 # Format: ACME-[PROJECT]-[A-Z0-9]{32}
 # Examples:
 #   ACME-WEB-ABC123DEF456GHI789JKL012MNO345PQ
@@ -1706,7 +1708,7 @@ After 2 weeks:
   └─ If FP > 10%: Refine pattern
 ```
 
-**Ejemplos de custom patterns útiles:**
+**Useful Custom Patterns Examples:**
 
 **1. Database connection strings:**
 ```regex
@@ -1739,7 +1741,7 @@ eyJ[A-Za-z0-9_-]{10,}\.eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}
 # -----END RSA PRIVATE KEY-----
 ```
 
-**4. API keys con checksums:**
+**4. API keys with checksums:**
 ```regex
 # Pattern:
 sk_[a-z]{4}_[a-zA-Z0-9]{24,99}
@@ -1749,7 +1751,7 @@ sk_[a-z]{4}_[a-zA-Z0-9]{24,99}
 # sk_test_51H7...(varies)
 ```
 
-**Pattern testing workflow:**
+**Pattern Testing Workflow:**
 
 ```python
 # test_custom_patterns.py
@@ -1813,23 +1815,23 @@ print(f"False Positives: {len(results['false_positives'])}")
 # Acceptable: FP rate < 10%
 ```
 
-**Managing custom patterns at scale:**
+**Managing Custom Patterns at Scale:**
 
 ```yaml
 # Terraform configuration for custom patterns
-# Infraestructure as Code
+# Infrastructure as Code
 
 resource "github_organization_secret_scanning_pattern" "acme_api_key" {
   pattern = "ACME-[A-Z]{3,10}-[A-Z0-9]{32}"
   name    = "ACME Internal API Key"
   
-  # Optional: antes/después de secret para contexto
+  # Optional: before/after secret for context
   before_secret = "^[\\s]*(?:api[_-]?key|token)[\\s]*[=:]"
   after_secret  = "[\\s]*$"
   
-  # Dry run primero
+  # Dry run first
   enabled = true
-  push_protection_enabled = false  # Enable después de testing
+  push_protection_enabled = false  # Enable after testing
 }
 
 resource "github_organization_secret_scanning_pattern" "internal_jwt" {
@@ -1844,7 +1846,7 @@ resource "github_organization_secret_scanning_pattern" "internal_jwt" {
 # terraform plan
 ```
 
-**Monitoring custom patterns:**
+**Monitoring Custom Patterns:**
 
 ```bash
 # Get all alerts for custom patterns
@@ -1866,7 +1868,7 @@ gh api /orgs/:org/secret-scanning/alerts \
 # - Developer feedback
 ```
 
-**Best practices:**
+**Best Practices:**
 
 ```yaml
 ✅ DO:
@@ -1885,8 +1887,6 @@ gh api /orgs/:org/secret-scanning/alerts \
   - Copy patterns from internet without testing
 ```
 
-**Enlaces:**
+**Links:**
 - https://docs.github.com/en/code-security/secret-scanning/defining-custom-patterns-for-secret-scanning
 - https://docs.github.com/en/code-security/secret-scanning/managing-alerts-from-secret-scanning/viewing-alerts
-
----

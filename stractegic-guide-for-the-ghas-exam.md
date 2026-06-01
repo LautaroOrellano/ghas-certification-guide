@@ -1,3 +1,7 @@
+> 🌐 **Disponible en:** [English 🇬🇧](stractegic-guide-for-the-ghas-exam-en.md) | **Español 🇪🇸**
+
+---
+
 # GUÍA ESTRATÉGICA PARA EL EXAMEN GHAS (GH-500)
 ## Decision-Making Framework, Exam Tips & Practice Questions
 
