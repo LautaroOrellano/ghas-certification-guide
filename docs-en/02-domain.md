@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](02-dominio.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/02-dominio.md)
 ---
 
 # DOMAIN 2: CONFIGURE AND USE SECRET SCANNING (15%)

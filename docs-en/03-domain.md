@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](03-dominio.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/03-dominio.md)
 ---
 
 # DOMAIN 3: CONFIGURE AND USE DEPENDABOT AND DEPENDENCY REVIEW (35%)

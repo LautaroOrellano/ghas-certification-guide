@@ -1,4 +1,4 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](05-dominio.md)
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](../docs/05-dominio.md)
 ---
 
 # DOMAIN 5: GHAS BEST PRACTICES, RESULTS, AND REMEDIATION MEASURES (10%)

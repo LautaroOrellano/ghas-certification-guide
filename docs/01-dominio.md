@@ -1,4 +1,4 @@
-> 🌐 **Disponible en:** [English 🇬🇧](01-domain.md) | **Español 🇪🇸**
+> 🌐 **Disponible en:** [English 🇬🇧](../docs-en/01-domain.md) | **Español 🇪🇸**
 
 ---
 
