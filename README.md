@@ -3,6 +3,12 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20371948.svg)](https://doi.org/10.5281/zenodo.20371948)
 
+![GitHub Repo stars](https://img.shields.io/github/stars/LautaroOrellano/ghas-certification-guide?style=social)
+![GitHub forks](https://img.shields.io/github/forks/LautaroOrellano/ghas-certification-guide?style=social)
+![GitHub last commit](https://img.shields.io/github/last-commit/LautaroOrellano/ghas-certification-guide)
+![GitHub release](https://img.shields.io/github/v/release/LautaroOrellano/ghas-certification-guide)
+![License](https://img.shields.io/github/license/LautaroOrellano/ghas-certification-guide)
+
 # COMPLETE GITHUB ADVANCED SECURITY (GHAS) CERTIFICATION GUIDE
 ## Advanced Level Study Guide - Exam GH-500
 
