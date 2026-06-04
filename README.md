@@ -1,13 +1,17 @@
-> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](README-es.md)
----
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20371948.svg)](https://doi.org/10.5281/zenodo.20371948)
-
 ![GitHub Repo stars](https://img.shields.io/github/stars/LautaroOrellano/ghas-certification-guide?style=social)
 ![GitHub forks](https://img.shields.io/github/forks/LautaroOrellano/ghas-certification-guide?style=social)
 ![GitHub last commit](https://img.shields.io/github/last-commit/LautaroOrellano/ghas-certification-guide)
 ![GitHub release](https://img.shields.io/github/v/release/LautaroOrellano/ghas-certification-guide)
 ![License](https://img.shields.io/github/license/LautaroOrellano/ghas-certification-guide)
+
+> 🌐 **Available in:** **English 🇬🇧** | [Español 🇪🇸](README-es.md)
+---
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20371948.svg)](https://doi.org/10.5281/zenodo.20371948)
+
+[![GH-500 Study Guide](https://img.shields.io/badge/GH--500-Study%20Guide-blue)](https://learn.microsoft.com/en-us/credentials/certifications/github-advanced-security/)
+[![GitHub Advanced Security](https://img.shields.io/badge/GitHub%20Advanced%20Security-GHAS-black)](https://learn.github.com/certification/GHAS)
+
 
 # COMPLETE GITHUB ADVANCED SECURITY (GHAS) CERTIFICATION GUIDE
 ## Advanced Level Study Guide - Exam GH-500
